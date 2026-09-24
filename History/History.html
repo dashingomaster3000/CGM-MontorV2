@@ -1,11 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
+
+<!-- INFO OM SIDEN  -->
 <head>
+    <!-- Æ, ø og å virker -->
     <meta charset="UTF-8">
+    <!-- Siden passer til mobil -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <!-- Teksten i browserens fane -->
+    <title>Historik</title>
+    <!-- Henter udseendet fra CSS-filen -->
+    <link rel="stylesheet" href="History.css">
 </head>
+
 <body>
+
     
+    <!-- Menu med links til siderne -->
+    <nav>
+        <a href="../Forside/Forside.html">Dashboard</a>
+        <!-- "aktiv" markerer siden man er på -->
+        <a href="History.html" class="aktiv">Historik</a>
+        <a href="../Feedback/MeldSymptomer.html">Symptommelding</a>
+    </nav>
+
+    <!-- Alt indhold under menuen -->
+    <main>
+        <h1>Historik</h1>
+
+        <!-- KNAPPER -->
+        <!-- Vælg hvor mange dage vises -->
+        <button id="knap7" class="knap valgt">7 dage</button>
+        <button id="knap14" class="knap">14 dage</button>
+
+        <!-- NØGLETAL  -->
+        <!-- Tre kort ved siden af hinanden -->
+        <section class="noegletal">
+            <!-- Tallene fyldes ud af JavaScript -->
+            <div class="kort">
+                Gennemsnit
+                <p id="gennemsnit" class="tal">–</p>
+            </div>
+            <div class="kort">
+                Tid i målområde
+                <p id="tidIMaal" class="tal">–</p>
+            </div>
+            <div class="kort">
+                Lave målinger
+                <p id="antalLave" class="tal">–</p>
+            </div>
+        </section>
+
+        <!-- TABEL -->
+        <section class="kort">
+            <h2>Målinger pr. dag</h2>
+            <table>
+                <!-- Overskrifter på tabellens kolonner -->
+                <tr>
+                    <th>Dato</th>
+                    <th>Gennemsnit</th>
+                    <th>Laveste</th>
+                    <th>Højeste</th>
+                </tr>
+                <!-- JavaScript laver rækkerne her -->
+                <tbody id="tabelIndhold"></tbody>
+            </table>
+        </section>
+
+        <!--  SYMPTOMER -->
+        <section class="kort">
+            <h2>Symptommeldinger</h2>
+            <!-- JavaScript fylder listen ud -->
+            <ul id="symptomListe"></ul>
+        </section>
+    </main>
+
 </body>
 </html>

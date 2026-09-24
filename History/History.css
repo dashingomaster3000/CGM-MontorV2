@@ -1,0 +1,94 @@
+/* Hele siden. */
+body {
+    margin: 0;
+    font-family: Arial;
+    background-color: #f4f6f8;
+}
+
+/* Den blå taskbar med links på én række. */
+nav {
+    background-color: #1f6feb;
+    padding: 12px;
+    display: flex;
+    gap: 20px;
+}
+
+/* Links i taskbaren. */
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+/* Markerer linket til den side, man er på. */
+nav a.aktiv {
+    background-color: white;
+    color: #1f6feb;
+}
+
+/* Centrerer sidens indhold. */
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Knapperne til 7 og 14 dage. */
+.knap {
+    padding: 8px 16px;
+    border: 2px solid #1f6feb;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Den valgte knap bliver blå. */
+.knap.valgt {
+    background-color: #1f6feb;
+    color: white;
+}
+
+/* Nøgletallene står på én række og er lige brede. */
+.noegletal {
+    display: flex;
+    gap: 16px;
+}
+
+.noegletal .kort {
+    flex: 1;
+    text-align: center;
+}
+
+/* Det store tal i nøgletal-boksene. */
+.tal {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Hvide kasser rundt om indholdet. */
+.kort {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+/* Tabellen fylder hele bredden. */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Grå streg under hver række. */
+th, td {
+    padding: 8px;
+    border-bottom: 1px solid #dddddd;
+    text-align: left;
+}
+
+/* Dage med lavt blodsukker bliver røde. */
+tr.lav {
+    background-color: #ffdddd;
+}
+
+/* Denne fil bestemmer udseendet af Historik-siden. */
