@@ -1,13 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
+    <!-- Angiver dokumentets sprog, tegnsæt og responsive layout. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tjek blod her</title>
+
+    <!-- Teksten, der vises i browserens fane. -->
+    <title>Login – Diabeto</title>
+
+    <!-- Indlæser login-logikken, efter HTML-koden er fortolket. -->
+    <script src="Login.js" defer></script>
 </head>
+
 <body>
-    <h1>Nilas har altid ret</h1>
-    <h5>Nilas er mit største idol</h5>
-    <h3>blodet er rødt</h3>
+    <!-- Login-sidens primære indhold. -->
+    <main>
+        <!-- Programmets navn og sidens overskrift. -->
+       <img
+        src="../Assets/DiabetoLogo.png"
+        alt="Diabeto"
+        width="300"
+    >
+        <h2>Log ind</h2>
+
+        <!-- Loginformular med brugerens loginoplysninger. -->
+        <form id="loginForm">
+            <div>
+                <!-- E-mailadresse, der bruges til at identificere brugeren. -->
+                <label for="email">E-mail</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                >
+            </div>
+
+            <div>
+                <!-- Adgangskode, der bruges til at bekræfte brugerens identitet. -->
+                <label for="password">Adgangskode</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                >
+            </div>
+
+            <!-- Sender de indtastede loginoplysninger til Login.js. -->
+            <button type="submit">Log ind</button>
+
+            <!-- Viser en fejl, hvis loginoplysningerne ikke godkendes. -->
+            <p id="loginMessage"></p>
+        </form>
+
+        <!-- Demo-login - Dette skal evt. ændres senere når vi har backend -->
+        <!-- Midlertidige loginoplysninger til test af de to brugerroller. -->
+        <section>
+            <h2>Demo-login</h2>
+
+            <h3>Borger</h3>
+            <p>
+                E-mail: borger@diabeto.dk<br>
+                Adgangskode: borger123
+            </p>
+
+            <h3>Sundhedsprofessionel</h3>
+            <p>
+                E-mail: sundhed@diabeto.dk<br>
+                Adgangskode: sundhed123
+            </p>
+        </section>
+    </main>
 </body>
 </html>
