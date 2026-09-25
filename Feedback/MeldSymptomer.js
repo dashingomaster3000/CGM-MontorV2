@@ -10,3 +10,13 @@ document.getElementById("sendKnap").addEventListener("click", function() {
         fejlBesked.textContent = "Tak for din feedback! Vi har modtaget dine symptomer.";
     }
 });
+
+    document.getElementById("ForsideKnap").onclick = function() {
+    window.location.href = "../Forside/Forside.html";  
+    };
+    document.getElementById("Historyknap").onclick = function() {
+    window.location.href = "../History/History.html";  
+    };
+     document.getElementById("MeldSymptomerKnap").onclick = function() {
+    window.location.href = "../Feedback/MeldSymptomer.html";  
+    };
