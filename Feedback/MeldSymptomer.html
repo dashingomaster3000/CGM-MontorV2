@@ -1,11 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Meld Symptomer</title>
+    <link rel="stylesheet" href="MeldSymptomer.css">
 </head>
+
 <body>
-    
+
+<button id="ForsideKnap">Forside</button>
+<button id="Loginknap">Login</button>
+<button id="Historyknap">History</button>
+
+
+    <h1>Meld Symptomer</h1>
+    <p>Her kan du melde dine symptomer:</p>
+    <p id="fejlBesked" class="fejl"></p>
+
+    <input type="text" id="symptomer" class="stort-felt" required>
+   
+    <button id="sendKnap">Send</button>
+
+    <script src="MeldSymptomer.js"></script>
 </body>
 </html>

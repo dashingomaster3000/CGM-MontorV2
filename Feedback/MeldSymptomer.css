@@ -1,0 +1,10 @@
+/* CSS finder feltet via klassen med et punktum foran (.stort-felt) 
+.stort-felt {
+    width: 350px;
+    height: 45px;
+    font-size: 16px;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
+
+*/
