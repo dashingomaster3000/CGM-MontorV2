@@ -18,7 +18,7 @@ document.getElementById("sendKnap").addEventListener("click", function() {
     window.location.href = "../History/History.html";  
     };
     document.getElementById("Loginknap").onclick = function() {
-    window.location.href = "../Login/index.html";  
+    window.location.href = "../index.html";  
     };
      document.getElementById("MeldSymptomerKnap").onclick = function() {
     window.location.href = "../Feedback/MeldSymptomer.html";  

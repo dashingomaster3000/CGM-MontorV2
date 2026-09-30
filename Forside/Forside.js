@@ -1,5 +1,5 @@
 document.getElementById("Loginknap").onclick = function() {
-    window.location.href = "../Login/index.html"; // Går et niveau op og åbner index.html i Login-mappen.
+    window.location.href = "../index.html"; // Går et niveau op og åbner index.html i projektets rod.
     };
     document.getElementById("Historyknap").onclick = function() {
     window.location.href = "../history/history.html";  
