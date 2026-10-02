@@ -20,7 +20,7 @@ loginForm.addEventListener("submit", function (event) {
         sessionStorage.setItem("diabetoRole", "borger");
 
         // Sender borgeren til programmets forside.
-        window.location.href = "../Forside/Forside.html"; // Dette skal vi have ændret til en side for borgere, når den er lavet, eller navnet på forsiden ændres.
+        window.location.href = "Forside/Forside.html"; // Dette skal vi have ændret til en side for borgere, når den er lavet, eller navnet på forsiden ændres.
     }
 
     // Demo-login for en sundhedsprofessionel
@@ -36,7 +36,7 @@ loginForm.addEventListener("submit", function (event) {
         );
 
         // Sender den sundhedsprofessionelle til historiksiden.
-        window.location.href = "../History/History.html"; //Dette skal vi have ændret til en side for sundhedsprofessionelle, når den er lavet.
+        window.location.href = "History/History.html"; //Dette skal vi have ændret til en side for sundhedsprofessionelle, når den er lavet.
     }
 
     // Forkerte loginoplysninger
