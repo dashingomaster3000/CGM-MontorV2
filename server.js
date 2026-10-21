@@ -20,6 +20,9 @@ app.use(express.json());
 
 // Udleverer frontend-filerne i public/ lokalt. På Vercel serverer Vercel selv public/.
 app.use(express.static("public"));
+app.get("/", (req, res) => {
+  res.redirect("/index.html");
+});
 
 // Sender forsiden, når klienten åbner /. Vercel sender / videre til Express.
 app.get("/", (req, res) => {
