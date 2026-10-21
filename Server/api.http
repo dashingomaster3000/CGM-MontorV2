@@ -1,0 +1,11 @@
+### Hele listen
+GET http://localhost:3000/api/patients
+
+### Opret patient
+POST http://localhost:3000/api/patients
+Content-Type: application/json
+
+{"cpr":"0201029994","navn":"Ny Test Person"}
+
+### Uden body — skal give 400
+POST http://localhost:3000/api/patients

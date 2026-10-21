@@ -1,0 +1,1 @@
+For at køre liveserver, skriv i terminal "npm run dev"
