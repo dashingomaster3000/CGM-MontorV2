@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
 // Opretter en liste af patienter, som serveren returnerer fra /api/patients.
@@ -16,6 +17,14 @@ app.use((req, res, next) => {
 
 // Gør det muligt for Express at læse JSON-data fra indkommende forespørgsler.
 app.use(express.json());
+
+// Udleverer frontend-filerne i public/ lokalt. På Vercel serverer Vercel selv public/.
+app.use(express.static("public"));
+
+// Sender forsiden, når klienten åbner /. Vercel sender / videre til Express.
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 // Returnerer patientlisten som JSON, når klienten henter /api/patients.
 app.get("/api/patients", (req, res) => {
