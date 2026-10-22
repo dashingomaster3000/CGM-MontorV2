@@ -1,45 +1,40 @@
 
 /* Grundopsætning for hele login-siden. */
 .login-page {
-    min-height: 100vh; /* Fylder mindst hele browserens højde. */
-    margin: 0; /* Fjerner browserens standardmargen omkring siden. */
-    padding: 24px; /* Giver luft, så indholdet ikke rammer skærmkanten. */
-    box-sizing: border-box; /* Medregner padding og kant i elementets bredde og højde. */
-    display: grid; /* Gør det muligt at centrere loginboksen med CSS Grid. */
-    place-items: center; /* Centrerer loginboksen både vandret og lodret. */
-    background-color: #f4f6f8; /* Samme lysegrå baggrund som History-siden. */
-    color: #202124; /* Standard tekstfarve på login-siden. */
-    font-family: Arial, sans-serif; /* Bruger Arial, med en generisk sans-serif som reserve. */
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    background-color: #f4f6f8;
+    color: #202124;
+    font-family: Arial, sans-serif;
 }
 
-/*
- * Stjernen (*) betyder "alle elementer" inde i .login-page.
- * ::before og ::after rammer eventuelle CSS-skabte elementer før og efter indholdet.
- * Sammen sikrer reglerne, at alle dele af login-siden medregner padding og kant
- * i deres størrelse. "inherit" betyder, at de arver box-sizing fra forælderen.
- */
+/* * rammer alle elementer; ::before og ::after rammer CSS-skabt indhold før og efter dem. */
 .login-page *,
 .login-page *::before,
 .login-page *::after {
     box-sizing: inherit;
 }
 
-/* Den hvide boks, der indeholder loginformularen og demo-loginoplysningerne. */
+/* Boksen omkring loginformularen og demo-loginoplysningerne. */
 .login-page main {
-    width: 100%; /* Kan fylde den tilgængelige plads på små skærme. */
-    max-width: 460px; /* Begrænser bredden, så boksen ikke bliver for stor. */
-    padding: 32px; /* Luft mellem boksens kant og dens indhold. */
-    background-color: white; /* Hvid baggrund, ligesom kortene på History-siden. */
-    border-radius: 8px; /* Afrunder hjørnerne. */
-    box-shadow: 0 4px 18px rgb(0 0 0 / 8%); /* Giver boksen en diskret skygge. */
+    width: 100%;
+    max-width: 460px;
+    padding: 32px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgb(0 0 0 / 8%);
 }
 
 /* Logoet øverst i loginboksen. */
 .login-page main > img {
-    display: block; /* Lader logoet centreres med auto-margener. */
-    width: min(100%, 240px); /* Logoet bliver højst 240 px og krymper på små skærme. */
-    height: auto; /* Bevarer logoets oprindelige proportioner. */
-    margin: 0 auto 24px; /* Centrerer logoet og giver afstand under det. */
+    display: block;
+    width: min(100%, 240px);
+    height: auto;
+    margin: 0 auto 24px;
 }
 
 /* Overskriften "Log ind". */
@@ -55,30 +50,30 @@
 
 /* Etiketterne "E-mail" og "Adgangskode". */
 .login-page label {
-    display: block; /* Placerer etiketten på sin egen linje over inputfeltet. */
+    display: block;
     margin-bottom: 6px;
     font-weight: bold;
 }
 
 /* Fælles udseende for felterne til e-mail og adgangskode. */
 .login-page input {
-    width: 100%; /* Lader inputfeltet fylde formularens bredde. */
-    min-height: 42px; /* Gør feltet nemmere at trykke på og læse. */
-    padding: 9px 12px; /* Luft omkring teksten inde i feltet. */
-    border: 1px solid #b8c0cc; /* Tynd grå kant omkring feltet. */
-    border-radius: 6px; /* Afrundede hjørner. */
-    font: inherit; /* Bruger samme skrifttype som resten af siden. */
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid #b8c0cc;
+    border-radius: 6px;
+    font: inherit;
 }
 
-/* Fremhæver inputfeltet, mens brugeren skriver i det. */
+/* Fremhæver inputfeltet, mens det er aktivt. */
 .login-page input:focus {
     border-color: #1f6feb;
-    outline: 2px solid rgb(31 111 235 / 20%); /* Blå markering uden om feltets kant. */
+    outline: 2px solid rgb(31 111 235 / 20%);
 }
 
 /* Den blå knap, der sender loginformularen. */
 .login-page button {
-    width: 100%; /* Får knappen til at fylde formularens bredde. */
+    width: 100%;
     min-height: 42px;
     padding: 10px 16px;
     border: 2px solid #1f6feb;
@@ -90,13 +85,13 @@
     cursor: pointer;
 }
 
-/* Ændrer knappens farve, når markøren holdes over den. */
+/* Knapfarve, når markøren holdes over knappen. */
 .login-page button:hover {
     background-color: #195fc9;
     border-color: #195fc9;
 }
 
-/* Synlig fokusmarkering for tastaturbrugere, der navigerer til knappen. */
+/* Fokusmarkering, når knappen vælges med tastatur. */
 .login-page button:focus-visible {
     outline: 3px solid rgb(31 111 235 / 35%);
     outline-offset: 2px;
@@ -108,7 +103,7 @@
     color: #b42318;
 }
 
-/* Skjuler beskedafsnittet, indtil der er en fejltekst at vise. */
+/* Skjuler fejlbeskeden, når den er tom. */
 .login-page #loginMessage:empty {
     display: none;
 }
@@ -134,20 +129,18 @@
     font-size: 1rem;
 }
 
-/* Teksten med demo-kontienes e-mail og adgangskode. */
+/* Teksten med demo-kontienes loginoplysninger. */
 .login-page section p {
     margin: 0;
-    line-height: 1.5; /* Giver lidt ekstra afstand mellem tekstlinjerne. */
+    line-height: 1.5;
 }
 
-/* Tilpasninger til smalle skærme, fx mobiltelefoner. */
+/* Tilpasninger til skærme, der er højst 520 px brede. */
 @media (max-width: 520px) {
-    /* Gør sidens yderkant mindre, så loginboksen får mere plads. */
     .login-page {
         padding: 16px;
     }
 
-    /* Reducerer den indvendige afstand på loginboksen på små skærme. */
     .login-page main {
         padding: 24px;
     }
