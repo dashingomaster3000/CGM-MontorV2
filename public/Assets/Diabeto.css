@@ -150,14 +150,80 @@
 
 
 /* Grundopsætning for hele meldsymptomer-siden. */
+/* Hele siden */
 .meld-symptomer-page {
-    min-height: 100vh;
     margin: 0;
-    padding: 24px;
-    box-sizing: border-box;
-    display: grid;
-    place-items: center;
+    font-family: Arial, sans-serif;
     background-color: #f4f6f8;
     color: #202124;
-    font-family: Arial, sans-serif;
+}
+
+/* Den blå taskbar */
+.meld-symptomer-page nav {
+    background-color: #1f6feb;
+    padding: 12px;
+    display: flex;
+    gap: 20px;
+}
+
+/* Knapperne i taskbaren */
+.meld-symptomer-page nav button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.meld-symptomer-page nav button:hover {
+    background-color: white;
+    color: #1f6feb;
+}
+
+/* Centrerer indholdet */
+.meld-symptomer-page main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Hvid kasse rundt om formularen */
+.meld-symptomer-page .kort {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+/* Inputfelter */
+.meld-symptomer-page input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Send-knappen */
+.meld-symptomer-page .knap {
+    padding: 8px 16px;
+    border: 2px solid #1f6feb;
+    background-color: #1f6feb;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Fejlbesked */
+.meld-symptomer-page .fejl {
+    color: #c62828;
+}
+
+.meld-symptomer-page .feedback {
+    color: #21c526;
 }
