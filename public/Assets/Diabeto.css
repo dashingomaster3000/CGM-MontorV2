@@ -145,3 +145,19 @@
         padding: 24px;
     }
 }
+
+
+
+
+/* Grundopsætning for hele meldsymptomer-siden. */
+.meld-symptomer-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    background-color: #f4f6f8;
+    color: #202124;
+    font-family: Arial, sans-serif;
+}
