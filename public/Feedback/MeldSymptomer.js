@@ -6,11 +6,11 @@ document.getElementById("sendKnap").addEventListener("click", function() {
 
     // Tjekker om dato og tekst er udfyldt, og viser fejlbesked hvis ikke
     if (dato === "") {
-        fejlBesked.textContent = "Du skal vælge en dato.";
+        fejlBesked.textContent = "Please choose a date.";
     } else if (tekst === "") {
-        fejlBesked.textContent = "Du skal skrive et symptom, før du kan sende.";
+        fejlBesked.textContent = "Please describe a symptom before sending.";
     } else {
-        feedback.textContent = "Tak for din feedback! Vi har modtaget dine symptomer.";
+        feedback.textContent = "Thank you for your feedback! We have received your symptoms.";
     }
 
     //fjerner fejlbeskeden, hvis både dato og tekst er udfyldt

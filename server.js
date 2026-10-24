@@ -42,7 +42,7 @@ app.get("/api/patients/:cpr", (req, res) => {
 app.post("/api/patients", (req, res) => {
   const { cpr, navn } = req.body ?? {};
   if (!cpr || !navn) {
-    return res.status(400).json({ error: "cpr og navn skal med" });
+    return res.status(400).json({ error: "cpr and name are required" });
   }
   patienter.push({ cpr, navn });
   res.status(201).json({ cpr, navn });
@@ -55,5 +55,5 @@ app.use((req, res) => {
 
 // Starter serveren på port 3000.
 app.listen(3000, () => {
-  console.log("Server kører på http://localhost:3000");
+  console.log("Server running at http://localhost:3000");
 });

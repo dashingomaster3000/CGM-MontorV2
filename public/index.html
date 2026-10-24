@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 <head>
     <!-- Angiver dokumentets sprog, tegnsæt og responsive layout. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Teksten, der vises i browserens fane. -->
-    <title>Login – Diabeto</title>
+    <title>Log in – Diabeto</title>
 
     <!-- Fælles udseende for Diabeto-siderne. -->
     <link rel="stylesheet" href="Assets/Diabeto.css">
@@ -24,7 +24,7 @@
         alt="Diabeto"
         width="300"
     >
-        <h2>Log ind</h2>
+        <h2>Log in</h2>
 
         <!-- Loginformular med brugerens loginoplysninger. -->
         <form id="loginForm">
@@ -41,7 +41,7 @@
 
             <div>
                 <!-- Adgangskode, der bruges til at bekræfte brugerens identitet. -->
-                <label for="password">Adgangskode</label>
+                <label for="password">Password</label>
                 <input
                     type="password"
                     id="password"
@@ -51,7 +51,7 @@
             </div>
 
             <!-- Sender de indtastede loginoplysninger til Login.js. -->
-            <button type="submit">Log ind</button>
+            <button type="submit">Log in</button>
 
             <!-- Viser en fejl, hvis loginoplysningerne ikke godkendes. -->
             <p id="loginMessage"></p>
@@ -60,18 +60,18 @@
         <!-- Demo-login - Dette skal evt. ændres senere når vi har backend -->
         <!-- Midlertidige loginoplysninger til test af de to brugerroller. -->
         <section>
-            <h2>Demo-login</h2>
+            <h2>Demo login</h2>
 
-            <h3>Borger</h3>
+            <h3>Patient</h3>
             <p>
                 E-mail: borger@diabeto.dk<br>
-                Adgangskode: borger123
+                Password: borger123
             </p>
 
-            <h3>Sundhedsprofessionel</h3>
+            <h3>Healthcare professional</h3>
             <p>
                 E-mail: sundhed@diabeto.dk<br>
-                Adgangskode: sundhed123
+                Password: sundhed123
             </p>
         </section>
     </main>

@@ -43,6 +43,6 @@ loginForm.addEventListener("submit", function (event) {
     else {
         // Viser en besked, når loginoplysningerne ikke passer til en demo-konto.
         loginMessage.textContent =
-            "E-mail eller adgangskode er forkert.";
+            "Incorrect e-mail or password.";
     }
 });

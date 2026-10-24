@@ -1,79 +1,84 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 
-<!-- INFO OM SIDEN  -->
+<!-- INFO ABOUT THE PAGE -->
 <head>
-    <!-- Æ, ø og å virker -->
+    <!-- Special characters work -->
     <meta charset="UTF-8">
-    <!-- Siden passer til mobil -->
+    <!-- The page fits on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Teksten i browserens fane -->
-    <title>Historik</title>
-    <!-- Henter udseendet fra CSS-filen -->
+    <!-- The text in the browser tab -->
+    <title>History</title>
+    <!-- Gets the look from the CSS file -->
     <link rel="stylesheet" href="History.css">
 </head>
 
 <body>
 
-    
-    <!-- Menu med links til siderne -->
+
+    <!-- Menu with links to the pages -->
     <nav>
         <a href="../Forside/Forside.html">Dashboard</a>
-        <!-- "aktiv" markerer siden man er på -->
-        <a href="History.html" class="aktiv">Historik</a>
-        <a href="../Feedback/MeldSymptomer.html">Symptommelding</a>
+        <!-- "active" marks the page you are on -->
+        <a href="History.html" class="active">History</a>
+        <a href="../Feedback/MeldSymptomer.html">Report symptoms</a>
     </nav>
 
-    <!-- Alt indhold under menuen -->
+    <!-- All content below the menu -->
     <main>
-        <h1>Historik</h1>
+        <h1>History</h1>
+        <!-- The patient's name is filled in by JavaScript -->
+        <p id="patientName"></p>
 
-        <!-- KNAPPER -->
-        <!-- Vælg hvor mange dage vises -->
-        <button id="knap7" class="knap valgt">7 dage</button>
-        <button id="knap14" class="knap">14 dage</button>
+        <!-- BUTTONS -->
+        <!-- Choose how many days are shown -->
+        <button id="button7" class="day-button selected">7 days</button>
+        <button id="button14" class="day-button">14 days</button>
 
-        <!-- NØGLETAL  -->
-        <!-- Tre kort ved siden af hinanden -->
-        <section class="noegletal">
-            <!-- Tallene fyldes ud af JavaScript -->
-            <div class="kort">
-                Gennemsnit
-                <p id="gennemsnit" class="tal">–</p>
+        <!-- KEY FIGURES -->
+        <!-- Three cards next to each other -->
+        <section class="key-figures">
+            <!-- The numbers are filled in by JavaScript -->
+            <div class="card">
+                Average
+                <p id="average" class="number">–</p>
             </div>
-            <div class="kort">
-                Tid i målområde
-                <p id="tidIMaal" class="tal">–</p>
+            <div class="card">
+                Time in range
+                <p id="timeInRange" class="number">–</p>
             </div>
-            <div class="kort">
-                Lave målinger
-                <p id="antalLave" class="tal">–</p>
+            <div class="card">
+                Low measurements
+                <p id="lowCount" class="number">–</p>
             </div>
         </section>
 
-        <!-- TABEL -->
-        <section class="kort">
-            <h2>Målinger pr. dag</h2>
+        <!-- TABLE -->
+        <section class="card">
+            <h2>Measurements per day</h2>
             <table>
-                <!-- Overskrifter på tabellens kolonner -->
+                <!-- Headings for the table columns -->
                 <tr>
-                    <th>Dato</th>
-                    <th>Gennemsnit</th>
-                    <th>Laveste</th>
-                    <th>Højeste</th>
+                    <th>Date</th>
+                    <th>Average</th>
+                    <th>Lowest</th>
+                    <th>Highest</th>
                 </tr>
-                <!-- JavaScript laver rækkerne her -->
-                <tbody id="tabelIndhold"></tbody>
+                <!-- JavaScript makes the rows here -->
+                <tbody id="tableBody"></tbody>
             </table>
         </section>
 
-        <!--  SYMPTOMER -->
-        <section class="kort">
-            <h2>Symptommeldinger</h2>
-            <!-- JavaScript fylder listen ud -->
-            <ul id="symptomListe"></ul>
+        <!-- SYMPTOMS -->
+        <section class="card">
+            <h2>Symptom reports</h2>
+            <!-- JavaScript fills in the list -->
+            <ul id="symptomList"></ul>
         </section>
     </main>
 
+    <!-- The data file must load before History.js -->
+    <script src="HistoryData.js"></script>
+    <script src="History.js"></script>
 </body>
 </html>
