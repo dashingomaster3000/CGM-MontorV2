@@ -1,0 +1,103 @@
+/* The whole page: blue bar at the top, grey background below. */
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8 linear-gradient(#1f6feb 56px, #f4f6f8 56px) no-repeat;
+
+    /* Everything is placed in rows, and the content is centered. */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 0 max(20px, calc((100% - 860px) / 2)) 20px;
+}
+
+/* "HYPO TRACK" in the blue bar. */
+h5:first-of-type {
+    color: white;
+    font-size: 18px;
+    line-height: 56px;
+    margin: 0 20px 0 0;
+}
+
+/* Buttons in the blue bar. */
+button {
+    background: none;
+    border: none;
+    color: white;
+    font-family: Arial;
+    font-size: 16px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* "Good day" and the section headings take a whole row. */
+h4, h3, fieldset {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+/* The big page title. */
+body > h4:first-of-type {
+    font-size: 32px;
+    margin-top: 20px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+/* White boxes around the content. */
+fieldset {
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+/* Text inside the boxes. */
+fieldset h4 {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 6px 0;
+}
+
+/* The big number in "Current glucose". */
+fieldset:nth-of-type(1) h4:first-child {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* The three low glucose boxes are next to each other. */
+fieldset:nth-of-type(3),
+fieldset:nth-of-type(4),
+fieldset:nth-of-type(5) {
+    flex: 1 1 calc(33.333% - 16px);
+}
+
+/* The big number in the low glucose boxes. */
+fieldset:nth-of-type(3) h4:last-child,
+fieldset:nth-of-type(4) h4:last-child,
+fieldset:nth-of-type(5) h4:last-child {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* "Most frequent low period" and the time below the pattern box. */
+body > h4:last-of-type {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+h5:last-of-type {
+    flex: 0 0 100%;
+    font-size: 28px;
+    margin: -8px 0 0 0;
+}
