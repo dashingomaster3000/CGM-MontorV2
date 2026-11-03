@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/dashingomaster3000/CGM-MontorV2#readme",
   "dependencies": {
-    "express": "^5.3.0"
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

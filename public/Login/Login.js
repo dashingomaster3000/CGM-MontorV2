@@ -35,8 +35,8 @@ loginForm.addEventListener("submit", function (event) {
             "sundhedsprofessionel"
         );
 
-        // Sender den sundhedsprofessionelle til historiksiden.
-        window.location.href = "History/History.html"; //Dette skal vi have ændret til en side for sundhedsprofessionelle, når den er lavet.
+        // Sender den sundhedsprofessionelle til patientlisten.
+        window.location.href = "Patients/Patients.html";
     }
 
     // Forkerte loginoplysninger

@@ -1,13 +1,27 @@
 const express = require("express");
 const path = require("path");
+const pg = require("pg");
+
+// Læser .env lokalt. På Vercel findes filen ikke, så fejlen ignoreres.
+try {
+  process.loadEnvFile();
+} catch (error) {
+  console.log("No .env file found");
+}
+
+// Tidspunkter fra databasen sendes som tekst, fx "2026-10-21 06:00:00".
+// Så bliver datoen den samme, uanset hvilken tidszone computeren står i.
+pg.types.setTypeParser(1114, function (tekst) {
+  return tekst;
+});
+
+// Forbindelse til Neon-databasen.
+const db = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 const app = express();
-// Opretter en liste af patienter, som serveren returnerer fra /api/patients.
-const patienter = [
-  { cpr: "2512489996", navn: "Benny Jensen" },
-  { cpr: "0102034567", navn: "Mads Nielsen" },
-  { cpr: "1234567890", navn: "Anna Larsen" }
-];
 
 // Tillader forespørgsler fra frontendens lokale side via CORS.
 app.use((req, res, next) => {
@@ -26,26 +40,64 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Returnerer patientlisten som JSON, når klienten henter /api/patients.
-app.get("/api/patients", (req, res) => {
-  res.json(patienter);
-});
-// Returnerer en patient som JSON, når klienten henter /api/patients/:cpr. (:cpr er en parameter i URL'en, som kan bruges til at finde patienten i listen.)
-app.get("/api/patients/:cpr", (req, res) => {
-  const patient = patienter.find((p) => p.cpr === req.params.cpr);
-  if (!patient) {
-    return res.status(404).json({ error: "not found" });
+// Returnerer alle patienter fra databasen, sorteret efter navn.
+app.get("/api/patients", async (req, res) => {
+  try {
+    const result = await db.query("SELECT id, cpr, navn FROM patients ORDER BY navn");
+    res.json(result.rows);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "database error" });
   }
-  res.json(patient);
 });
 
-app.post("/api/patients", (req, res) => {
+// Returnerer én patients målinger, sorteret efter tidspunkt.
+app.get("/api/patients/:id/maalinger", async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT tidspunkt, glukose_mmol FROM maalinger WHERE patient_id = $1 ORDER BY tidspunkt",
+      [req.params.id]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "database error" });
+  }
+});
+
+// Returnerer én patient ud fra CPR-nummeret i URL'en.
+app.get("/api/patients/:cpr", async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT id, cpr, navn FROM patients WHERE cpr = $1",
+      [req.params.cpr]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "database error" });
+  }
+});
+
+// Gemmer en ny patient i tabellen patients.
+app.post("/api/patients", async (req, res) => {
   const { cpr, navn } = req.body ?? {};
   if (!cpr || !navn) {
     return res.status(400).json({ error: "cpr and name are required" });
   }
-  patienter.push({ cpr, navn });
-  res.status(201).json({ cpr, navn });
+  try {
+    const result = await db.query(
+      "INSERT INTO patients (cpr, navn) VALUES ($1, $2) RETURNING id, cpr, navn",
+      [cpr, navn]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "database error" });
+  }
 });
 
 // Sidste middleware: returnerer JSON med status 404 for ukendte adresser.

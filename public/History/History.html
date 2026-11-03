@@ -18,11 +18,22 @@
 
     <!-- Menu with links to the pages -->
     <nav>
-        <a href="../Forside/Forside.html">Dashboard</a>
+        <!-- Only shown for health professionals (see the script below) -->
+        <a href="../Patients/Patients.html" id="patientsLink" hidden>Patients</a>
+        <a href="../Forside/Forside.html" id="dashboardLink">Dashboard</a>
         <!-- "active" marks the page you are on -->
         <a href="History.html" class="active">History</a>
-        <a href="../Feedback/MeldSymptomer.html">Report symptoms</a>
+        <a href="../Feedback/MeldSymptomer.html" id="symptomsLink">Report symptoms</a>
     </nav>
+
+    <!-- Health professionals see "Patients" instead of "Dashboard" and "Report symptoms" -->
+    <script>
+        if (sessionStorage.getItem("diabetoRole") === "sundhedsprofessionel") {
+            document.getElementById("patientsLink").hidden = false;
+            document.getElementById("dashboardLink").hidden = true;
+            document.getElementById("symptomsLink").hidden = true;
+        }
+    </script>
 
     <!-- All content below the menu -->
     <main>
@@ -77,8 +88,6 @@
         </section>
     </main>
 
-    <!-- The data file must load before History.js -->
-    <script src="HistoryData.js"></script>
     <script src="History.js"></script>
 </body>
 </html>

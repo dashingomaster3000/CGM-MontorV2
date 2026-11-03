@@ -7,10 +7,9 @@ const highLimit = 10.0;
 const urlParams = new URLSearchParams(window.location.search);
 const patientId = Number(urlParams.get("patient")) || 1;
 
-// Find the patient in the data file (HistoryData.js)
-const patient = patients.find(function (p) {
-    return p.id === patientId;
-});
+// Dagene med målinger, fx [{ date: "2026-10-21", values: [6.2, 7.8] }]
+// Fyldes ud, når data er hentet fra serveren
+let days = [];
 
 // Elements on the page
 const patientName = document.getElementById("patientName");
@@ -53,16 +52,11 @@ function showHistory(dayCount) {
     // Clear the old rows
     tableBody.innerHTML = "";
 
-    // Get the last days, but only days that have measurements
-    let days = [];
-    if (patient) {
-        days = patient.days.slice(-dayCount).filter(function (day) {
-            return day.values.length > 0;
-        });
-    }
+    // Get the last days that have measurements
+    const chosenDays = days.slice(-dayCount);
 
     // No data: show dashes and a message
-    if (days.length === 0) {
+    if (chosenDays.length === 0) {
         average.textContent = "–";
         timeInRange.textContent = "–";
         lowCount.textContent = "–";
@@ -74,7 +68,7 @@ function showHistory(dayCount) {
     let allValues = [];
 
     // One table row per day
-    for (const day of days) {
+    for (const day of chosenDays) {
         const lowest = Math.min(...day.values);
         const highest = Math.max(...day.values);
 
@@ -128,11 +122,8 @@ function getSavedSymptoms() {
 function showSymptoms() {
     symptomList.innerHTML = "";
 
-    // Symptoms from the data file and from localStorage
-    let symptoms = getSavedSymptoms();
-    if (patient) {
-        symptoms = patient.symptoms.concat(symptoms);
-    }
+    // Symptoms from localStorage
+    const symptoms = getSavedSymptoms();
 
     // No symptoms: show a message
     if (symptoms.length === 0) {
@@ -164,13 +155,61 @@ button14.addEventListener("click", function () {
     selectDays(14);
 });
 
-// Show the patient's name, or a message if the patient does not exist
-if (patient) {
-    patientName.textContent = "Patient: " + patient.name;
-} else {
-    patientName.textContent = "Patient not found";
+// Hent JSON fra serveren. Giver en fejl, hvis serveren svarer med en fejl
+async function getJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error("Server error");
+    }
+    return response.json();
 }
 
-// Show 7 days when the page opens
-selectDays(7);
+// Saml målingerne pr. dato, fx [{ date: "2026-10-21", values: [6.2, 7.8] }]
+// Målingerne kommer sorteret efter tidspunkt, så dagene bliver også sorteret
+function groupByDate(maalinger) {
+    const result = [];
+    for (const maaling of maalinger) {
+        // "2026-10-21 06:00:00" -> "2026-10-21"
+        const date = maaling.tidspunkt.slice(0, 10);
+        const value = Number(maaling.glukose_mmol);
+
+        // Ny dato: lav en ny dag. Ellers læg værdien i den sidste dag
+        const lastDay = result[result.length - 1];
+        if (lastDay && lastDay.date === date) {
+            lastDay.values.push(value);
+        } else {
+            result.push({ date: date, values: [value] });
+        }
+    }
+    return result;
+}
+
+// Show the patient's name, or a message if the patient does not exist
+function showPatientName(patientList) {
+    const patient = patientList.find(function (p) {
+        return p.id === patientId;
+    });
+    if (patient) {
+        patientName.textContent = "Patient: " + patient.navn;
+    } else {
+        patientName.textContent = "Patient not found";
+    }
+}
+
+// Hent patient og målinger fra serveren og vis 7 dage
+async function loadData() {
+    try {
+        const patientList = await getJson("/api/patients");
+        const maalinger = await getJson("/api/patients/" + patientId + "/maalinger");
+        showPatientName(patientList);
+        days = groupByDate(maalinger);
+        selectDays(7);
+    } catch (error) {
+        patientName.textContent = "Could not connect to the server.";
+        selectDays(7);
+    }
+}
+
+// Start the page
+loadData();
 showSymptoms();
