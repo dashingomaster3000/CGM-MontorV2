@@ -9,8 +9,8 @@ try {
   console.log("No .env file found");
 }
 
-// Tidspunkter fra databasen sendes som tekst, fx "2026-10-21 06:00:00".
-// Så bliver datoen den samme, uanset hvilken tidszone computeren står i.
+// Tidspunkter sendes som tekst fra databasen.
+// Så passer datoen uanset computerens tidszone.
 pg.types.setTypeParser(1114, function (tekst) {
   return tekst;
 });

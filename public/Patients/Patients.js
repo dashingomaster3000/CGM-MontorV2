@@ -1,9 +1,9 @@
-// Elementer på siden
+// Elementer på siden, vi skal bruge
 const patientTable = document.getElementById("patientTable");
 const message = document.getElementById("message");
 const logoutLink = document.getElementById("logoutLink");
 
-// Vis kun de første 6 cifre af CPR, fx "251248-xxxx"
+// Vis kun de første 6 cifre af CPR
 function hideCpr(cpr) {
     return cpr.slice(0, 6) + "-xxxx";
 }
@@ -15,7 +15,7 @@ function addCell(row, text) {
     row.appendChild(cell);
 }
 
-// Lav en "See history"-knap, der går til patientens History-side
+// Lav knap, der åbner patientens History-side
 function addHistoryButton(row, id) {
     const cell = document.createElement("td");
     const button = document.createElement("button");
@@ -40,7 +40,7 @@ function showPatients(patientList) {
     }
 }
 
-// Hent patienterne fra serveren
+// Hent alle patienterne fra serveren og vis
 async function loadPatients() {
     try {
         const response = await fetch("/api/patients");
@@ -59,5 +59,5 @@ logoutLink.addEventListener("click", function () {
     sessionStorage.clear();
 });
 
-// Start siden
+// Start siden ved at hente patienterne
 loadPatients();

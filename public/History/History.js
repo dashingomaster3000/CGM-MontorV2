@@ -1,17 +1,17 @@
-// Limits for blood sugar in mmol/L
+// Grænser for blodsukker i mmol/L
 const lowLimit = 3.9;
 const highLimit = 10.0;
 
-// Read the patient number from the URL, e.g. History.html?patient=1
-// If there is no number in the URL, patient 1 is shown
+// Læs patientnummer fra URL, fx ?patient=1
+// Uden nummer i URL vises patient 1
 const urlParams = new URLSearchParams(window.location.search);
 const patientId = Number(urlParams.get("patient")) || 1;
 
-// Dagene med målinger, fx [{ date: "2026-10-21", values: [6.2, 7.8] }]
-// Fyldes ud, når data er hentet fra serveren
+// Liste over dage med deres målinger
+// Fyldes ud, når serverdata er hentet
 let days = [];
 
-// Elements on the page
+// Elementer på siden, vi skal bruge
 const patientName = document.getElementById("patientName");
 const button7 = document.getElementById("button7");
 const button14 = document.getElementById("button14");
@@ -21,7 +21,7 @@ const lowCount = document.getElementById("lowCount");
 const tableBody = document.getElementById("tableBody");
 const symptomList = document.getElementById("symptomList");
 
-// Calculate the average of a list of numbers
+// Beregn gennemsnittet af en liste tal
 function getAverage(values) {
     let sum = 0;
     for (const value of values) {
@@ -30,14 +30,14 @@ function getAverage(values) {
     return sum / values.length;
 }
 
-// Add one cell with text to a table row
+// Tilføj én celle med tekst til række
 function addCell(row, text) {
     const cell = document.createElement("td");
     cell.textContent = text;
     row.appendChild(cell);
 }
 
-// Show a message in the table, e.g. "No measurements yet"
+// Vis en besked i tabellen, fx ingen målinger
 function showTableMessage(message) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
@@ -47,15 +47,15 @@ function showTableMessage(message) {
     tableBody.appendChild(row);
 }
 
-// Fill key figures and table for the last 7 or 14 days
+// Udfyld nøgletal og tabel for valgte dage
 function showHistory(dayCount) {
-    // Clear the old rows
+    // Ryd de gamle rækker i tabellen
     tableBody.innerHTML = "";
 
-    // Get the last days that have measurements
+    // Tag de sidste dage med målinger
     const chosenDays = days.slice(-dayCount);
 
-    // No data: show dashes and a message
+    // Ingen data: vis streger og en besked
     if (chosenDays.length === 0) {
         average.textContent = "–";
         timeInRange.textContent = "–";
@@ -64,16 +64,16 @@ function showHistory(dayCount) {
         return;
     }
 
-    // All measurements from the chosen days
+    // Alle målinger fra de valgte dage
     let allValues = [];
 
-    // One table row per day
+    // Lav én tabelrække for hver dag
     for (const day of chosenDays) {
         const lowest = Math.min(...day.values);
         const highest = Math.max(...day.values);
 
         const row = document.createElement("tr");
-        // Days with a low measurement get a red row
+        // Dage med lav måling får rød række
         if (lowest < lowLimit) {
             row.classList.add("low");
         }
@@ -86,7 +86,7 @@ function showHistory(dayCount) {
         allValues = allValues.concat(day.values);
     }
 
-    // Count measurements in range and low measurements
+    // Tæl målinger i mål og lave målinger
     let inRange = 0;
     let low = 0;
     for (const value of allValues) {
@@ -98,34 +98,34 @@ function showHistory(dayCount) {
         }
     }
 
-    // Show the key figures
+    // Vis de beregnede nøgletal på siden
     average.textContent = getAverage(allValues).toFixed(1) + " mmol/L";
     timeInRange.textContent = Math.round(inRange / allValues.length * 100) + " %";
     lowCount.textContent = low;
 }
 
-// Get symptoms saved in localStorage under the key "symptoms"
+// Hent symptomer gemt i localStorage under "symptoms"
 function getSavedSymptoms() {
     try {
         const saved = JSON.parse(localStorage.getItem("symptoms"));
-        // Only use it if it is a list
+        // Brug det kun, hvis det er en liste
         if (Array.isArray(saved)) {
             return saved;
         }
     } catch (error) {
-        // Bad data in localStorage is ignored
+        // Forkerte data i localStorage bliver ignoreret
     }
     return [];
 }
 
-// Fill the symptom list
+// Udfyld listen med symptomer på siden
 function showSymptoms() {
     symptomList.innerHTML = "";
 
-    // Symptoms from localStorage
+    // Hent de gemte symptomer fra localStorage
     const symptoms = getSavedSymptoms();
 
-    // No symptoms: show a message
+    // Ingen symptomer: vis en besked i stedet
     if (symptoms.length === 0) {
         const item = document.createElement("li");
         item.textContent = "No symptoms reported yet";
@@ -133,6 +133,7 @@ function showSymptoms() {
         return;
     }
 
+    // Lav ét listepunkt for hvert symptom
     for (const symptom of symptoms) {
         const item = document.createElement("li");
         item.textContent = symptom.date + ": " + symptom.text;
@@ -140,14 +141,14 @@ function showSymptoms() {
     }
 }
 
-// Mark the chosen button and show the data
+// Marker den valgte knap og vis data
 function selectDays(dayCount) {
     button7.classList.toggle("selected", dayCount === 7);
     button14.classList.toggle("selected", dayCount === 14);
     showHistory(dayCount);
 }
 
-// Buttons for 7 and 14 days
+// Knapperne til at vælge 7 eller 14 dage
 button7.addEventListener("click", function () {
     selectDays(7);
 });
@@ -155,7 +156,7 @@ button14.addEventListener("click", function () {
     selectDays(14);
 });
 
-// Hent JSON fra serveren. Giver en fejl, hvis serveren svarer med en fejl
+// Hent JSON fra serveren, fejl ved fejlsvar
 async function getJson(url) {
     const response = await fetch(url);
     if (!response.ok) {
@@ -164,16 +165,16 @@ async function getJson(url) {
     return response.json();
 }
 
-// Saml målingerne pr. dato, fx [{ date: "2026-10-21", values: [6.2, 7.8] }]
-// Målingerne kommer sorteret efter tidspunkt, så dagene bliver også sorteret
+// Saml målingerne pr. dato i dage
+// Målingerne er sorteret, så dagene bliver også
 function groupByDate(maalinger) {
     const result = [];
     for (const maaling of maalinger) {
-        // "2026-10-21 06:00:00" -> "2026-10-21"
+        // Tag kun datoen, fx "2026-10-21"
         const date = maaling.tidspunkt.slice(0, 10);
         const value = Number(maaling.glukose_mmol);
 
-        // Ny dato: lav en ny dag. Ellers læg værdien i den sidste dag
+        // Ny dato giver ny dag, ellers tilføj
         const lastDay = result[result.length - 1];
         if (lastDay && lastDay.date === date) {
             lastDay.values.push(value);
@@ -184,7 +185,7 @@ function groupByDate(maalinger) {
     return result;
 }
 
-// Show the patient's name, or a message if the patient does not exist
+// Vis patientens navn eller en fejlbesked
 function showPatientName(patientList) {
     const patient = patientList.find(function (p) {
         return p.id === patientId;
@@ -196,7 +197,7 @@ function showPatientName(patientList) {
     }
 }
 
-// Hent patient og målinger fra serveren og vis 7 dage
+// Hent patient og målinger, vis 7 dage
 async function loadData() {
     try {
         const patientList = await getJson("/api/patients");
@@ -205,11 +206,12 @@ async function loadData() {
         days = groupByDate(maalinger);
         selectDays(7);
     } catch (error) {
+        // Ingen forbindelse: vis besked og tom tabel
         patientName.textContent = "Could not connect to the server.";
         selectDays(7);
     }
 }
 
-// Start the page
+// Start siden ved at hente alt data
 loadData();
 showSymptoms();

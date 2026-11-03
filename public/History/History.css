@@ -1,11 +1,13 @@
-/* The whole page. */
+/* Denne fil styrer udseendet af History-siden. */
+
+/* Hele siden: margen, skrift og baggrund. */
 body {
     margin: 0;
     font-family: Arial;
     background-color: #f4f6f8;
 }
 
-/* The blue taskbar with links on one row. */
+/* Den blå menulinje med links på række. */
 nav {
     background-color: #1f6feb;
     padding: 12px;
@@ -13,7 +15,7 @@ nav {
     gap: 20px;
 }
 
-/* Links in the taskbar. */
+/* Links i menulinjen er hvide uden understregning. */
 nav a {
     color: white;
     text-decoration: none;
@@ -21,20 +23,20 @@ nav a {
     border-radius: 6px;
 }
 
-/* Marks the link to the page you are on. */
+/* Markerer linket til den side, du er på. */
 nav a.active {
     background-color: white;
     color: #1f6feb;
 }
 
-/* Centers the content of the page. */
+/* Centrerer sidens indhold og giver luft rundt. */
 main {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* The buttons for 7 and 14 days. */
+/* Knapperne til at vælge 7 eller 14 dage. */
 .day-button {
     padding: 8px 16px;
     border: 2px solid #1f6feb;
@@ -42,30 +44,31 @@ main {
     cursor: pointer;
 }
 
-/* The selected button turns blue. */
+/* Den valgte knap bliver blå med hvid tekst. */
 .day-button.selected {
     background-color: #1f6feb;
     color: white;
 }
 
-/* The key figures are on one row and have the same width. */
+/* Nøgletallene står på én række. */
 .key-figures {
     display: flex;
     gap: 16px;
 }
 
+/* Kortene får samme bredde og centreret tekst. */
 .key-figures .card {
     flex: 1;
     text-align: center;
 }
 
-/* The big number in the key figure boxes. */
+/* Det store tal i nøgletalskortene. */
 .number {
     font-size: 28px;
     font-weight: bold;
 }
 
-/* White boxes around the content. */
+/* Hvide bokse rundt om indholdet. */
 .card {
     background-color: white;
     border-radius: 8px;
@@ -73,22 +76,20 @@ main {
     margin-top: 20px;
 }
 
-/* The table fills the whole width. */
+/* Tabellen fylder hele bredden af kortet. */
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/* Grey line under each row. */
+/* Grå linje under hver række i tabellen. */
 th, td {
     padding: 8px;
     border-bottom: 1px solid #dddddd;
     text-align: left;
 }
 
-/* Days with low blood sugar turn red. */
+/* Dage med lavt blodsukker bliver røde. */
 tr.low {
     background-color: #ffdddd;
 }
-
-/* This file decides the look of the History page. */

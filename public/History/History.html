@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- INFO ABOUT THE PAGE -->
+<!-- INFORMATION OM SIDEN TIL BROWSEREN -->
 <head>
-    <!-- Special characters work -->
+    <!-- Gør at æ, ø og å virker -->
     <meta charset="UTF-8">
-    <!-- The page fits on mobile -->
+    <!-- Får siden til at passe på mobil -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- The text in the browser tab -->
+    <!-- Teksten der vises i browserfanen -->
     <title>History</title>
-    <!-- Gets the look from the CSS file -->
+    <!-- Henter sidens udseende fra CSS-filen her -->
     <link rel="stylesheet" href="History.css">
 </head>
 
 <body>
 
 
-    <!-- Menu with links to the pages -->
+    <!-- Menu med links til de andre sider -->
     <nav>
-        <!-- Only shown for health professionals (see the script below) -->
+        <!-- Vises kun for sundhedsprofessionelle, se scriptet nedenfor -->
         <a href="../Patients/Patients.html" id="patientsLink" hidden>Patients</a>
         <a href="../Forside/Forside.html" id="dashboardLink">Dashboard</a>
-        <!-- "active" marks the page you are on -->
+        <!-- "active" markerer den side, du er på -->
         <a href="History.html" class="active">History</a>
         <a href="../Feedback/MeldSymptomer.html" id="symptomsLink">Report symptoms</a>
     </nav>
 
-    <!-- Health professionals see "Patients" instead of "Dashboard" and "Report symptoms" -->
+    <!-- Sundhedsprofessionelle ser Patients i stedet for Dashboard -->
     <script>
         if (sessionStorage.getItem("diabetoRole") === "sundhedsprofessionel") {
             document.getElementById("patientsLink").hidden = false;
@@ -35,21 +35,21 @@
         }
     </script>
 
-    <!-- All content below the menu -->
+    <!-- Alt indholdet under menuen på siden -->
     <main>
         <h1>History</h1>
-        <!-- The patient's name is filled in by JavaScript -->
+        <!-- Patientens navn indsættes af JavaScript -->
         <p id="patientName"></p>
 
-        <!-- BUTTONS -->
-        <!-- Choose how many days are shown -->
+        <!-- KNAPPER TIL AT VÆLGE PERIODEN -->
+        <!-- Vælg om der vises 7 eller 14 dage -->
         <button id="button7" class="day-button selected">7 days</button>
         <button id="button14" class="day-button">14 days</button>
 
-        <!-- KEY FIGURES -->
-        <!-- Three cards next to each other -->
+        <!-- NØGLETAL FOR DE VALGTE DAGE -->
+        <!-- Tre kort ved siden af hinanden -->
         <section class="key-figures">
-            <!-- The numbers are filled in by JavaScript -->
+            <!-- Tallene bliver udfyldt af JavaScript -->
             <div class="card">
                 Average
                 <p id="average" class="number">–</p>
@@ -64,26 +64,26 @@
             </div>
         </section>
 
-        <!-- TABLE -->
+        <!-- TABEL MED MÅLINGER FOR HVER DAG -->
         <section class="card">
             <h2>Measurements per day</h2>
             <table>
-                <!-- Headings for the table columns -->
+                <!-- Overskrifter til tabellens kolonner her -->
                 <tr>
                     <th>Date</th>
                     <th>Average</th>
                     <th>Lowest</th>
                     <th>Highest</th>
                 </tr>
-                <!-- JavaScript makes the rows here -->
+                <!-- JavaScript laver rækkerne her inde -->
                 <tbody id="tableBody"></tbody>
             </table>
         </section>
 
-        <!-- SYMPTOMS -->
+        <!-- SYMPTOMER SOM PATIENTEN HAR MELDT -->
         <section class="card">
             <h2>Symptom reports</h2>
-            <!-- JavaScript fills in the list -->
+            <!-- JavaScript udfylder listen med symptomer -->
             <ul id="symptomList"></ul>
         </section>
     </main>

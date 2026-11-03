@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- INFO ABOUT THE PAGE -->
+<!-- INFORMATION OM SIDEN TIL BROWSEREN -->
 <head>
-    <!-- Special characters work -->
+    <!-- Gør at æ, ø og å virker -->
     <meta charset="UTF-8">
-    <!-- The page fits on mobile -->
+    <!-- Får siden til at passe på mobil -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- The text in the browser tab -->
+    <!-- Teksten der vises i browserfanen -->
     <title>Patients</title>
     <!-- Bruger samme udseende som History-siden -->
     <link rel="stylesheet" href="../History/History.css">
@@ -15,29 +15,29 @@
 
 <body>
 
-    <!-- Menu med links -->
+    <!-- Menu med links til siderne -->
     <nav>
-        <!-- "active" marks the page you are on -->
+        <!-- "active" markerer den side, du er på -->
         <a href="Patients.html" class="active">Patients</a>
         <a href="../index.html" id="logoutLink">Log out</a>
     </nav>
 
-    <!-- All content below the menu -->
+    <!-- Alt indholdet under menuen på siden -->
     <main>
         <h1>Patients</h1>
         <!-- Fejlbesked, hvis serveren ikke svarer -->
         <p id="message"></p>
 
-        <!-- TABLE -->
+        <!-- TABEL MED ALLE PATIENTERNE I SYSTEMET -->
         <section class="card">
             <table>
-                <!-- Headings for the table columns -->
+                <!-- Overskrifter til tabellens kolonner her -->
                 <tr>
                     <th>Name</th>
                     <th>CPR</th>
                     <th></th>
                 </tr>
-                <!-- JavaScript laver rækkerne her -->
+                <!-- JavaScript laver rækkerne her inde -->
                 <tbody id="patientTable"></tbody>
             </table>
         </section>

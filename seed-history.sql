@@ -1,6 +1,6 @@
--- Demodata til History-siden: målinger for patient_id 1.
--- 4 målinger om dagen (kl. 06, 12, 18, 23) fra 2026-10-21 til 2026-11-03.
--- Kør filen i Neons SQL Editor. Kun syntetiske data.
+-- Demodata til History-siden: målinger for patient 1.
+-- Fire målinger om dagen, 21/10 til 3/11.
+-- Kør i Neons SQL Editor, kun syntetiske data.
 
 INSERT INTO maalinger (patient_id, tidspunkt, glukose_mmol) VALUES (1, '2026-10-21 06:00', 6.0);
 INSERT INTO maalinger (patient_id, tidspunkt, glukose_mmol) VALUES (1, '2026-10-21 12:00', 8.1);
