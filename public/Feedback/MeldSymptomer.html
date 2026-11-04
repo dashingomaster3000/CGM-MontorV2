@@ -22,18 +22,10 @@
         <p>Here you can report your symptoms:</p>
         <p id="fejlBesked" class="fejl"></p>
 
-        <!-- Formularen. JavaScript fylder listen med patienter fra /api/patients -->
+        <!-- Formularen. Patienten er den, der er logget ind (fra URL, fx ?patient=1) -->
         <form id="symptomForm">
-            <label for="patient">Patient</label>
-            <select id="patient" required>
-                <option value="">Choose a patient</option>
-            </select>
-
             <label for="dato">Date</label>
             <input type="date" id="dato" required>
-
-            <label for="tid">Time</label>
-            <input type="time" id="tid" required>
 
             <label for="symptomer">Symptom</label>
             <input type="text" id="symptomer" class="stort-felt" placeholder="E.g. dizzy, shaky hands" required>
@@ -42,22 +34,6 @@
         </form>
 
         <p id="feedback" class="feedback"></p>
-    </div>
-
-    <!-- Tabellen med alle gemte symptomer fra /api/symptomer -->
-    <div class="kort">
-        <h2>Reported symptoms</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Patient</th>
-                    <th>Time</th>
-                    <th>Symptom</th>
-                </tr>
-            </thead>
-            <tbody id="symptomTabel"></tbody>
-        </table>
     </div>
 </main>
 
