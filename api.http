@@ -1,4 +1,4 @@
-### 1. Hele listen — forventet 200
+### 1. Hele listen med patienter — forventet 200
 GET http://localhost:3000/api/patients
 
 ### 2. Opret patient med gyldig body — forventet 201
@@ -11,23 +11,29 @@ Content-Type: application/json
 ### 3. Opret patient uden body — forventet 400
 POST http://localhost:3000/api/patients
 
-### 4. Meld symptom for patient 1 — forventet 201
+### 4. Alle symptomer — forventet 200
+GET http://localhost:3000/api/symptomer
+
+### 5. Meld symptom for patient 1 (fra /api/patients) — forventet 201
 POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
 {"patient_id":1,"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
 
-### 5. Meld symptom uden beskrivelse — forventet 400
+### 6. Meld symptom uden patient_id — forventet 400
 POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
-{"patient_id":1,"tidspunkt":"2026-11-04 09:00"}
+{"tidspunkt":"2026-11-04 09:00","beskrivelse":"Headache"}
 
-### 6. Meld symptom for patient 9999, som ikke findes — forventet 500
+### 7. Meld symptom for patient 9999, som ikke findes — forventet 500
 POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
 {"patient_id":9999,"tidspunkt":"2026-11-04 10:00","beskrivelse":"Shaky hands"}
 
-### 7. Patient 1's symptomer — forventet 200
+### 8. Patient 1's symptomer — forventet 200
 GET http://localhost:3000/api/patients/1/symptomer
+
+### 9. Adresse der ikke findes — forventet 404
+GET http://localhost:3000/findesikke

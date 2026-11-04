@@ -197,8 +197,9 @@
     margin-top: 20px;
 }
 
-/* Inputfelter */
-.meld-symptomer-page input {
+/* Inputfelter og listen med patienter */
+.meld-symptomer-page input,
+.meld-symptomer-page select {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -226,4 +227,17 @@
 
 .meld-symptomer-page .feedback {
     color: #21c526;
+}
+
+/* Tabellen med gemte symptomer */
+.meld-symptomer-page table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.meld-symptomer-page th,
+.meld-symptomer-page td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #dddddd;
 }

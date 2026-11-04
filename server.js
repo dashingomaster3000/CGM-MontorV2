@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 
 // Repository-filerne. Al SQL ligger i dem, ikke her.
 const patients = require("./patients");
@@ -7,11 +8,8 @@ const symptomer = require("./symptomer");
 
 const app = express();
 
-// Tillader forespørgsler fra frontendens lokale side via CORS.
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  next();
-});
+// Tillader forespørgsler fra andre adresser (CORS). Skal stå før alle routes.
+app.use(cors());
 
 // Gør det muligt for Express at læse JSON-data fra indkommende forespørgsler.
 app.use(express.json());
@@ -86,17 +84,31 @@ app.post("/api/patients", async (req, res) => {
   }
 });
 
+// Returnerer alle symptomer fra tabellen symptomer, sorteret efter id.
+app.get("/api/symptomer", async (req, res) => {
+  try {
+    const liste = await symptomer.hentAlleSymptomer();
+    res.status(200).json(liste);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "database error" });
+  }
+});
+
 // Gemmer et nyt symptom i tabellen symptomer.
 app.post("/api/symptomer", async (req, res) => {
   const { patient_id, tidspunkt, beskrivelse } = req.body ?? {};
-  if (!patient_id || !tidspunkt || !beskrivelse) {
+
+  // Tjekker felterne FØR databasen. Tom tekst eller kun mellemrum tæller som manglende.
+  if (!patient_id || !String(tidspunkt ?? "").trim() || !String(beskrivelse ?? "").trim()) {
     return res.status(400).json({ error: "patient_id, tidspunkt and beskrivelse are required" });
   }
+
   try {
-    const symptom = await symptomer.opretSymptom(patient_id, tidspunkt, beskrivelse);
+    const symptom = await symptomer.opretSymptom(patient_id, tidspunkt, beskrivelse.trim());
     res.status(201).json(symptom);
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "database error" });
   }
 });

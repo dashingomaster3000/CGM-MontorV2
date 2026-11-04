@@ -9,6 +9,14 @@ async function hentSymptomer(patientId) {
   return result.rows;
 }
 
+// Henter alle symptomer fra alle patienter, sorteret efter id.
+async function hentAlleSymptomer() {
+  const result = await pool.query(
+    "SELECT id, patient_id, tidspunkt, beskrivelse FROM symptomer ORDER BY id"
+  );
+  return result.rows;
+}
+
 // Gemmer et nyt symptom og returnerer den gemte række.
 async function opretSymptom(patientId, tidspunkt, beskrivelse) {
   const result = await pool.query(
@@ -19,4 +27,4 @@ async function opretSymptom(patientId, tidspunkt, beskrivelse) {
 }
 
 // Gør funktionerne tilgængelige for server.js.
-module.exports = { hentSymptomer, opretSymptom };
+module.exports = { hentSymptomer, hentAlleSymptomer, opretSymptom };
