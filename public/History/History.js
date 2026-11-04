@@ -104,40 +104,38 @@ function showHistory(dayCount) {
     lowCount.textContent = low;
 }
 
-// Hent symptomer gemt i localStorage under "symptoms"
-function getSavedSymptoms() {
-    try {
-        const saved = JSON.parse(localStorage.getItem("symptoms"));
-        // Brug det kun, hvis det er en liste
-        if (Array.isArray(saved)) {
-            return saved;
-        }
-    } catch (error) {
-        // Forkerte data i localStorage bliver ignoreret
-    }
-    return [];
+// Tilføj ét punkt med tekst til symptomlisten
+function addSymptomItem(text) {
+    const item = document.createElement("li");
+    item.textContent = text;
+    symptomList.appendChild(item);
 }
 
-// Udfyld listen med symptomer på siden
-function showSymptoms() {
+// Udfyld listen med symptomer fra databasen
+function showSymptoms(symptoms) {
     symptomList.innerHTML = "";
-
-    // Hent de gemte symptomer fra localStorage
-    const symptoms = getSavedSymptoms();
 
     // Ingen symptomer: vis en besked i stedet
     if (symptoms.length === 0) {
-        const item = document.createElement("li");
-        item.textContent = "No symptoms reported yet";
-        symptomList.appendChild(item);
+        addSymptomItem("No symptoms reported yet");
         return;
     }
 
-    // Lav ét listepunkt for hvert symptom
+    // Lav ét listepunkt for hvert symptom, fx "2026-11-04 08:30: Dizzy"
+    // tidspunkt ser sådan ud: "2026-11-04 08:30:00", så vi tager de første 16 tegn
     for (const symptom of symptoms) {
-        const item = document.createElement("li");
-        item.textContent = symptom.date + ": " + symptom.text;
-        symptomList.appendChild(item);
+        addSymptomItem(symptom.tidspunkt.slice(0, 16) + ": " + symptom.beskrivelse);
+    }
+}
+
+// Hent patientens symptomer fra serveren og vis dem
+async function loadSymptoms() {
+    try {
+        const symptoms = await getJson("/api/patients/" + patientId + "/symptomer");
+        showSymptoms(symptoms);
+    } catch (error) {
+        symptomList.innerHTML = "";
+        addSymptomItem("Could not load symptoms.");
     }
 }
 
@@ -214,4 +212,4 @@ async function loadData() {
 
 // Start siden ved at hente alt data
 loadData();
-showSymptoms();
+loadSymptoms();

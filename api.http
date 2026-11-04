@@ -1,11 +1,33 @@
-### Hele listen
+### 1. Hele listen — forventet 200
 GET http://localhost:3000/api/patients
 
-### Opret patient
+### 2. Opret patient med gyldig body — forventet 201
+# CPR skal være unikt. Kører du den igen, så skift CPR-nummeret, ellers giver den 500.
 POST http://localhost:3000/api/patients
 Content-Type: application/json
 
-{"cpr":"0201029994","navn":"Ny Test Person"}
+{"cpr":"0411269991","navn":"Symptom Test Person"}
 
-### Uden body — skal give 400
+### 3. Opret patient uden body — forventet 400
 POST http://localhost:3000/api/patients
+
+### 4. Meld symptom for patient 1 — forventet 201
+POST http://localhost:3000/api/symptomer
+Content-Type: application/json
+
+{"patient_id":1,"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
+
+### 5. Meld symptom uden beskrivelse — forventet 400
+POST http://localhost:3000/api/symptomer
+Content-Type: application/json
+
+{"patient_id":1,"tidspunkt":"2026-11-04 09:00"}
+
+### 6. Meld symptom for patient 9999, som ikke findes — forventet 500
+POST http://localhost:3000/api/symptomer
+Content-Type: application/json
+
+{"patient_id":9999,"tidspunkt":"2026-11-04 10:00","beskrivelse":"Shaky hands"}
+
+### 7. Patient 1's symptomer — forventet 200
+GET http://localhost:3000/api/patients/1/symptomer

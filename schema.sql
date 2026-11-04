@@ -27,3 +27,6 @@ VALUES (2, '2026-10-28 08:00', 6.2);
 SELECT id, patient_id, tidspunkt, glukose_mmol
 FROM maalinger
 WHERE patient_id = 2;
+
+-- Lektion 17 — symptomer som borgeren melder.
+CREATE TABLE symptomer (id SERIAL PRIMARY KEY, patient_id INTEGER NOT NULL REFERENCES patients (id), tidspunkt TIMESTAMP NOT NULL, beskrivelse TEXT NOT NULL);
