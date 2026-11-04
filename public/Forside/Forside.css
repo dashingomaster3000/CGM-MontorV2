@@ -12,7 +12,7 @@ body {
     padding: 0 max(20px, calc((100% - 860px) / 2)) 20px;
 }
 
-/* "HYPO TRACK" in the blue bar. */
+/* "Diabeto" in the blue bar. */
 h5:first-of-type {
     color: white;
     font-size: 18px;
