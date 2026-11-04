@@ -27,11 +27,11 @@ app.get("/", (req, res) => {
 // Returnerer alle patienter fra databasen, sorteret efter navn.
 app.get("/api/patients", async (req, res) => {
   try {
-    const liste = await patients.hentAllePatienter();
+    const liste = await patients.hentPatienter();
     res.json(liste);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "database error" });
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 

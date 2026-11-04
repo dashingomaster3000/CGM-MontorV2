@@ -1,8 +1,8 @@
-const db = require("./db");
+const pool = require("./db");
 
 // Henter én patients symptomer, sorteret efter tidspunkt.
 async function hentSymptomer(patientId) {
-  const result = await db.query(
+  const result = await pool.query(
     "SELECT id, patient_id, tidspunkt, beskrivelse FROM symptomer WHERE patient_id = $1 ORDER BY tidspunkt",
     [patientId]
   );
@@ -11,7 +11,7 @@ async function hentSymptomer(patientId) {
 
 // Gemmer et nyt symptom og returnerer den gemte række.
 async function opretSymptom(patientId, tidspunkt, beskrivelse) {
-  const result = await db.query(
+  const result = await pool.query(
     "INSERT INTO symptomer (patient_id, tidspunkt, beskrivelse) VALUES ($1, $2, $3) RETURNING id, patient_id, tidspunkt, beskrivelse",
     [patientId, tidspunkt, beskrivelse]
   );

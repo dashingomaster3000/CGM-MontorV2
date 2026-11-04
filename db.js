@@ -13,11 +13,16 @@ pg.types.setTypeParser(1114, function (tekst) {
   return tekst;
 });
 
-// Forbindelse til Neon-databasen.
-const db = new pg.Pool({
+// Forbindelse til Neon-databasen. Projektets eneste Pool.
+const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
+// Neon kan lukke en ledig forbindelse. Uden denne linje går serveren ned.
+pool.on("error", (err) => {
+  console.error("Databasen lukkede forbindelsen:", err.message);
+});
+
 // Gør forbindelsen tilgængelig for de andre filer.
-module.exports = db;
+module.exports = pool;
