@@ -1,103 +1,266 @@
-/* The whole page: blue bar at the top, grey background below. */
+/* Medregn indre afstand og kanter i elementernes bredde og højde. */
+* {
+    box-sizing: border-box;
+}
+
+/* Vælg sidens standardskrifttype, tekstfarve og lyse baggrund. */
 body {
     margin: 0;
-    font-family: Arial;
-    background: #f4f6f8 linear-gradient(#1f6feb 56px, #f4f6f8 56px) no-repeat;
+    color: #17212f;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
 
-    /* Everything is placed in rows, and the content is centered. */
+/* Lav en blå bjælke til sidens navn og navigationsknapper. */
+.topbar {
+    min-height: 56px;
+    padding: 0 max(20px, calc((100% - 860px) / 2));
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 16px;
-    padding: 0 max(20px, calc((100% - 860px) / 2)) 20px;
+    gap: 8px;
+    background: #1f6feb;
 }
 
-/* "Diabeto" in the blue bar. */
-h5:first-of-type {
+/* Hold sidens navn til venstre og navigationsknapperne til højre. */
+.topbar h1 {
+    margin: 0 auto 0 0;
     color: white;
     font-size: 18px;
-    line-height: 56px;
-    margin: 0 20px 0 0;
 }
 
-/* Buttons in the blue bar. */
+/* Giv alle knapper ens form, afstand og musemarkør. */
 button {
-    background: none;
-    border: none;
-    color: white;
-    font-family: Arial;
-    font-size: 16px;
-    padding: 6px 12px;
+    padding: 8px 12px;
+    border: 0;
     border-radius: 6px;
+    color: white;
+    background: transparent;
+    font: inherit;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+/* Fremhæv navigationsknapper ved musemarkør eller tastaturfokus. */
+button:hover,
+button:focus-visible {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-/* "Good day" and the section headings take a whole row. */
-h4, h3, fieldset {
-    flex: 0 0 100%;
-    box-sizing: border-box;
+/* Gør importknappen større og tydeligere end navigationsknapperne. */
+#importButton {
+    padding: 12px 20px;
+    color: white;
+    background: #1f6feb;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+/* Gør importknappen mørkere ved musemarkør eller tastaturfokus. */
+#importButton:hover,
+#importButton:focus-visible {
+    background: #1558bd;
+}
+
+/* Centrer dashboardet, og placer indholdet i en lodret kolonne med afstand. */
+.dashboard {
+    width: min(100% - 32px, 860px);
+    margin: 24px auto;
+    display: grid;
+    gap: 16px;
+}
+
+/* Fremhæv velkomstteksten som sidens hovedoverskrift. */
+.dashboard > h2 {
     margin: 0;
+    font-size: 30px;
 }
 
-/* The big page title. */
-body > h4:first-of-type {
-    font-size: 32px;
-    margin-top: 20px;
+/* Stil beskeden, der fortæller, hvilke data der vises. */
+.status {
+    margin: -8px 0 0;
+    color: #536273;
+    font-size: 14px;
 }
 
-h3 {
+/* Brug rød tekst, så indlæsnings- og importfejl er nemme at se. */
+.status.error {
+    color: #b42318;
+}
+
+/* Vis hver datasektion som et hvidt kort med runde hjørner og let skygge. */
+.panel {
+    min-width: 0;
+    padding: 18px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(20, 33, 50, 0.08);
+}
+
+/* Skab afstand mellem kortets overskrift og indhold. */
+.panel h2 {
+    margin: 0 0 16px;
     font-size: 20px;
 }
 
-/* White boxes around the content. */
-fieldset {
-    background-color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 16px;
-    text-align: center;
+/* Placér måling og tendens ved siden af hinanden; lad dem bryde på små skærme. */
+.current-reading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px;
 }
 
-/* Text inside the boxes. */
-fieldset h4 {
-    font-size: 16px;
+/* Gør den aktuelle glukoseværdi nem at få øje på. */
+.current-reading strong {
+    font-size: 32px;
+}
+
+/* Brug en afdæmpet tekstfarve til tendensbeskrivelsen. */
+.current-reading span {
+    color: #536273;
+}
+
+/* Placér måletidspunktet på sin egen linje under glukoseværdien. */
+.current-reading small {
+    flex-basis: 100%;
+    color: #687789;
+}
+
+/* Gør grafen vandret rulbar, hvis den ikke kan være på skærmen. */
+.chart-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Tilpas SVG-grafens størrelse, men behold en læsbar minimumsbredde. */
+#glucoseChart {
+    display: block;
+    width: 100%;
+    min-width: 520px;
+    height: auto;
+}
+
+/* Tegn diskrete vandrette hjælpelinjer bag glukosegrafen. */
+.chart-grid {
+    stroke: #e4e9ef;
+    stroke-width: 1;
+}
+
+/* Farvelæg målområdet bag grafens linje. */
+.range-band {
+    fill: #eaf5ee;
+}
+
+/* Stil linjen, der forbinder glukosemålingerne. */
+.chart-line {
+    fill: none;
+    stroke: #1f6feb;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3;
+}
+
+/* Vis hver måling som et rundt punkt på grafen. */
+.chart-point {
+    fill: #1f6feb;
+    stroke: white;
+    stroke-width: 2;
+}
+
+/* Gør grafens etiketter mindre fremtrædende end målingerne. */
+.chart-label {
+    fill: #687789;
+    font-size: 12px;
+}
+
+/* Vis gennemsnit, tid i målområdet og antal målinger i kolonner. */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+/* Placér hver overskrift over dens beregnede værdi. */
+.summary div {
+    display: grid;
+    gap: 5px;
+}
+
+/* Brug afdæmpet tekst til overskrifterne i oversigten. */
+.summary span {
+    color: #687789;
+    font-size: 13px;
+}
+
+/* Fremhæv de beregnede værdier i oversigten. */
+.summary strong {
+    font-size: 18px;
+}
+
+/* Vis så mange kort over lave målinger på hver række, som skærmen tillader. */
+.event-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+}
+
+/* Giv hvert kort med lave målinger en lys baggrund og indre afstand. */
+.event-card {
+    padding: 14px;
+    border-radius: 6px;
+    background: #f4f6f8;
+}
+
+/* Vis dato og detaljer på separate linjer i hvert målingskort. */
+.event-card strong,
+.event-card span {
+    display: block;
+}
+
+/* Tilføj lidt afstand under datoen for målingen. */
+.event-card strong {
+    margin-bottom: 6px;
+}
+
+/* Gør målingsdetaljerne læsbare uden at overdøve datoen. */
+.event-card span {
+    color: #536273;
+    font-size: 14px;
+}
+
+/* Stil underoverskriften over det hyppigste tidspunkt med lav glukose. */
+.panel h3 {
+    margin: 18px 0 6px;
+    font-size: 15px;
     font-weight: normal;
-    margin: 6px 0;
 }
 
-/* The big number in "Current glucose". */
-fieldset:nth-of-type(1) h4:first-child {
-    font-size: 28px;
-    font-weight: bold;
+/* Fremhæv tidspunktet, hvor lav glukose forekommer oftest. */
+.period {
+    font-size: 24px;
 }
 
-/* The three low glucose boxes are next to each other. */
-fieldset:nth-of-type(3),
-fieldset:nth-of-type(4),
-fieldset:nth-of-type(5) {
-    flex: 1 1 calc(33.333% - 16px);
-}
+/* Tilpas afstande og kort på mindre mobilskærme. */
+@media (max-width: 600px) {
+    /* Lad navigationen ombryde, og hold den tæt på skærmens kanter. */
+    .topbar {
+        padding: 8px 12px;
+    }
 
-/* The big number in the low glucose boxes. */
-fieldset:nth-of-type(3) h4:last-child,
-fieldset:nth-of-type(4) h4:last-child,
-fieldset:nth-of-type(5) h4:last-child {
-    font-size: 28px;
-    font-weight: bold;
-}
+    /* Giv sidens navn en hel række over navigationsknapperne. */
+    .topbar h1 {
+        flex-basis: 100%;
+    }
 
-/* "Most frequent low period" and the time below the pattern box. */
-body > h4:last-of-type {
-    font-size: 16px;
-    font-weight: normal;
-}
+    /* Brug mindre sidemargener, så dashboardet passer på mobilen. */
+    .dashboard {
+        width: min(100% - 24px, 860px);
+        margin: 16px auto;
+    }
 
-h5:last-of-type {
-    flex: 0 0 100%;
-    font-size: 28px;
-    margin: -8px 0 0 0;
+    /* Reducér kortenes indre afstand for at give indholdet mere plads. */
+    .panel {
+        padding: 14px;
+    }
 }

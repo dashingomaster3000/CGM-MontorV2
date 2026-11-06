@@ -1,0 +1,19 @@
+{
+  "readings": [
+    { "timestamp": "2026-11-06T00:00:00", "glucose": 6.1 },
+    { "timestamp": "2026-11-06T02:00:00", "glucose": 5.3 },
+    { "timestamp": "2026-11-06T03:00:00", "glucose": 3.7 },
+    { "timestamp": "2026-11-06T03:30:00", "glucose": 3.4 },
+    { "timestamp": "2026-11-06T04:00:00", "glucose": 3.8 },
+    { "timestamp": "2026-11-06T06:00:00", "glucose": 4.6 },
+    { "timestamp": "2026-11-06T08:00:00", "glucose": 6.5 },
+    { "timestamp": "2026-11-06T10:00:00", "glucose": 8.2 },
+    { "timestamp": "2026-11-06T12:00:00", "glucose": 7.4 },
+    { "timestamp": "2026-11-06T14:00:00", "glucose": 9.1 },
+    { "timestamp": "2026-11-06T16:00:00", "glucose": 10.4 },
+    { "timestamp": "2026-11-06T18:00:00", "glucose": 8.0 },
+    { "timestamp": "2026-11-06T20:00:00", "glucose": 6.7 },
+    { "timestamp": "2026-11-06T22:00:00", "glucose": 5.8 },
+    { "timestamp": "2026-11-06T23:00:00", "glucose": 5.2 }
+  ]
+}

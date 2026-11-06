@@ -1,29 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Vælger tegnsættet, så bogstaver og symboler vises korrekt. -->
     <meta charset="UTF-8">
+    <!-- Tilpasser layoutet til skærmbredden på mobil og tablet. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <!-- Indlæser sidens farver og layout fra CSS-filen. -->
     <link rel="stylesheet" href="Forside.css">
 </head>
 <body>
-<h5>Diabeto</h5>
-<button id="Loginknap">Log out</button>
-<button id="Historyknap">History</button>
-<button id="MeldSymptomerKnap">Report symptoms</button>
-<h4>Good day</h4>
-<h3>Current glucose</h3>
-<fieldset><h4>4.2 mmol/L</h4><h4>Falling slowly</h4></fieldset> <!-- fieldset laver en boks, som man kan skrive inden i. -->
-<h3>Glucose today</h3>
-<fieldset></fieldset><!-- Her skal vi have lavet Glukose grafen -->
- <h3>Low glucose events</h3>
- <fieldset><h4>18 Sep</h4><h4>06:38</h4><h4>3.1 mmol/L</h4></fieldset>
- <fieldset><h4>22 Sep</h4><h4>03:26</h4><h4>3.7 mmol/L</h4></fieldset>
- <fieldset><h4>24 Sep</h4><h4>23:04</h4><h4>3.9 mmol/L</h4></fieldset> <!-- Her er det meningen at boksne skal være ved siden af hinanden, men ved ik hvordan jeg gør endnu. -->
-<h3>Pattern overview</h3>
-<fieldset></fieldset> <!-- Her skal der være et grafisk overview -->
-<h4>Most frequent low period</h4>
-<h5>03:00 - 04:00</h5>
-<script src="Forside.js"></script>
+    <!-- Topbjælken indeholder knapperne til sidens navigation. -->
+    <header class="topbar">
+        <h1>Diabeto</h1>
+        <!-- Disse knapper skifter side via funktioner i Forside.js. -->
+        <button id="Loginknap" type="button">Log out</button>
+        <button id="Historyknap" type="button">History</button>
+        <button id="MeldSymptomerKnap" type="button">Report symptoms</button>
+    </header>
+
+    <!-- Dashboardets hovedindhold, centreret under topbjælken. -->
+    <main class="dashboard">
+        <h2>Good day</h2>
+        <!-- Knappen åbner filvælgeren, så man kan importere glukosedata. -->
+        <div class="import-controls">
+            <button id="importButton" type="button">Importer data</button>
+            <!-- Filvælgeren tager imod JSON-filer og åbnes med knappen ovenfor. -->
+            <input id="dataFile" type="file" accept=".json,application/json" hidden>
+        </div>
+        <!-- JavaScript opdaterer beskeden, når data indlæses eller importeres. -->
+        <p id="dataStatus" class="status" role="status" aria-live="polite">Loading sample glucose data…</p>
+
+        <!-- Viser den nyeste glukoseværdi, dens retning og måletidspunkt. -->
+        <section class="panel" aria-labelledby="currentHeading">
+            <h2 id="currentHeading">Current glucose</h2>
+            <div class="current-reading">
+                <!-- JavaScript udfylder felterne med værdier fra målingerne. -->
+                <strong id="currentGlucose">--</strong>
+                <span id="currentTrend">Waiting for data</span>
+                <small id="readingTime"></small>
+            </div>
+        </section>
+
+        <!-- Viser dagens graf og beregnede glukoseoversigt. -->
+        <section class="panel" aria-labelledby="todayHeading">
+            <h2 id="todayHeading">Glucose today</h2>
+            <div class="chart-wrap">
+                <!-- JavaScript tegner grafens linje og målepunkter i denne SVG. -->
+                <svg id="glucoseChart" role="img" aria-label="Glucose readings chart" viewBox="0 0 760 250"></svg>
+            </div>
+            <!-- Tallene her beregnes ud fra de indlæste målinger. -->
+            <div class="summary" aria-label="Glucose summary">
+                <div><span>Average</span><strong id="averageGlucose">--</strong></div>
+                <div><span>Time in range</span><strong id="timeInRange">--</strong></div>
+                <div><span>Readings</span><strong id="readingCount">--</strong></div>
+            </div>
+        </section>
+
+        <!-- JavaScript tilføjer et kort for hver registreret lav måling. -->
+        <section class="panel" aria-labelledby="eventsHeading">
+            <h2 id="eventsHeading">Low glucose events</h2>
+            <div id="lowEvents" class="event-list"></div>
+        </section>
+
+        <!-- Opsummerer lave målinger og det klokkeslæt, de oftest forekommer. -->
+        <section class="panel" aria-labelledby="patternHeading">
+            <h2 id="patternHeading">Pattern overview</h2>
+            <p id="patternSummary">Low-glucose patterns will appear here when data is loaded.</p>
+            <h3>Most frequent low period</h3>
+            <strong id="frequentLowPeriod" class="period">--</strong>
+        </section>
+    </main>
+    <!-- Indlæser scriptet, der læser data og opdaterer dashboardet. -->
+    <script src="Forside.js"></script>
 </body>
 </html>
