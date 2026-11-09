@@ -197,7 +197,7 @@
     margin-top: 20px;
 }
 
-/* Inputfelter og listen med patienter */
+/* Inputfelter */
 .meld-symptomer-page input,
 .meld-symptomer-page select {
     display: block;
@@ -208,6 +208,7 @@
     border: 1px solid #dddddd;
     border-radius: 6px;
     font-size: 16px;
+    
 }
 
 /* Send-knappen */
