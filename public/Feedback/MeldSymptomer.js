@@ -16,13 +16,30 @@ function lavDatoTekst(dato) {
     return aar + "-" + maaned + "-" + dag;
 }
 
-// Kalenderen må kun vise datoer fra 14 dage tilbage til i dag
+// Laver klokkeslættet om til tekst som "14:30", som tidsfeltet bruger
+function lavTidTekst(dato) {
+    const timer = String(dato.getHours()).padStart(2, "0");
+    const minutter = String(dato.getMinutes()).padStart(2, "0");
+    return timer + ":" + minutter;
+}
+
+// Kalenderen må kun vise datoer fra 2 dage tilbage til i dag.
+// Så kan man ikke vælge andre årstal.
 const datoFelt = document.getElementById("dato");
+const tidFelt = document.getElementById("tid");
 const idag = new Date();
-const fjortenDageSiden = new Date();
-fjortenDageSiden.setDate(idag.getDate() - 14);
+const toDageSiden = new Date();
+toDageSiden.setDate(idag.getDate() - 2);
 datoFelt.max = lavDatoTekst(idag);
-datoFelt.min = lavDatoTekst(fjortenDageSiden);
+datoFelt.min = lavDatoTekst(toDageSiden);
+
+// Udfylder felterne med dagens dato og klokkeslættet lige nu
+function udfyldNu() {
+    const nu = new Date();
+    datoFelt.value = lavDatoTekst(nu);
+    tidFelt.value = lavTidTekst(nu);
+}
+udfyldNu();
 
 // Når formularen sendes: gem symptomet med POST
 form.addEventListener("submit", async function (event) {
@@ -50,11 +67,11 @@ form.addEventListener("submit", async function (event) {
         return;
     }
 
-    // Tjekker at tidspunktet højst er 14 dage gammelt
+    // Tjekker at tidspunktet højst er 2 dage gammelt (hvis man har glemt at melde det)
     const graense = new Date();
-    graense.setDate(nu.getDate() - 14);
+    graense.setDate(nu.getDate() - 2);
     if (valgtTidspunkt < graense) {
-        fejlBesked.textContent = "The date and time can be at most 14 days ago.";
+        fejlBesked.textContent = "You can only report symptoms from the last 2 days.";
         return;
     }
 
@@ -85,6 +102,7 @@ form.addEventListener("submit", async function (event) {
         // Succes (201): vis besked og tøm formularen
         feedback.textContent = "Saved";
         form.reset();
+        udfyldNu(); // Sæt dato og tid til nu igen efter at formularen er tømt
     } catch (error) {
         // Ingen forbindelse til serveren
         fejlBesked.textContent = "Something went wrong. Please try again.";

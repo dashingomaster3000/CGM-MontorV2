@@ -131,11 +131,11 @@ app.post("/api/symptomer", async (req, res) => {
     return res.status(400).json({ error: "The date and time cannot be in the future." });
   }
 
-  // Tjekker at tidspunktet højst er 14 dage gammelt
+  // Tjekker at tidspunktet højst er 2 dage gammelt (hvis man har glemt at melde det)
   const graense = new Date();
-  graense.setDate(nu.getDate() - 14);
+  graense.setDate(nu.getDate() - 2);
   if (valgtTidspunkt < graense) {
-    return res.status(400).json({ error: "The date and time can be at most 14 days ago." });
+    return res.status(400).json({ error: "You can only report symptoms from the last 2 days." });
   }
 
   try {
