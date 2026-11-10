@@ -2,6 +2,10 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 
+// Serveren regner i dansk tid. Ellers kører Vercel i UTC-tid,
+// og et symptom meldt "lige nu" ville se ud til at ligge i fremtiden.
+process.env.TZ = "Europe/Copenhagen";
+
 // Repository-filerne. Al SQL ligger i dem, ikke her.
 const patients = require("./patients");
 const symptomer = require("./symptomer");
@@ -102,6 +106,36 @@ app.post("/api/symptomer", async (req, res) => {
   // Tjekker felterne FØR databasen. Tom tekst eller kun mellemrum tæller som manglende.
   if (!patient_id || !String(tidspunkt ?? "").trim() || !String(beskrivelse ?? "").trim()) {
     return res.status(400).json({ error: "patient_id, tidspunkt and beskrivelse are required" });
+  }
+
+  // Tjekker formatet: præcis "ÅÅÅÅ-MM-DD TT:MM", fx "2026-11-10 14:30". Stopper fx år 00000.
+  const formatOk = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(tidspunkt);
+  if (!formatOk) {
+    return res.status(400).json({ error: "Date and time must look like 2026-11-10 14:30" });
+  }
+
+  // Laver teksten om til et rigtigt tidspunkt. Ugyldige værdier (fx kl. 25:00) giver NaN.
+  const valgtTidspunkt = new Date(tidspunkt.replace(" ", "T"));
+  if (isNaN(valgtTidspunkt.getTime())) {
+    return res.status(400).json({ error: "Invalid date or time" });
+  }
+
+  // Tjekker at datoen findes. Fx bliver 31/2 ellers lavet om til 3/3.
+  if (valgtTidspunkt.getDate() !== Number(tidspunkt.slice(8, 10))) {
+    return res.status(400).json({ error: "Invalid date or time" });
+  }
+
+  // Tjekker at tidspunktet ikke ligger i fremtiden
+  const nu = new Date();
+  if (valgtTidspunkt > nu) {
+    return res.status(400).json({ error: "The date and time cannot be in the future." });
+  }
+
+  // Tjekker at tidspunktet højst er 14 dage gammelt
+  const graense = new Date();
+  graense.setDate(nu.getDate() - 14);
+  if (valgtTidspunkt < graense) {
+    return res.status(400).json({ error: "The date and time can be at most 14 days ago." });
   }
 
   try {

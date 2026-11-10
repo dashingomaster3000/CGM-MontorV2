@@ -19,6 +19,7 @@ const average = document.getElementById("average");
 const timeInRange = document.getElementById("timeInRange");
 const lowCount = document.getElementById("lowCount");
 const tableBody = document.getElementById("tableBody");
+const measurementBody = document.getElementById("measurementBody");
 const symptomList = document.getElementById("symptomList");
 
 // Beregn gennemsnittet af en liste tal
@@ -49,8 +50,9 @@ function showTableMessage(message) {
 
 // Udfyld nøgletal og tabel for valgte dage
 function showHistory(dayCount) {
-    // Ryd de gamle rækker i tabellen
+    // Ryd de gamle rækker i begge tabeller
     tableBody.innerHTML = "";
+    measurementBody.innerHTML = "";
 
     // Tag de sidste dage med målinger
     const chosenDays = days.slice(-dayCount);
@@ -82,6 +84,19 @@ function showHistory(dayCount) {
         addCell(row, lowest.toFixed(1) + " mmol/L");
         addCell(row, highest.toFixed(1) + " mmol/L");
         tableBody.appendChild(row);
+
+        // Lav én række for hver måling på dagen med dato, klokkeslæt og værdi
+        for (let i = 0; i < day.values.length; i++) {
+            const measurementRow = document.createElement("tr");
+            // Lave målinger får rød række
+            if (day.values[i] < lowLimit) {
+                measurementRow.classList.add("low");
+            }
+            addCell(measurementRow, day.date);
+            addCell(measurementRow, day.times[i]);
+            addCell(measurementRow, day.values[i].toFixed(1) + " mmol/L");
+            measurementBody.appendChild(measurementRow);
+        }
 
         allValues = allValues.concat(day.values);
     }
@@ -170,14 +185,17 @@ function groupByDate(maalinger) {
     for (const maaling of maalinger) {
         // Tag kun datoen, fx "2026-10-21"
         const date = maaling.tidspunkt.slice(0, 10);
+        // Tag klokkeslættet, fx "06:00" fra "2026-10-21 06:00:00"
+        const time = maaling.tidspunkt.slice(11, 16);
         const value = Number(maaling.glukose_mmol);
 
         // Ny dato giver ny dag, ellers tilføj
         const lastDay = result[result.length - 1];
         if (lastDay && lastDay.date === date) {
             lastDay.values.push(value);
+            lastDay.times.push(time);
         } else {
-            result.push({ date: date, values: [value] });
+            result.push({ date: date, values: [value], times: [time] });
         }
     }
     return result;
