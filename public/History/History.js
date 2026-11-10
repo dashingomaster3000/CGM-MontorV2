@@ -11,6 +11,9 @@ const patientId = Number(urlParams.get("patient")) || 1;
 // Fyldes ud, når serverdata er hentet
 let days = [];
 
+// Bliver true, hvis målingerne ikke kunne hentes fra serveren
+let loadFailed = false;
+
 // Elementer på siden, vi skal bruge
 const patientName = document.getElementById("patientName");
 const button7 = document.getElementById("button7");
@@ -62,7 +65,12 @@ function showHistory(dayCount) {
         average.textContent = "–";
         timeInRange.textContent = "–";
         lowCount.textContent = "–";
-        showTableMessage("No measurements yet");
+        // Skelner mellem en fejl og en patient uden målinger
+        if (loadFailed) {
+            showTableMessage("Could not load measurements. Please try again later.");
+        } else {
+            showTableMessage("No measurements yet");
+        }
         return;
     }
 
@@ -115,7 +123,9 @@ function showHistory(dayCount) {
 
     // Vis de beregnede nøgletal på siden
     average.textContent = getAverage(allValues).toFixed(1) + " mmol/L";
-    timeInRange.textContent = Math.round(inRange / allValues.length * 100) + " %";
+    // Viser procenten sammen med grænserne, fx "73 % (3.9–10.0 mmol/L)"
+    timeInRange.textContent = Math.round(inRange / allValues.length * 100) + " % (" +
+        lowLimit.toFixed(1) + "–" + highLimit.toFixed(1) + " mmol/L)";
     lowCount.textContent = low;
 }
 
@@ -222,7 +232,8 @@ async function loadData() {
         days = groupByDate(maalinger);
         selectDays(7);
     } catch (error) {
-        // Ingen forbindelse: vis besked og tom tabel
+        // Fejl fra serveren eller databasen: vis besked og fejl i tabellen
+        loadFailed = true;
         patientName.textContent = "Could not connect to the server.";
         selectDays(7);
     }

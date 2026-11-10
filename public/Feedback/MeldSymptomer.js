@@ -23,15 +23,15 @@ function lavTidTekst(dato) {
     return timer + ":" + minutter;
 }
 
-// Kalenderen må kun vise datoer fra 2 dage tilbage til i dag.
+// Kalenderen må kun vise datoer fra 14 dage tilbage til i dag (samme periode som History).
 // Så kan man ikke vælge andre årstal.
 const datoFelt = document.getElementById("dato");
 const tidFelt = document.getElementById("tid");
 const idag = new Date();
-const toDageSiden = new Date();
-toDageSiden.setDate(idag.getDate() - 2);
+const fjortenDageSiden = new Date();
+fjortenDageSiden.setDate(idag.getDate() - 14);
 datoFelt.max = lavDatoTekst(idag);
-datoFelt.min = lavDatoTekst(toDageSiden);
+datoFelt.min = lavDatoTekst(fjortenDageSiden);
 
 // Udfylder felterne med dagens dato og klokkeslættet lige nu
 function udfyldNu() {
@@ -67,11 +67,11 @@ form.addEventListener("submit", async function (event) {
         return;
     }
 
-    // Tjekker at tidspunktet højst er 2 dage gammelt (hvis man har glemt at melde det)
+    // Tjekker at tidspunktet højst er 14 dage gammelt (samme periode som History)
     const graense = new Date();
-    graense.setDate(nu.getDate() - 2);
+    graense.setDate(nu.getDate() - 14);
     if (valgtTidspunkt < graense) {
-        fejlBesked.textContent = "You can only report symptoms from the last 2 days.";
+        fejlBesked.textContent = "You can only report symptoms from the last 14 days.";
         return;
     }
 

@@ -246,17 +246,34 @@ function setStatus(message, isError = false) {
     dataStatus.classList.toggle("error", isError);
 }
 
-// Indlæs eksempeldata automatisk, når dashboardet åbnes.
-fetch("sample-glucose.json")
+// Læs patientnummer fra URL, fx ?patient=1. Uden nummer vises patient 1 (samme som History).
+const urlParams = new URLSearchParams(window.location.search);
+const patientId = Number(urlParams.get("patient")) || 1;
+
+// Hent patientens målinger fra databasen (Neon), når dashboardet åbnes.
+fetch("/api/patients/" + patientId + "/maalinger")
     .then(response => {
-        // Vis en fejl, hvis serveren ikke kunne levere eksempeldataene.
-        if (!response.ok) throw new Error(`Could not load sample data (${response.status}).`);
+        // Vis en fejl, hvis serveren eller databasen ikke kunne levere målingerne.
+        if (!response.ok) throw new Error("Could not load measurements from the database.");
         return response.json();
     })
-    .then(data => {
-        // Kontrollér og vis eksempeldataene, og fortæl, hvor de kommer fra.
+    .then(maalinger => {
+        // Ingen målinger i databasen: vis en besked i stedet.
+        if (maalinger.length === 0) {
+            setStatus("No measurements yet.");
+            return;
+        }
+        // Lav databasens rækker om til samme format som en importeret fil.
+        // "2026-11-09 23:00:00" bliver til "2026-11-09T23:00:00", som JavaScript kan læse.
+        const data = { readings: [] };
+        for (const maaling of maalinger) {
+            data.readings.push({
+                timestamp: maaling.tidspunkt.replace(" ", "T"),
+                glucose: maaling.glukose_mmol
+            });
+        }
         renderDashboard(parseReadings(data));
-        setStatus("Showing example data. Import a JSON file to view your own readings.");
+        setStatus("Showing your measurements from the database. Import a JSON file to view other readings.");
     })
-    // Vis fejl ved netværk, filer eller kontrol af data i statusfeltet.
+    // Vis fejl ved netværk eller databasen i statusfeltet.
     .catch(error => setStatus(error.message, true));

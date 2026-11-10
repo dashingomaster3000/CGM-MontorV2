@@ -39,6 +39,10 @@ app.get("/api/patients", async (req, res) => {
 
 // Returnerer én patients målinger, sorteret efter tidspunkt.
 app.get("/api/patients/:id/maalinger", async (req, res) => {
+  // Tjekker at patient-id er et helt tal, fx 1 og ikke "abc"
+  if (!Number.isInteger(Number(req.params.id))) {
+    return res.status(400).json({ error: "Invalid patient id" });
+  }
   try {
     const maalinger = await patients.hentMaalinger(req.params.id);
     res.json(maalinger);
@@ -50,6 +54,10 @@ app.get("/api/patients/:id/maalinger", async (req, res) => {
 
 // Returnerer én patients symptomer, sorteret efter tidspunkt.
 app.get("/api/patients/:id/symptomer", async (req, res) => {
+  // Tjekker at patient-id er et helt tal, fx 1 og ikke "abc"
+  if (!Number.isInteger(Number(req.params.id))) {
+    return res.status(400).json({ error: "Invalid patient id" });
+  }
   try {
     const liste = await symptomer.hentSymptomer(req.params.id);
     res.status(200).json(liste);
@@ -108,6 +116,11 @@ app.post("/api/symptomer", async (req, res) => {
     return res.status(400).json({ error: "patient_id, tidspunkt and beskrivelse are required" });
   }
 
+  // Tjekker at patient_id er et helt tal, fx 1 og ikke "abc"
+  if (!Number.isInteger(Number(patient_id))) {
+    return res.status(400).json({ error: "Invalid patient id" });
+  }
+
   // Tjekker formatet: præcis "ÅÅÅÅ-MM-DD TT:MM", fx "2026-11-10 14:30". Stopper fx år 00000.
   const formatOk = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(tidspunkt);
   if (!formatOk) {
@@ -131,17 +144,21 @@ app.post("/api/symptomer", async (req, res) => {
     return res.status(400).json({ error: "The date and time cannot be in the future." });
   }
 
-  // Tjekker at tidspunktet højst er 2 dage gammelt (hvis man har glemt at melde det)
+  // Tjekker at tidspunktet højst er 14 dage gammelt (samme periode som History)
   const graense = new Date();
-  graense.setDate(nu.getDate() - 2);
+  graense.setDate(nu.getDate() - 14);
   if (valgtTidspunkt < graense) {
-    return res.status(400).json({ error: "You can only report symptoms from the last 2 days." });
+    return res.status(400).json({ error: "You can only report symptoms from the last 14 days." });
   }
 
   try {
     const symptom = await symptomer.opretSymptom(patient_id, tidspunkt, beskrivelse.trim());
     res.status(201).json(symptom);
   } catch (err) {
+    // Fejlkode 23503 betyder, at patienten ikke findes i tabellen patients
+    if (err.code === "23503") {
+      return res.status(400).json({ error: "Patient not found" });
+    }
     console.error(err);
     res.status(500).json({ error: "database error" });
   }

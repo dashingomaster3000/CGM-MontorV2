@@ -26,7 +26,7 @@ Content-Type: application/json
 
 {"tidspunkt":"2026-11-04 09:00","beskrivelse":"Headache"}
 
-### 7. Meld symptom for patient 9999, som ikke findes — forventet 500
+### 7. Meld symptom for patient 9999, som ikke findes — forventet 400
 POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 

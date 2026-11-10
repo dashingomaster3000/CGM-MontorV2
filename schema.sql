@@ -11,7 +11,9 @@ CREATE TABLE maalinger (
   id SERIAL PRIMARY KEY,
   patient_id INTEGER NOT NULL REFERENCES patients (id),
   tidspunkt TIMESTAMP NOT NULL,
-  glukose_mmol NUMERIC(4,1) NOT NULL
+  glukose_mmol NUMERIC(4,1) NOT NULL,
+  -- Samme patient kan ikke have to målinger på samme tidspunkt (ingen dubletter)
+  UNIQUE (patient_id, tidspunkt)
 );
 
 CREATE TABLE symptomer (
