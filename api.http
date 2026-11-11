@@ -32,7 +32,7 @@ Content-Type: application/json
 POST http://localhost:3000/api/login
 Content-Type: application/json
 
-{"brugernavn":"sundhed@diabeto.test","password":"DIT-SYNTHETIC-TEST-PASSWORD"}
+{"brugernavn":"sundhed@diabeto.test","password":"Sundhed-Demo-26!"}
 
 ### Hvem er jeg — forventet 200 og samme brugernavn
 GET http://localhost:3000/api/me
@@ -96,7 +96,7 @@ Content-Type: application/json
 POST http://localhost:3000/api/login
 Content-Type: application/json
 
-{"brugernavn":"nancy.berggren@diabeto.test","password":"DiabetoTest2026!"}
+{"brugernavn":"nancy.berggren@diabeto.test","password":"Nancy-Demo-26!"}
 
 ### Patientens egen session indeholder patient_id — forventet 200
 GET http://localhost:3000/api/me

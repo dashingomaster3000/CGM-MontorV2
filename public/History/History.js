@@ -251,6 +251,10 @@ window.visLogin().then((bruger) => {
     if (bruger.patient_id != null) {
         patientId = bruger.patient_id;
         document.getElementById("patientsLink").hidden = true;
+    } else {
+        const patientQuery = "?patient=" + patientId;
+        document.getElementById("dashboardLink").href = "../Forside/Forside.html" + patientQuery;
+        document.getElementById("symptomsLink").href = "../Feedback/MeldSymptomer.html" + patientQuery;
     }
     loadData(bruger);
     loadSymptoms();

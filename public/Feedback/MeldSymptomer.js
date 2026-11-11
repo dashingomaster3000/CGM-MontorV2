@@ -116,10 +116,10 @@ form.addEventListener("submit", async function (event) {
 
 // Knapperne i menuen
 document.getElementById("ForsideKnap").onclick = function () {
-    window.location.href = "../Forside/Forside.html";
+    window.location.href = "../Forside/Forside.html" + (urlParams.has("patient") ? "?patient=" + patientId : "");
 };
 document.getElementById("Historyknap").onclick = function () {
-    window.location.href = "../History/History.html";
+    window.location.href = "../History/History.html" + (urlParams.has("patient") ? "?patient=" + patientId : "");
 };
 document.getElementById("PatientsKnap").onclick = function () {
     window.location.href = "../Patients/Patients.html";

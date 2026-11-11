@@ -16,16 +16,21 @@ function addCell(row, text) {
     row.appendChild(cell);
 }
 
-// Lav knap, der åbner patientens History-side
-function addHistoryButton(row, id) {
+// Lav knapper, der åbner patientens dashboard og History-side
+function addPatientActions(row, id) {
     const cell = document.createElement("td");
-    const button = document.createElement("button");
-    button.textContent = "See history";
-    button.className = "day-button";
-    button.addEventListener("click", function () {
-        window.location.href = "../History/History.html?patient=" + id;
-    });
-    cell.appendChild(button);
+    for (const [label, page] of [
+        ["Dashboard", "../Forside/Forside.html"],
+        ["See history", "../History/History.html"]
+    ]) {
+        const button = document.createElement("button");
+        button.textContent = label;
+        button.className = "day-button";
+        button.addEventListener("click", function () {
+            window.location.href = page + "?patient=" + id;
+        });
+        cell.appendChild(button);
+    }
     row.appendChild(cell);
 }
 
@@ -54,7 +59,7 @@ function showPatients(patientList) {
         const row = document.createElement("tr");
         addCell(row, patient.navn);
         addCell(row, hideCpr(patient.cpr));
-        addHistoryButton(row, patient.id);
+        addPatientActions(row, patient.id);
         patientTable.appendChild(row);
     }
 }

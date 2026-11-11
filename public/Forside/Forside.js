@@ -8,11 +8,13 @@ document.getElementById("PatientsKnap").onclick = function() {
 };
 // Åbn historiksiden, når brugeren vælger knappen.
 document.getElementById("Historyknap").onclick = function() {
-    window.location.href = "../History/History.html";
+    const patient = new URLSearchParams(window.location.search).get("patient");
+    window.location.href = "../History/History.html" + (patient ? "?patient=" + patient : "");
 };
 // Åbn siden til symptomrapportering, når brugeren vælger knappen.
 document.getElementById("MeldSymptomerKnap").onclick = function() {
-    window.location.href = "../Feedback/MeldSymptomer.html";
+    const patient = new URLSearchParams(window.location.search).get("patient");
+    window.location.href = "../Feedback/MeldSymptomer.html" + (patient ? "?patient=" + patient : "");
 };
 
 // Åbn den skjulte filvælger, når brugeren klikker på importknappen.
