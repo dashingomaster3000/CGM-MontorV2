@@ -1,48 +1,40 @@
-// Finder formularen og beskedområdet på login-siden.
 const loginForm = document.getElementById("loginForm");
 const loginMessage = document.getElementById("loginMessage");
 
-// Håndterer login uden at genindlæse siden.
-loginForm.addEventListener("submit", function (event) {
+loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
+    loginMessage.textContent = "";
 
-    // Henter og renser de loginoplysninger, som brugeren har indtastet.
-    const email = document.getElementById("email").value.trim();
+    const brugernavn = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    // Demo-login for en borger
-    if (
-        email === "borger@diabeto.dk" &&
-        password === "borger123"
-    ) {
-        // Gemmer loginstatus og brugerrolle til brug på den næste side.
-        sessionStorage.setItem("diabetoLoggedIn", "true");
-        sessionStorage.setItem("diabetoRole", "borger");
+    try {
+        const response = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ brugernavn, password })
+        });
 
-        // Sender borgeren til programmets forside.
-        window.location.href = "Forside/Forside.html"; // Dette skal vi have ændret til en side for borgere, når den er lavet, eller navnet på forsiden ændres.
-    }
+        if (response.status === 400 || response.status === 401) {
+            loginMessage.textContent = "Incorrect e-mail or password.";
+            return;
+        }
+        if (!response.ok) {
+            loginMessage.textContent = "Login is unavailable. Please try again.";
+            return;
+        }
 
-    // Demo-login for en sundhedsprofessionel
-    else if (
-        email === "sundhed@diabeto.dk" &&
-        password === "sundhed123"
-    ) {
-        // Gemmer loginstatus og brugerrolle til brug på den næste side.
-        sessionStorage.setItem("diabetoLoggedIn", "true");
-        sessionStorage.setItem(
-            "diabetoRole",
-            "sundhedsprofessionel"
-        );
-
-        // Sender den sundhedsprofessionelle til patientlisten.
-        window.location.href = "Patients/Patients.html";
-    }
-
-    // Forkerte loginoplysninger
-    else {
-        // Viser en besked, når loginoplysningerne ikke passer til en demo-konto.
-        loginMessage.textContent =
-            "Incorrect e-mail or password.";
+        window.location.replace("/Patients/Patients.html");
+    } catch (error) {
+        console.error("Could not log in:", error);
+        loginMessage.textContent = "Could not connect to the server. Please try again.";
     }
 });
+
+fetch("/api/me")
+    .then((response) => {
+        if (response.ok) {
+            window.location.replace("/Patients/Patients.html");
+        }
+    })
+    .catch((error) => console.error("Could not check the current session:", error));

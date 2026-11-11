@@ -86,6 +86,11 @@ form.addEventListener("submit", async function (event) {
             })
         });
 
+        if (res.status === 401) {
+            window.location.replace("/index.html");
+            return;
+        }
+
         // Serveren afviste felterne (400): vis serverens fejlbesked
         if (res.status === 400) {
             const svar = await res.json();
@@ -116,7 +121,11 @@ document.getElementById("ForsideKnap").onclick = function () {
 document.getElementById("Historyknap").onclick = function () {
     window.location.href = "../History/History.html";
 };
-document.getElementById("Loginknap").onclick = function () {
-    sessionStorage.clear(); // Log ud: slet login-data og gå til login-siden.
-    window.location.href = "../index.html";
+document.getElementById("PatientsKnap").onclick = function () {
+    window.location.href = "../Patients/Patients.html";
 };
+
+form.hidden = true;
+window.visLogin().then((authenticated) => {
+    form.hidden = !authenticated;
+});

@@ -1,39 +1,90 @@
-### 1. Hele listen med patienter — forventet 200
+### Patientlisten er offentlig — forventet 200
 GET http://localhost:3000/api/patients
 
-### 2. Opret patient med gyldig body — forventet 201
-# CPR skal være unikt. Kører du den igen, så skift CPR-nummeret, ellers giver den 500.
+### Opret patient uden login — forventet 401
 POST http://localhost:3000/api/patients
 Content-Type: application/json
 
-{"cpr":"0411269991","navn":"Symptom Test Person"}
+{"cpr":"0411269993","navn":"Synthetic Test Patient"}
 
-### 3. Opret patient uden body — forventet 400
-POST http://localhost:3000/api/patients
-
-### 4. Alle symptomer — forventet 200
-GET http://localhost:3000/api/symptomer
-
-### 5. Meld symptom for patient 1 (fra /api/patients) — forventet 201
+### Meld symptom uden login — forventet 401
 POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
 {"patient_id":1,"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
 
-### 6. Meld symptom uden patient_id — forventet 400
+### Login uden password — forventet 400
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{"brugernavn":"sundhed@diabeto.test"}
+
+### Login med forkert password — forventet 401
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{"brugernavn":"sundhed@diabeto.test","password":"forkert"}
+
+### Login som sundhedsprofessionel — forventet 200 og Set-Cookie
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{"brugernavn":"sundhed@diabeto.test","password":"DIT-SYNTHETIC-TEST-PASSWORD"}
+
+### Hvem er jeg — forventet 200 og samme brugernavn
+GET http://localhost:3000/api/me
+
+### Opret patient med gyldig body — forventet 201 efter login
+# CPR skal være unikt. Skift det, hvis du kører requesten mere end én gang.
+POST http://localhost:3000/api/patients
+Content-Type: application/json
+
+{"cpr":"0411269992","navn":"Synthetic Test Patient"}
+
+### Opret patient uden body — forventet 400 efter login
+POST http://localhost:3000/api/patients
+
+### Alle symptomer — forventet 200
+GET http://localhost:3000/api/symptomer
+
+### Meld symptom for patient 1 — forventet 201 efter login
+POST http://localhost:3000/api/symptomer
+Content-Type: application/json
+
+{"patient_id":1,"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
+
+### Meld symptom uden patient_id — forventet 400 efter login
 POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
 {"tidspunkt":"2026-11-04 09:00","beskrivelse":"Headache"}
 
-### 7. Meld symptom for patient 9999, som ikke findes — forventet 400
+### Meld symptom for patient 9999, som ikke findes — forventet 400 efter login
 POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
 {"patient_id":9999,"tidspunkt":"2026-11-04 10:00","beskrivelse":"Shaky hands"}
 
-### 8. Patient 1's symptomer — forventet 200
+### Patient 1's symptomer — forventet 200
 GET http://localhost:3000/api/patients/1/symptomer
 
-### 9. Adresse der ikke findes — forventet 404
+### Log ud — forventet 204
+POST http://localhost:3000/api/logout
+
+### Hvem er jeg efter logout — forventet 401
+GET http://localhost:3000/api/me
+
+### Opret patient efter logout — forventet 401
+POST http://localhost:3000/api/patients
+Content-Type: application/json
+
+{"cpr":"0411269993","navn":"Synthetic Test Patient"}
+
+### Meld symptom efter logout — forventet 401
+POST http://localhost:3000/api/symptomer
+Content-Type: application/json
+
+{"patient_id":1,"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
+
+### Adresse der ikke findes — forventet 404
 GET http://localhost:3000/findesikke

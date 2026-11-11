@@ -1,10 +1,16 @@
--- Opretter databasens tre tabeller: patients, maalinger og symptomer.
+-- Opretter databasens tabeller: patients, brugere, maalinger og symptomer.
 -- Køres manuelt i Neons SQL Editor, før seed.sql.
 
 CREATE TABLE patients (
   id SERIAL PRIMARY KEY,
   cpr VARCHAR(10) NOT NULL UNIQUE,
   navn VARCHAR(200) NOT NULL
+);
+
+CREATE TABLE brugere (
+  id SERIAL PRIMARY KEY,
+  brugernavn VARCHAR(254) NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL
 );
 
 CREATE TABLE maalinger (

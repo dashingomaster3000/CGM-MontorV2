@@ -2,10 +2,9 @@
 const dataStatus = document.getElementById("dataStatus");
 const dataFile = document.getElementById("dataFile");
 
-// Log brugeren ud ved at rydde sessionsdata og åbne login-siden.
-document.getElementById("Loginknap").onclick = function() {
-    sessionStorage.clear();
-    window.location.href = "../index.html";
+// Åbn patientlisten.
+document.getElementById("PatientsKnap").onclick = function() {
+    window.location.href = "../Patients/Patients.html";
 };
 // Åbn historiksiden, når brugeren vælger knappen.
 document.getElementById("Historyknap").onclick = function() {
@@ -250,8 +249,11 @@ function setStatus(message, isError = false) {
 const urlParams = new URLSearchParams(window.location.search);
 const patientId = Number(urlParams.get("patient")) || 1;
 
-// Hent patientens målinger fra databasen (Neon), når dashboardet åbnes.
-fetch("/api/patients/" + patientId + "/maalinger")
+// Hent kun patientdata, når serveren har bekræftet login-sessionen.
+window.visLogin().then((authenticated) => {
+    if (!authenticated) return;
+
+    return fetch("/api/patients/" + patientId + "/maalinger")
     .then(response => {
         // Vis en fejl, hvis serveren eller databasen ikke kunne levere målingerne.
         if (!response.ok) throw new Error("Could not load measurements from the database.");
@@ -287,3 +289,4 @@ fetch("/api/patients/" + patientId + "/maalinger")
         const day = readings[readings.length - 1].timestamp.toDateString();
         renderChart(readings.filter(reading => reading.timestamp.toDateString() === day));
     });
+});

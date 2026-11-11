@@ -17,9 +17,12 @@
 
     <!-- Menu med links til siderne -->
     <nav>
-        <!-- "active" markerer den side, du er på -->
+        <a href="../Forside/Forside.html">Dashboard</a>
+        <a href="../History/History.html">History</a>
+        <a href="../Feedback/MeldSymptomer.html">Report symptoms</a>
         <a href="Patients.html" class="active">Patients</a>
-        <a href="../index.html" id="logoutLink">Log out</a>
+        <span id="currentUser"></span>
+        <button id="Loginknap" type="button">Log out</button>
     </nav>
 
     <!-- Alt indholdet under menuen på siden -->
@@ -27,6 +30,7 @@
         <h1>Patients</h1>
         <!-- Fejlbesked, hvis serveren ikke svarer -->
         <p id="message"></p>
+        <p id="authMessage" role="alert"></p>
 
         <!-- TABEL MED ALLE PATIENTERNE I SYSTEMET -->
         <section class="card">
@@ -43,6 +47,7 @@
         </section>
     </main>
 
+    <script src="../Login/Auth.js"></script>
     <script src="Patients.js"></script>
 </body>
 </html>

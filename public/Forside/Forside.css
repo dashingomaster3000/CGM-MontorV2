@@ -29,6 +29,10 @@ body {
     font-size: 18px;
 }
 
+.topbar #currentUser {
+    color: white;
+}
+
 /* Giv alle knapper ens form, afstand og musemarkør. */
 button {
     padding: 8px 12px;

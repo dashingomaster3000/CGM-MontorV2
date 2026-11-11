@@ -18,25 +18,17 @@
 
     <!-- Menu med links til de andre sider -->
     <nav>
-        <!-- Vises kun for sundhedsprofessionelle, se scriptet nedenfor -->
-        <a href="../Patients/Patients.html" id="patientsLink" hidden>Patients</a>
-        <a href="../Forside/Forside.html" id="dashboardLink">Dashboard</a>
-        <!-- "active" markerer den side, du er på -->
+        <a href="../Patients/Patients.html">Patients</a>
+        <a href="../Forside/Forside.html">Dashboard</a>
         <a href="History.html" class="active">History</a>
-        <a href="../Feedback/MeldSymptomer.html" id="symptomsLink">Report symptoms</a>
+        <a href="../Feedback/MeldSymptomer.html">Report symptoms</a>
+        <span id="currentUser"></span>
+        <button id="Loginknap" type="button">Log out</button>
     </nav>
-
-    <!-- Sundhedsprofessionelle ser Patients i stedet for Dashboard -->
-    <script>
-        if (sessionStorage.getItem("diabetoRole") === "sundhedsprofessionel") {
-            document.getElementById("patientsLink").hidden = false;
-            document.getElementById("dashboardLink").hidden = true;
-            document.getElementById("symptomsLink").hidden = true;
-        }
-    </script>
 
     <!-- Alt indholdet under menuen på siden -->
     <main>
+        <p id="authMessage" role="alert"></p>
         <h1>History</h1>
         <!-- Patientens navn indsættes af JavaScript -->
         <p id="patientName"></p>
@@ -102,6 +94,7 @@
         </section>
     </main>
 
+    <script src="../Login/Auth.js"></script>
     <script src="History.js"></script>
 </body>
 </html>

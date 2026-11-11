@@ -19,7 +19,7 @@
     box-sizing: inherit;
 }
 
-/* Boksen omkring loginformularen og demo-loginoplysningerne. */
+/* Boksen omkring loginformularen. */
 .login-page main {
     width: 100%;
     max-width: 460px;
@@ -108,33 +108,6 @@
     display: none;
 }
 
-/* Den lysegrå boks med demo-loginoplysningerne. */
-.login-page section {
-    margin-top: 24px;
-    padding: 16px;
-    border-radius: 8px;
-    background-color: #f4f6f8;
-}
-
-/* Overskriften "Demo-login". */
-.login-page section h2 {
-    margin-bottom: 14px;
-    font-size: 1.2rem;
-}
-
-/* Overskrifterne for demo-kontiene. */
-.login-page section h3 {
-    margin: 14px 0 4px;
-    color: #1f6feb;
-    font-size: 1rem;
-}
-
-/* Teksten med demo-kontienes loginoplysninger. */
-.login-page section p {
-    margin: 0;
-    line-height: 1.5;
-}
-
 /* Tilpasninger til skærme, der er højst 520 px brede. */
 @media (max-width: 520px) {
     .login-page {
@@ -180,6 +153,16 @@
 .meld-symptomer-page nav button:hover {
     background-color: white;
     color: #1f6feb;
+}
+
+.meld-symptomer-page nav #currentUser {
+    margin-left: auto;
+    align-self: center;
+    color: white;
+}
+
+.meld-symptomer-page #authMessage:empty {
+    display: none;
 }
 
 /* Centrerer indholdet */

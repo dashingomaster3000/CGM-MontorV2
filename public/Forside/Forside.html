@@ -14,6 +14,8 @@
     <header class="topbar">
         <h1>Diabeto</h1>
         <!-- Disse knapper skifter side via funktioner i Forside.js. -->
+        <button id="PatientsKnap" type="button">Patients</button>
+        <span id="currentUser"></span>
         <button id="Loginknap" type="button">Log out</button>
         <button id="Historyknap" type="button">History</button>
         <button id="MeldSymptomerKnap" type="button">Report symptoms</button>
@@ -21,6 +23,7 @@
 
     <!-- Dashboardets hovedindhold, centreret under topbjælken. -->
     <main class="dashboard">
+        <p id="authMessage" role="alert"></p>
         <h2>Good day</h2>
         <!-- Knappen åbner filvælgeren, så man kan importere glukosedata. -->
         <div class="import-controls">
@@ -72,6 +75,7 @@
         </section>
     </main>
     <!-- Indlæser scriptet, der læser data og opdaterer dashboardet. -->
+    <script src="../Login/Auth.js"></script>
     <script src="Forside.js"></script>
 </body>
 </html>

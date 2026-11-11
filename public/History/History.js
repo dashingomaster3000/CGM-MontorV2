@@ -239,6 +239,9 @@ async function loadData() {
     }
 }
 
-// Start siden ved at hente alt data
-loadData();
-loadSymptoms();
+// Hent kun patientdata, når serveren har bekræftet login-sessionen.
+window.visLogin().then((authenticated) => {
+    if (!authenticated) return;
+    loadData();
+    loadSymptoms();
+});

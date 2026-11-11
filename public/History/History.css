@@ -16,17 +16,41 @@ nav {
 }
 
 /* Links i menulinjen er hvide uden understregning. */
-nav a {
+nav a,
+nav button {
     color: white;
     text-decoration: none;
     padding: 6px 12px;
     border-radius: 6px;
 }
 
+nav button {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+nav a:hover,
+nav button:hover,
+nav button:focus-visible {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
 /* Markerer linket til den side, du er på. */
 nav a.active {
     background-color: white;
     color: #1f6feb;
+}
+
+nav #currentUser {
+    margin-left: auto;
+    align-self: center;
+    color: white;
+}
+
+#authMessage:empty {
+    display: none;
 }
 
 /* Centrerer sidens indhold og giver luft rundt. */

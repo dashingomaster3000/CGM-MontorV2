@@ -12,11 +12,14 @@
 
 <nav>
     <button id="ForsideKnap">Dashboard</button>
-    <button id="Loginknap">Log out</button>
+    <button id="PatientsKnap">Patients</button>
     <button id="Historyknap">History</button>
+    <span id="currentUser"></span>
+    <button id="Loginknap">Log out</button>
 </nav>
 
 <main>
+    <p id="authMessage" role="alert"></p>
     <div class="kort">
         <h1>Report symptoms</h1>
         <p>Here you can report your symptoms:</p>
@@ -41,6 +44,7 @@
     </div>
 </main>
 
+<script src="../Login/Auth.js"></script>
 <script src="MeldSymptomer.js"></script>
 </body>
 </html>
