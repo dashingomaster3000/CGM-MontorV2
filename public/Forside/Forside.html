@@ -47,7 +47,12 @@
             <h2 id="todayHeading">Glucose today</h2>
             <div class="chart-wrap">
                 <!-- JavaScript tegner grafens linje og målepunkter i denne SVG. -->
-                <svg id="glucoseChart" role="img" aria-label="Glucose readings chart" viewBox="0 0 760 250"></svg>
+                <svg id="glucoseChart" role="img" aria-label="Glucose readings chart" viewBox="0 0 760 280"></svg>
+            </div>
+            <!-- Forklarer farverne for glukoseområderne i grafen. -->
+            <div class="chart-legend" aria-label="Glucose range legend">
+                <span><i class="legend-swatch optimal" aria-hidden="true"></i>Optimal glucose</span>
+                <span><i class="legend-swatch dangerous" aria-hidden="true"></i>Dangerous glucose</span>
             </div>
             <!-- Tallene her beregnes ud fra de indlæste målinger. -->
             <div class="summary" aria-label="Glucose summary">

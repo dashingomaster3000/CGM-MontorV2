@@ -132,11 +132,11 @@ button:focus-visible {
     overflow-x: auto;
 }
 
-/* Tilpas SVG-grafens størrelse, men behold en læsbar minimumsbredde. */
+/* Behold nok bredde til at vise alle timeetiketter uden overlap. */
 #glucoseChart {
     display: block;
     width: 100%;
-    min-width: 520px;
+    min-width: 760px;
     height: auto;
 }
 
@@ -176,6 +176,42 @@ button:focus-visible {
 .chart-label {
     fill: #687789;
     font-size: 12px;
+}
+
+/* Vis forklaringerne til grafens farver på en række med lidt afstand. */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-top: 8px;
+}
+
+/* Placér en lille farveboks før hver forklaring i grafens signatur. */
+.chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #536273;
+    font-size: 13px;
+}
+
+/* Gør farvefeltet til en lille firkant med afrundede hjørner. */
+.legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+/* Grøn signatur viser grafens optimale område. */
+.legend-swatch.optimal {
+    background: #eaf5ee;
+    border: 1px solid #b8d9c2;
+}
+
+/* Rød signatur viser grafens farlige områder. */
+.legend-swatch.dangerous {
+    background: #fce8e6;
+    border: 1px solid #f2b8b5;
 }
 
 /* Vis gennemsnit, tid i målområdet og antal målinger i kolonner. */

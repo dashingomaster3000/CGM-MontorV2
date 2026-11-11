@@ -110,19 +110,28 @@ function renderChart(readings) {
     if (readings.length === 0) return;
 
     // Angiv grafens størrelse og pladsen til etiketter.
-    const width = 760;
-    const height = 250;
+    const height = 280;
     const left = 48;
     const right = 16;
     const top = 18;
-    const bottom = 32;
+    const bottom = 60;
     const minValue = 0;
+    // Udvid grafens bredde, så der er plads til en synlig etiket for hver time.
+    const firstHour = new Date(readings[0].timestamp);
+    firstHour.setMinutes(0, 0, 0);
+    const lastHour = new Date(readings[readings.length - 1].timestamp);
+    lastHour.setMinutes(0, 0, 0);
+    const axisEnd = new Date(lastHour);
+    axisEnd.setHours(axisEnd.getHours() + 1);
+    const axisStart = new Date(firstHour);
+    const hourCount = Math.max(1, Math.ceil((axisEnd - firstHour) / (60 * 60 * 1000)));
+    const width = Math.max(760, left + right + hourCount * 56);
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.style.width = `${width}px`;
     // Udvid skalaen, hvis en måling ligger over grafens normale område.
     const maxValue = Math.max(14, Math.ceil(Math.max(...readings.map(reading => reading.glucose)) / 2) * 2);
-    // Fordel målingerne jævnt på grafen; centrér en enkelt måling.
-    const x = index => readings.length === 1
-        ? (left + width - right) / 2
-        : left + index / (readings.length - 1) * (width - left - right);
+    // Placér målingerne efter deres tidspunkter på grafens tidsakse.
+    const x = index => xForTime(readings[index].timestamp);
     // Omdan glukoseværdier til lodrette placeringer på grafen.
     const y = value => top + (maxValue - value) / (maxValue - minValue) * (height - top - bottom);
 
@@ -138,7 +147,7 @@ function renderChart(readings) {
     }));
 
     // Tilføj vandrette hjælpelinjer og glukoseværdier.
-    [4, 7, 10, 13].forEach(value => {
+    [0,4, 7, 10, 13].forEach(value => {
         svg.append(svgElement("line", {
             x1: left, y1: y(value), x2: width - right, y2: y(value), class: "chart-grid"
         }));
@@ -162,14 +171,25 @@ function renderChart(readings) {
         svg.append(point);
     });
 
-    // Skriv tidspunkterne for den første og sidste måling på grafen.
-    const firstLabel = svgElement("text", { x: left, y: height - 6, class: "chart-label" });
-    firstLabel.textContent = readings[0].timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const lastLabel = svgElement("text", {
-        x: width - right, y: height - 6, "text-anchor": "end", class: "chart-label"
-    });
-    lastLabel.textContent = readings[readings.length - 1].timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    svg.append(firstLabel, lastLabel);
+    // Tilføj en etiket for hver time, og lad grafen rulle på smalle skærme.
+    // Tegn hver timeetiket fast på x-aksen, fra første til sidste måling.
+    for (let hour = new Date(firstHour); hour <= lastHour; hour.setHours(hour.getHours() + 1)) {
+        const hourX = xForTime(hour);
+        svg.append(svgElement("line", {
+            x1: hourX, y1: height - bottom, x2: hourX, y2: height - bottom + 5, class: "chart-grid"
+        }));
+        const label = svgElement("text", {
+            x: hourX, y: height - 8, "text-anchor": "middle", class: "chart-label"
+        });
+        label.textContent = `${String(hour.getHours()).padStart(2, "0")}:00`;
+        svg.append(label);
+    }
+
+    function xForTime(time) {
+        const start = axisStart.getTime();
+        const duration = axisEnd.getTime() - start;
+        return left + (time.getTime() - start) / duration * (width - left - right);
+    }
 }
 
 // Saml nærliggende lave målinger i hændelser, og vis de nyeste.
