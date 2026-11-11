@@ -3,17 +3,9 @@ const dataStatus = document.getElementById("dataStatus");
 const dataFile = document.getElementById("dataFile");
 
 // Log brugeren ud ved at rydde sessionsdata og åbne login-siden.
-document.getElementById("Loginknap").onclick = function() {
+document.getElementById("logoutButton").onclick = function() {
     sessionStorage.clear();
     window.location.href = "../index.html";
-};
-// Åbn historiksiden, når brugeren vælger knappen.
-document.getElementById("Historyknap").onclick = function() {
-    window.location.href = "../History/History.html";
-};
-// Åbn siden til symptomrapportering, når brugeren vælger knappen.
-document.getElementById("MeldSymptomerKnap").onclick = function() {
-    window.location.href = "../Feedback/MeldSymptomer.html";
 };
 
 // Åbn den skjulte filvælger, når brugeren klikker på importknappen.

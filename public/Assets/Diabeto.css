@@ -158,28 +158,41 @@
     color: #202124;
 }
 
-/* Den blå taskbar */
-.meld-symptomer-page nav {
-    background-color: #1f6feb;
+/* Den blå navigationslinje. */
+.meld-symptomer-page .topbar {
     padding: 12px;
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 20px;
+    background-color: #1f6feb;
 }
 
-/* Knapperne i taskbaren */
-.meld-symptomer-page nav button {
-    background: none;
-    border: none;
+.meld-symptomer-page .brand {
+    margin-right: auto;
     color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
 }
 
-.meld-symptomer-page nav button:hover {
-    background-color: white;
+.meld-symptomer-page .topbar a,
+.meld-symptomer-page .topbar button {
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font: inherit;
+}
+
+.meld-symptomer-page .topbar button {
+    background: transparent;
+    cursor: pointer;
+}
+
+.meld-symptomer-page .topbar a.active {
     color: #1f6feb;
+    background-color: white;
 }
 
 /* Centrerer indholdet */
@@ -255,4 +268,10 @@
     text-align: left;
     padding: 8px;
     border-bottom: 1px solid #dddddd;
+}
+
+@media (max-width: 600px) {
+    .meld-symptomer-page .topbar {
+        gap: 8px;
+    }
 }

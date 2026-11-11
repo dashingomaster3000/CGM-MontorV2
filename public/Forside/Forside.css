@@ -11,48 +11,54 @@ body {
     background: #f4f6f8;
 }
 
-/* Lav en blå bjælke til sidens navn og navigationsknapper. */
+/* Lav den blå navigationslinje. */
 .topbar {
-    min-height: 56px;
-    padding: 0 max(20px, calc((100% - 860px) / 2));
+    padding: 12px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 20px;
     background: #1f6feb;
 }
 
-/* Hold sidens navn til venstre og navigationsknapperne til højre. */
-.topbar h1 {
-    margin: 0 auto 0 0;
+/* Hold Diabeto til venstre for navigationslinksene. */
+.brand {
+    margin-right: auto;
     color: white;
-    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
 }
 
-/* Giv alle knapper ens form, afstand og musemarkør. */
-button {
-    padding: 8px 12px;
-    border: 0;
-    border-radius: 6px;
+.topbar a,
+.topbar button {
+    padding: 6px 12px;
     color: white;
-    background: transparent;
+    text-decoration: none;
+    border-radius: 6px;
     font: inherit;
+}
+
+.topbar button {
+    border: 0;
+    background: transparent;
     cursor: pointer;
 }
 
-/* Fremhæv navigationsknapper ved musemarkør eller tastaturfokus. */
-button:hover,
-button:focus-visible {
-    background: rgba(255, 255, 255, 0.2);
+.topbar a.active {
+    color: #1f6feb;
+    background: white;
 }
 
 /* Gør importknappen større og tydeligere end navigationsknapperne. */
 #importButton {
     padding: 12px 20px;
+    border: 0;
+    border-radius: 6px;
     color: white;
     background: #1f6feb;
     font-size: 17px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 /* Gør importknappen mørkere ved musemarkør eller tastaturfokus. */
@@ -284,14 +290,8 @@ button:focus-visible {
 
 /* Tilpas afstande og kort på mindre mobilskærme. */
 @media (max-width: 600px) {
-    /* Lad navigationen ombryde, og hold den tæt på skærmens kanter. */
     .topbar {
-        padding: 8px 12px;
-    }
-
-    /* Giv sidens navn en hel række over navigationsknapperne. */
-    .topbar h1 {
-        flex-basis: 100%;
+        gap: 8px;
     }
 
     /* Brug mindre sidemargener, så dashboardet passer på mobilen. */

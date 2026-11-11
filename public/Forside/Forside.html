@@ -11,13 +11,13 @@
 </head>
 <body>
     <!-- Topbjælken indeholder knapperne til sidens navigation. -->
-    <header class="topbar">
-        <h1>Diabeto</h1>
-        <!-- Disse knapper skifter side via funktioner i Forside.js. -->
-        <button id="Loginknap" type="button">Log out</button>
-        <button id="Historyknap" type="button">History</button>
-        <button id="MeldSymptomerKnap" type="button">Report symptoms</button>
-    </header>
+    <nav class="topbar" aria-label="Main navigation">
+        <a class="brand" href="Forside.html">Diabeto</a>
+        <a href="../Feedback/MeldSymptomer.html">Report symptoms</a>
+        <a href="Forside.html" class="active" aria-current="page">Dashboard</a>
+        <a href="../History/History.html">History</a>
+        <button id="logoutButton" type="button">Log out</button>
+    </nav>
 
     <!-- Dashboardets hovedindhold, centreret under topbjælken. -->
     <main class="dashboard">
