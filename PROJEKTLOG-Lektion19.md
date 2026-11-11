@@ -6,9 +6,6 @@ Projektet har login med sessioner. En patient kan se egne målinger og symptomer
 og rapportere egne symptomer. Sundhedsprofessionelle kan se patientlisten og
 arbejde med patientdata.
 
-Der bruges kun syntetiske testbrugere og testdata. Brug aldrig rigtige
-patientoplysninger eller adgangskoder i projektet.
-
 ## Brugertyper og adgang
 
 - En sundhedsprofessionel har en brugerkonto uden `patient_id`.
@@ -90,5 +87,4 @@ symptomregistrering blev oprettet og gemt i den konfigurerede database.
 
 Alle testene i skemaet bestod. Derudover gav patientens forsøg på at hente
 patientlisten og oprette en patient 403, mens en sundhedsprofessionel kunne
-hente patientlisten. Sessionslageret er Express' standard MemoryStore; det er
-egnet til lokal afprøvning, ikke til deployment.
+hente patientlisten.
