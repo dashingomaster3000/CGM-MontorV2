@@ -151,6 +151,11 @@ button:focus-visible {
     fill: #eaf5ee;
 }
 
+/* Farvelæg områderne under og over målområdet med en diskret rød tone. */
+.out-of-range-band {
+    fill: #fce8e6;
+}
+
 /* Stil linjen, der forbinder glukosemålingerne. */
 .chart-line {
     fill: none;

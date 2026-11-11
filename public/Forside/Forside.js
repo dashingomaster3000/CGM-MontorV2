@@ -126,9 +126,15 @@ function renderChart(readings) {
     // Omdan glukoseværdier til lodrette placeringer på grafen.
     const y = value => top + (maxValue - value) / (maxValue - minValue) * (height - top - bottom);
 
-    // Tegn det farvede målområde bag grafens data.
+    // Tegn rød zone under målområdet, grøn målzone og rød zone over målområdet.
     svg.append(svgElement("rect", {
-        x: left, y: y(10), width: width - left - right, height: y(3.9) - y(10), class: "range-band"
+        x: left, y: y(4), width: width - left - right, height: y(0) - y(4), class: "out-of-range-band"
+    }));
+    svg.append(svgElement("rect", {
+        x: left, y: y(10), width: width - left - right, height: y(4) - y(10), class: "range-band"
+    }));
+    svg.append(svgElement("rect", {
+        x: left, y: y(13), width: width - left - right, height: y(10) - y(13), class: "out-of-range-band"
     }));
 
     // Tilføj vandrette hjælpelinjer og glukoseværdier.
