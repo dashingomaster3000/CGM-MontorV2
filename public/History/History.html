@@ -16,24 +16,13 @@
 <body>
 
 
-    <!-- Menu med links til de andre sider -->
-    <nav>
-        <!-- Vises kun for sundhedsprofessionelle, se scriptet nedenfor -->
-        <a href="../Patients/Patients.html" id="patientsLink" hidden>Patients</a>
-        <a href="../Forside/Forside.html" id="dashboardLink">Dashboard</a>
-        <!-- "active" markerer den side, du er på -->
-        <a href="History.html" class="active">History</a>
-        <a href="../Feedback/MeldSymptomer.html" id="symptomsLink">Report symptoms</a>
+    <nav class="topbar" aria-label="Main navigation">
+        <a class="brand" href="../Forside/Forside.html">Diabeto</a>
+        <a href="../Feedback/MeldSymptomer.html">Report symptoms</a>
+        <a href="../Forside/Forside.html">Dashboard</a>
+        <a href="History.html" class="active" aria-current="page">History</a>
+        <button id="logoutButton" type="button">Log out</button>
     </nav>
-
-    <!-- Sundhedsprofessionelle ser Patients i stedet for Dashboard -->
-    <script>
-        if (sessionStorage.getItem("diabetoRole") === "sundhedsprofessionel") {
-            document.getElementById("patientsLink").hidden = false;
-            document.getElementById("dashboardLink").hidden = true;
-            document.getElementById("symptomsLink").hidden = true;
-        }
-    </script>
 
     <!-- Alt indholdet under menuen på siden -->
     <main>

@@ -25,6 +25,11 @@ const tableBody = document.getElementById("tableBody");
 const measurementBody = document.getElementById("measurementBody");
 const symptomList = document.getElementById("symptomList");
 
+document.getElementById("logoutButton").addEventListener("click", function () {
+    sessionStorage.clear();
+    window.location.href = "../index.html";
+});
+
 // Beregn gennemsnittet af en liste tal
 function getAverage(values) {
     let sum = 0;

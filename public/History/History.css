@@ -7,26 +7,41 @@ body {
     background-color: #f4f6f8;
 }
 
-/* Den blå menulinje med links på række. */
-nav {
-    background-color: #1f6feb;
+/* Den blå navigationslinje. */
+.topbar {
     padding: 12px;
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 20px;
+    background-color: #1f6feb;
 }
 
-/* Links i menulinjen er hvide uden understregning. */
-nav a {
+.brand {
+    margin-right: auto;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.topbar a,
+.topbar button {
+    padding: 6px 12px;
     color: white;
     text-decoration: none;
-    padding: 6px 12px;
     border-radius: 6px;
+    font: inherit;
 }
 
-/* Markerer linket til den side, du er på. */
-nav a.active {
-    background-color: white;
+.topbar button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.topbar a.active {
     color: #1f6feb;
+    background: white;
 }
 
 /* Centrerer sidens indhold og giver luft rundt. */
@@ -92,4 +107,10 @@ th, td {
 /* Dage med lavt blodsukker bliver røde. */
 tr.low {
     background-color: #ffdddd;
+}
+
+@media (max-width: 600px) {
+    .topbar {
+        gap: 8px;
+    }
 }
