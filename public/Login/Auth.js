@@ -38,7 +38,7 @@ async function visLogin() {
         currentUser.textContent = bruger.brugernavn;
     }
 
-    return true;
+    return bruger;
 }
 
 async function logUd() {

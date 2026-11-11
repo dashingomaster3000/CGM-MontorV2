@@ -10,8 +10,17 @@ CREATE TABLE patients (
 CREATE TABLE brugere (
   id SERIAL PRIMARY KEY,
   brugernavn VARCHAR(254) NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL
+  password_hash TEXT NOT NULL,
+  patient_id INTEGER REFERENCES patients (id)
 );
+
+-- Tillad flere sundhedsprofessionelle uden patient_id, men kun én konto pr. patient.
+ALTER TABLE brugere
+  ADD COLUMN IF NOT EXISTS patient_id INTEGER REFERENCES patients (id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS brugere_patient_id_unique
+  ON brugere (patient_id)
+  WHERE patient_id IS NOT NULL;
 
 CREATE TABLE maalinger (
   id SERIAL PRIMARY KEY,

@@ -1,4 +1,4 @@
-### Patientlisten er offentlig — forventet 200
+### Patientlisten uden login — forventet 401
 GET http://localhost:3000/api/patients
 
 ### Opret patient uden login — forventet 401
@@ -12,6 +12,9 @@ POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
 {"patient_id":1,"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
+
+### Alle symptomer uden login — forventet 401
+GET http://localhost:3000/api/symptomer
 
 ### Login uden password — forventet 400
 POST http://localhost:3000/api/login
@@ -44,7 +47,10 @@ Content-Type: application/json
 ### Opret patient uden body — forventet 400 efter login
 POST http://localhost:3000/api/patients
 
-### Alle symptomer — forventet 200
+### Patientliste som sundhedsprofessionel — forventet 200
+GET http://localhost:3000/api/patients
+
+### Alle symptomer som sundhedsprofessionel — forventet 200
 GET http://localhost:3000/api/symptomer
 
 ### Meld symptom for patient 1 — forventet 201 efter login
@@ -85,6 +91,49 @@ POST http://localhost:3000/api/symptomer
 Content-Type: application/json
 
 {"patient_id":1,"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
+
+### Login som syntetisk patient — forventet 200 og role "patient"
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{"brugernavn":"nancy.berggren@diabeto.test","password":"DiabetoTest2026!"}
+
+### Patientens egen session indeholder patient_id — forventet 200
+GET http://localhost:3000/api/me
+
+# Sæt værdierne ud fra patient_id i /api/me og en anden testpatients id.
+@patientId = 1
+@otherPatientId = 2
+
+### Patient kan ikke hente patientlisten — forventet 403
+GET http://localhost:3000/api/patients
+
+### Patient kan se egne målinger — forventet 200
+GET http://localhost:3000/api/patients/{{patientId}}/maalinger
+
+### Patient kan ikke se en anden patients målinger — forventet 403
+GET http://localhost:3000/api/patients/{{otherPatientId}}/maalinger
+
+### Patient kan melde eget symptom — forventet 201
+POST http://localhost:3000/api/symptomer
+Content-Type: application/json
+
+{"patient_id":{{patientId}},"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
+
+### Patient kan ikke melde symptom for en anden patient — forventet 403
+POST http://localhost:3000/api/symptomer
+Content-Type: application/json
+
+{"patient_id":{{otherPatientId}},"tidspunkt":"2026-11-04 08:30","beskrivelse":"Dizzy"}
+
+### Patient kan ikke oprette patienter — forventet 403
+POST http://localhost:3000/api/patients
+Content-Type: application/json
+
+{"cpr":"0411269993","navn":"Synthetic Test Patient"}
+
+### Patient logger ud — forventet 204
+POST http://localhost:3000/api/logout
 
 ### Adresse der ikke findes — forventet 404
 GET http://localhost:3000/findesikke

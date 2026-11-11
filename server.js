@@ -72,6 +72,8 @@ app.post("/api/login", async (req, res) => {
       req.session.bruger = {
         id: bruger.id,
         brugernavn: bruger.brugernavn,
+        patient_id: bruger.patient_id,
+        role: bruger.patient_id === null ? "professional" : "patient",
       };
 
       req.session.save((saveError) => {
@@ -117,8 +119,35 @@ function krævLogin(req, res, next) {
   next();
 }
 
-// Returnerer alle patienter fra databasen, sorteret efter navn.
-app.get("/api/patients", async (req, res) => {
+function krævSundhedsprofessionel(req, res, next) {
+  if (!req.session.bruger) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+  if (req.session.bruger.patient_id != null) {
+    return res.status(403).json({ error: "Healthcare professional access required" });
+  }
+  next();
+}
+
+function krævPatientAdgang(req, res, next) {
+  if (!req.session.bruger) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+  const patientId = Number(req.params.id);
+  if (!Number.isInteger(patientId)) {
+    return res.status(400).json({ error: "Invalid patient id" });
+  }
+  if (
+    req.session.bruger.patient_id != null &&
+    patientId !== req.session.bruger.patient_id
+  ) {
+    return res.status(403).json({ error: "You can only access your own patient data" });
+  }
+  next();
+}
+
+// Returnerer patientlisten til sundhedsprofessionelle.
+app.get("/api/patients", krævSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await patients.hentPatienter();
     res.json(liste);
@@ -129,11 +158,7 @@ app.get("/api/patients", async (req, res) => {
 });
 
 // Returnerer én patients målinger, sorteret efter tidspunkt.
-app.get("/api/patients/:id/maalinger", async (req, res) => {
-  // Tjekker at patient-id er et helt tal, fx 1 og ikke "abc"
-  if (!Number.isInteger(Number(req.params.id))) {
-    return res.status(400).json({ error: "Invalid patient id" });
-  }
+app.get("/api/patients/:id/maalinger", krævPatientAdgang, async (req, res) => {
   try {
     const maalinger = await patients.hentMaalinger(req.params.id);
     res.json(maalinger);
@@ -144,11 +169,7 @@ app.get("/api/patients/:id/maalinger", async (req, res) => {
 });
 
 // Returnerer én patients symptomer, sorteret efter tidspunkt.
-app.get("/api/patients/:id/symptomer", async (req, res) => {
-  // Tjekker at patient-id er et helt tal, fx 1 og ikke "abc"
-  if (!Number.isInteger(Number(req.params.id))) {
-    return res.status(400).json({ error: "Invalid patient id" });
-  }
+app.get("/api/patients/:id/symptomer", krævPatientAdgang, async (req, res) => {
   try {
     const liste = await symptomer.hentSymptomer(req.params.id);
     res.status(200).json(liste);
@@ -158,8 +179,8 @@ app.get("/api/patients/:id/symptomer", async (req, res) => {
   }
 });
 
-// Returnerer én patient ud fra CPR-nummeret i URL'en.
-app.get("/api/patients/:cpr", async (req, res) => {
+// Returnerer én patient ud fra CPR-nummeret til sundhedsprofessionelle.
+app.get("/api/patients/:cpr", krævSundhedsprofessionel, async (req, res) => {
   try {
     const patient = await patients.hentPatientMedCpr(req.params.cpr);
     if (!patient) {
@@ -173,7 +194,7 @@ app.get("/api/patients/:cpr", async (req, res) => {
 });
 
 // Gemmer en ny patient i tabellen patients.
-app.post("/api/patients", krævLogin, async (req, res) => {
+app.post("/api/patients", krævSundhedsprofessionel, async (req, res) => {
   const { cpr, navn } = req.body ?? {};
   if (!cpr || !navn) {
     return res.status(400).json({ error: "cpr and name are required" });
@@ -188,7 +209,7 @@ app.post("/api/patients", krævLogin, async (req, res) => {
 });
 
 // Returnerer alle symptomer fra tabellen symptomer, sorteret efter id.
-app.get("/api/symptomer", async (req, res) => {
+app.get("/api/symptomer", krævSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await symptomer.hentAlleSymptomer();
     res.status(200).json(liste);
@@ -210,6 +231,12 @@ app.post("/api/symptomer", krævLogin, async (req, res) => {
   // Tjekker at patient_id er et helt tal, fx 1 og ikke "abc"
   if (!Number.isInteger(Number(patient_id))) {
     return res.status(400).json({ error: "Invalid patient id" });
+  }
+  if (
+    req.session.bruger.patient_id != null &&
+    Number(patient_id) !== req.session.bruger.patient_id
+  ) {
+    return res.status(403).json({ error: "You can only report symptoms for your own patient account" });
   }
 
   // Tjekker formatet: præcis "ÅÅÅÅ-MM-DD TT:MM", fx "2026-11-10 14:30". Stopper fx år 00000.

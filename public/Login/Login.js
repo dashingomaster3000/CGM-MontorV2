@@ -24,7 +24,12 @@ loginForm.addEventListener("submit", async function (event) {
             return;
         }
 
-        window.location.replace("/Patients/Patients.html");
+        const bruger = await response.json();
+        if (bruger.role === "patient") {
+            window.location.replace("/Forside/Forside.html");
+        } else {
+            window.location.replace("/Patients/Patients.html");
+        }
     } catch (error) {
         console.error("Could not log in:", error);
         loginMessage.textContent = "Could not connect to the server. Please try again.";

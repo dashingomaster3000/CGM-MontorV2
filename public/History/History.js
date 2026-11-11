@@ -5,7 +5,7 @@ const highLimit = 10.0;
 // Læs patientnummer fra URL, fx ?patient=1
 // Uden nummer i URL vises patient 1
 const urlParams = new URLSearchParams(window.location.search);
-const patientId = Number(urlParams.get("patient")) || 1;
+let patientId = Number(urlParams.get("patient")) || 1;
 
 // Liste over dage med deres målinger
 // Fyldes ud, når serverdata er hentet
@@ -224,11 +224,17 @@ function showPatientName(patientList) {
 }
 
 // Hent patient og målinger, vis 7 dage
-async function loadData() {
+async function loadData(bruger) {
     try {
-        const patientList = await getJson("/api/patients");
+        const patientList = bruger.patient_id == null
+            ? await getJson("/api/patients")
+            : null;
         const maalinger = await getJson("/api/patients/" + patientId + "/maalinger");
-        showPatientName(patientList);
+        if (patientList) {
+            showPatientName(patientList);
+        } else {
+            patientName.textContent = "Your history";
+        }
         days = groupByDate(maalinger);
         selectDays(7);
     } catch (error) {
@@ -240,8 +246,12 @@ async function loadData() {
 }
 
 // Hent kun patientdata, når serveren har bekræftet login-sessionen.
-window.visLogin().then((authenticated) => {
-    if (!authenticated) return;
-    loadData();
+window.visLogin().then((bruger) => {
+    if (!bruger) return;
+    if (bruger.patient_id != null) {
+        patientId = bruger.patient_id;
+        document.getElementById("patientsLink").hidden = true;
+    }
+    loadData(bruger);
     loadSymptoms();
 });

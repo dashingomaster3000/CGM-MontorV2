@@ -247,11 +247,15 @@ function setStatus(message, isError = false) {
 
 // Læs patientnummer fra URL, fx ?patient=1. Uden nummer vises patient 1 (samme som History).
 const urlParams = new URLSearchParams(window.location.search);
-const patientId = Number(urlParams.get("patient")) || 1;
+let patientId = Number(urlParams.get("patient")) || 1;
 
 // Hent kun patientdata, når serveren har bekræftet login-sessionen.
-window.visLogin().then((authenticated) => {
-    if (!authenticated) return;
+window.visLogin().then((bruger) => {
+    if (!bruger) return;
+    if (bruger.patient_id != null) {
+        patientId = bruger.patient_id;
+        document.getElementById("PatientsKnap").hidden = true;
+    }
 
     return fetch("/api/patients/" + patientId + "/maalinger")
     .then(response => {
@@ -280,13 +284,16 @@ window.visLogin().then((authenticated) => {
     // Vis fejl ved netværk eller databasen i statusfeltet.
     .catch(error => setStatus(error.message, true))
     // Når databasen er færdig, hentes eksempelfilen sample-glucose.json.
-    .then(() => fetch("sample-glucose.json"))
-    .then(response => response.json())
-    .then(data => {
-        // Grafen "Glucose today" tegnes kun ud fra eksempelfilens målinger.
-        const readings = parseReadings(data);
-        // Find dagen for den sidste måling i filen, og vis kun den dags målinger.
-        const day = readings[readings.length - 1].timestamp.toDateString();
-        renderChart(readings.filter(reading => reading.timestamp.toDateString() === day));
+    .then(() => {
+        if (bruger.patient_id != null) return;
+        return fetch("sample-glucose.json")
+            .then(response => response.json())
+            .then(data => {
+                // Grafen "Glucose today" tegnes kun ud fra eksempelfilens målinger.
+                const readings = parseReadings(data);
+                // Find dagen for den sidste måling i filen, og vis kun den dags målinger.
+                const day = readings[readings.length - 1].timestamp.toDateString();
+                renderChart(readings.filter(reading => reading.timestamp.toDateString() === day));
+            });
     });
 });

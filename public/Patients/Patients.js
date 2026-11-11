@@ -1,6 +1,8 @@
 // Elementer på siden, vi skal bruge
 const patientTable = document.getElementById("patientTable");
 const message = document.getElementById("message");
+const patientSearch = document.getElementById("patientSearch");
+let patients = [];
 
 // Vis kun de første 6 cifre af CPR
 function hideCpr(cpr) {
@@ -30,7 +32,25 @@ function addHistoryButton(row, id) {
 // Lav én række i tabellen pr. patient
 function showPatients(patientList) {
     patientTable.innerHTML = "";
-    for (const patient of patientList) {
+    const query = patientSearch.value.trim().toLocaleLowerCase();
+    const cprQuery = query.replace(/\D/g, "");
+    const matchingPatients = patientList.filter(function (patient) {
+        return !query ||
+            patient.navn.toLocaleLowerCase().includes(query) ||
+            (cprQuery && patient.cpr.replace(/\D/g, "").includes(cprQuery));
+    });
+
+    if (matchingPatients.length === 0) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 3;
+        cell.textContent = "No matching patients.";
+        row.appendChild(cell);
+        patientTable.appendChild(row);
+        return;
+    }
+
+    for (const patient of matchingPatients) {
         const row = document.createElement("tr");
         addCell(row, patient.navn);
         addCell(row, hideCpr(patient.cpr));
@@ -47,14 +67,23 @@ async function loadPatients() {
             throw new Error("Server error");
         }
         const patientList = await response.json();
-        showPatients(patientList);
+        patients = patientList;
+        showPatients(patients);
     } catch (error) {
         message.textContent = "Could not connect to the server.";
     }
 }
 
+patientSearch.addEventListener("input", function () {
+    showPatients(patients);
+});
+
 // Hent kun patientlisten, når serveren har bekræftet login-sessionen.
-window.visLogin().then((authenticated) => {
-    if (!authenticated) return;
+window.visLogin().then((bruger) => {
+    if (!bruger) return;
+    if (bruger.patient_id != null) {
+        window.location.replace("/Forside/Forside.html");
+        return;
+    }
     loadPatients();
 });

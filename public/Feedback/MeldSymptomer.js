@@ -6,7 +6,7 @@ const feedback = document.getElementById("feedback");
 // Læs patientnummer fra URL, fx ?patient=1 (samme som History)
 // Uden nummer i URL bruges patient 1
 const urlParams = new URLSearchParams(window.location.search);
-const patientId = Number(urlParams.get("patient")) || 1;
+let patientId = Number(urlParams.get("patient")) || 1;
 
 // Laver en dato om til tekst som "2026-11-10", som datofeltet bruger
 function lavDatoTekst(dato) {
@@ -126,6 +126,10 @@ document.getElementById("PatientsKnap").onclick = function () {
 };
 
 form.hidden = true;
-window.visLogin().then((authenticated) => {
-    form.hidden = !authenticated;
+window.visLogin().then((bruger) => {
+    form.hidden = !bruger;
+    if (bruger && bruger.patient_id != null) {
+        patientId = bruger.patient_id;
+        document.getElementById("PatientsKnap").hidden = true;
+    }
 });

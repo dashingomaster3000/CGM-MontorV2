@@ -2,7 +2,7 @@
 -- Køres manuelt i Neons SQL Editor, efter schema.sql.
 -- Kan køres flere gange: ON CONFLICT DO NOTHING springer rækker over, der allerede findes.
 
--- Fem testpatienter. De får id 1-5 i den rækkefølge, de står her.
+-- Fem syntetiske testpatienter.
 -- Findes CPR-nummeret allerede, indsættes patienten ikke igen.
 INSERT INTO patients (cpr, navn) VALUES
   ('2512489996', 'Nancy Ann Test Berggren'),
@@ -12,10 +12,32 @@ INSERT INTO patients (cpr, navn) VALUES
   ('3103979995', 'Anders Test Jensen')
 ON CONFLICT (cpr) DO NOTHING;
 
--- Én måling for patient 2, og fire målinger om dagen for patient 1
+-- Syntetiske patientkonti. Testadgangskoden er DiabetoTest2026! for alle fem.
+-- Hashen er lavet med bcryptjs; kontiene kobles via CPR, ikke antagne patient-id'er.
+INSERT INTO brugere (brugernavn, password_hash, patient_id)
+SELECT konto.brugernavn,
+       '$2b$10$7UqTPi0m92jrs9UQU8xwSu7i3aPJEYefJkQ6FHYbgQXMxD4tNG.7q',
+       patient.id
+FROM (VALUES
+  ('nancy.berggren@diabeto.test', '2512489996'),
+  ('max.berggren@diabeto.test', '0107729995'),
+  ('kirsten.berggren@diabeto.test', '2911829996'),
+  ('brita.berggren@diabeto.test', '1509819996'),
+  ('anders.jensen@diabeto.test', '3103979995')
+) AS konto(brugernavn, cpr)
+JOIN patients AS patient ON patient.cpr = konto.cpr
+ON CONFLICT (brugernavn)
+DO UPDATE SET
+  password_hash = EXCLUDED.password_hash,
+  patient_id = EXCLUDED.patient_id;
+
+-- Én måling for Max og fire målinger om dagen for Nancy
 -- fra 27/10 til 9/11 (14 dage, vises på History-siden).
+-- Patientnumrene i værdilisten oversættes til syntetiske CPR-numre nedenfor.
 -- Har patienten allerede en måling på samme tidspunkt, indsættes den ikke igen.
-INSERT INTO maalinger (patient_id, tidspunkt, glukose_mmol) VALUES
+INSERT INTO maalinger (patient_id, tidspunkt, glukose_mmol)
+SELECT patient.id, maaling.tidspunkt, maaling.glukose_mmol
+FROM (VALUES
   (2, '2026-11-03 08:00', 6.2),
 
   (1, '2026-10-27 06:00', 6.0),
@@ -87,4 +109,10 @@ INSERT INTO maalinger (patient_id, tidspunkt, glukose_mmol) VALUES
   (1, '2026-11-09 12:00', 6.6),
   (1, '2026-11-09 18:00', 8.4),
   (1, '2026-11-09 23:00', 5.2)
+) AS maaling(testpatient, tidspunkt, glukose_mmol)
+JOIN patients AS patient
+  ON patient.cpr = CASE maaling.testpatient
+    WHEN 1 THEN '2512489996'
+    WHEN 2 THEN '0107729995'
+  END
 ON CONFLICT (patient_id, tidspunkt) DO NOTHING;
