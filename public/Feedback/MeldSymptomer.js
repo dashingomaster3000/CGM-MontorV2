@@ -110,6 +110,23 @@ form.addEventListener("submit", async function (event) {
 });
 
 document.getElementById("logoutButton").onclick = function () {
+    navigator.sendBeacon("/api/logout"); // Lukker sessionen på serveren.
     sessionStorage.clear(); // Log ud: slet login-data og gå til login-siden.
     window.location.href = "../index.html";
 };
+
+// Menuens links beholder den valgte patient (?patient=), når man skifter side.
+document.querySelectorAll("nav a").forEach(function (link) {
+    link.search = window.location.search;
+});
+
+// Spørg serveren, hvem der er logget ind. Er det en sundhedsprofessionel,
+// vises "Patient list", så man kan gå tilbage og vælge en ny borger.
+fetch("/api/me")
+    .then(response => response.json())
+    .then(bruger => {
+        if (bruger.role === "professional") {
+            document.getElementById("patientListLink").hidden = false;
+        }
+    })
+    .catch(() => {}); // Ved fejl forbliver linket skjult.

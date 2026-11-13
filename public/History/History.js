@@ -26,9 +26,28 @@ const measurementBody = document.getElementById("measurementBody");
 const symptomList = document.getElementById("symptomList");
 
 document.getElementById("logoutButton").addEventListener("click", function () {
+    navigator.sendBeacon("/api/logout"); // Lukker sessionen på serveren.
     sessionStorage.clear();
     window.location.href = "../index.html";
 });
+
+// Menuens links beholder den valgte patient (?patient=), når man skifter side.
+document.querySelectorAll("nav a").forEach(function (link) {
+    link.search = window.location.search;
+});
+
+// Spørg serveren, hvem der er logget ind. Er det en sundhedsprofessionel,
+// vises "Patient list", så man kan gå tilbage og vælge en ny borger,
+// og "Report symptoms" skjules, da kun borgere melder symptomer.
+fetch("/api/me")
+    .then(response => response.json())
+    .then(bruger => {
+        if (bruger.role === "professional") {
+            document.getElementById("patientListLink").hidden = false;
+            document.getElementById("reportSymptomsLink").hidden = true;
+        }
+    })
+    .catch(() => {}); // Ved fejl forbliver linket skjult.
 
 // Beregn gennemsnittet af en liste tal
 function getAverage(values) {
@@ -231,9 +250,13 @@ function showPatientName(patientList) {
 // Hent patient og målinger, vis 7 dage
 async function loadData() {
     try {
-        const patientList = await getJson("/api/patients");
         const maalinger = await getJson("/api/patients/" + patientId + "/maalinger");
-        showPatientName(patientList);
+        // Kun sundhedsprofessionelle må hente patientlisten. En patient ser siden uden navn.
+        try {
+            showPatientName(await getJson("/api/patients"));
+        } catch (error) {
+            patientName.textContent = "";
+        }
         days = groupByDate(maalinger);
         selectDays(7);
     } catch (error) {

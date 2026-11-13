@@ -13,7 +13,10 @@
     <!-- Topbjælken indeholder knapperne til sidens navigation. -->
     <nav class="topbar" aria-label="Main navigation">
         <a class="brand" href="Forside.html">Diabeto</a>
-        <a href="../Feedback/MeldSymptomer.html">Report symptoms</a>
+        <!-- Skjult som standard. Vises kun for sundhedsprofessionelle (styres i JavaScript) -->
+        <a href="../Patients/Patients.html" id="patientListLink" hidden>Patient list</a>
+        <!-- Skjules for sundhedsprofessionelle (styres i JavaScript) – kun borgere melder symptomer -->
+        <a href="../Feedback/MeldSymptomer.html" id="reportSymptomsLink">Report symptoms</a>
         <a href="Forside.html" class="active" aria-current="page">Dashboard</a>
         <a href="../History/History.html">History</a>
         <button id="logoutButton" type="button">Log out</button>

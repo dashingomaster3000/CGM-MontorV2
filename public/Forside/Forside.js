@@ -4,9 +4,28 @@ const dataFile = document.getElementById("dataFile");
 
 // Log brugeren ud ved at rydde sessionsdata og åbne login-siden.
 document.getElementById("logoutButton").onclick = function() {
+    navigator.sendBeacon("/api/logout"); // Lukker sessionen på serveren.
     sessionStorage.clear();
     window.location.href = "../index.html";
 };
+
+// Menuens links beholder den valgte patient (?patient=), når man skifter side.
+document.querySelectorAll("nav a").forEach(function (link) {
+    link.search = window.location.search;
+});
+
+// Spørg serveren, hvem der er logget ind. Er det en sundhedsprofessionel,
+// vises "Patient list", så man kan gå tilbage og vælge en ny borger,
+// og "Report symptoms" skjules, da kun borgere melder symptomer.
+fetch("/api/me")
+    .then(response => response.json())
+    .then(bruger => {
+        if (bruger.role === "professional") {
+            document.getElementById("patientListLink").hidden = false;
+            document.getElementById("reportSymptomsLink").hidden = true;
+        }
+    })
+    .catch(() => {}); // Ved fejl forbliver linket skjult.
 
 // Åbn den skjulte filvælger, når brugeren klikker på importknappen.
 document.getElementById("importButton").addEventListener("click", function() {

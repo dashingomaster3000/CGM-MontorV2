@@ -1,7 +1,7 @@
 // Elementer på siden, vi skal bruge
 const patientTable = document.getElementById("patientTable");
 const message = document.getElementById("message");
-const logoutLink = document.getElementById("logoutLink");
+const logoutButton = document.getElementById("logoutButton");
 
 // Vis kun de første 6 cifre af CPR
 function hideCpr(cpr) {
@@ -55,8 +55,10 @@ async function loadPatients() {
 }
 
 // Log ud: slet sessionStorage og gå til login-siden
-logoutLink.addEventListener("click", function () {
+logoutButton.addEventListener("click", function () {
+    navigator.sendBeacon("/api/logout"); // Lukker sessionen på serveren.
     sessionStorage.clear();
+    window.location.href = "../index.html";
 });
 
 // Start siden ved at hente patienterne
