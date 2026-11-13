@@ -24,6 +24,8 @@
         <a href="../Feedback/MeldSymptomer.html" id="reportSymptomsLink">Report symptoms</a>
         <a href="../Forside/Forside.html">Dashboard</a>
         <a href="History.html" class="active" aria-current="page">History</a>
+        <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
+        <span id="currentUser" style="color: white;"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
@@ -94,6 +96,7 @@
         </section>
     </main>
 
+    <script src="../Login/Auth.js"></script>
     <script src="History.js"></script>
 </body>
 </html>

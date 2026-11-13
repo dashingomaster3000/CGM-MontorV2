@@ -19,6 +19,8 @@
         <a href="../Feedback/MeldSymptomer.html" id="reportSymptomsLink">Report symptoms</a>
         <a href="Forside.html" class="active" aria-current="page">Dashboard</a>
         <a href="../History/History.html">History</a>
+        <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
+        <span id="currentUser" style="color: white;"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
@@ -80,6 +82,7 @@
         </section>
     </main>
     <!-- Indlæser scriptet, der læser data og opdaterer dashboardet. -->
+    <script src="../Login/Auth.js"></script>
     <script src="Forside.js"></script>
 </body>
 </html>

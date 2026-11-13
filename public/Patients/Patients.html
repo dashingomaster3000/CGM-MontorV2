@@ -20,6 +20,8 @@
         <a class="brand" href="Patients.html">Diabeto</a>
         <!-- "active" markerer den side, du er på -->
         <a href="Patients.html" class="active" aria-current="page">Patient list</a>
+        <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
+        <span id="currentUser" style="color: white;"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
@@ -44,6 +46,7 @@
         </section>
     </main>
 
+    <script src="../Login/Auth.js"></script>
     <script src="Patients.js"></script>
 </body>
 </html>

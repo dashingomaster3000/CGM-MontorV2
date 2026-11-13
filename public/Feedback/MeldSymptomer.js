@@ -86,6 +86,12 @@ form.addEventListener("submit", async function (event) {
             })
         });
 
+        // Ikke logget ind (401), fx logget ud i en anden fane
+        if (res.status === 401) {
+            fejlBesked.textContent = "Please log in first.";
+            return;
+        }
+
         // Serveren afviste felterne (400): vis serverens fejlbesked
         if (res.status === 400) {
             const svar = await res.json();
@@ -109,24 +115,15 @@ form.addEventListener("submit", async function (event) {
     }
 });
 
-document.getElementById("logoutButton").onclick = function () {
-    navigator.sendBeacon("/api/logout"); // Lukker sessionen på serveren.
-    sessionStorage.clear(); // Log ud: slet login-data og gå til login-siden.
-    window.location.href = "../index.html";
-};
-
 // Menuens links beholder den valgte patient (?patient=), når man skifter side.
 document.querySelectorAll("nav a").forEach(function (link) {
     link.search = window.location.search;
 });
 
-// Spørg serveren, hvem der er logget ind. Er det en sundhedsprofessionel,
-// vises "Patient list", så man kan gå tilbage og vælge en ny borger.
-fetch("/api/me")
-    .then(response => response.json())
-    .then(bruger => {
-        if (bruger.role === "professional") {
-            document.getElementById("patientListLink").hidden = false;
-        }
-    })
-    .catch(() => {}); // Ved fejl forbliver linket skjult.
+// Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
+// Kun borgere melder symptomer. En sundhedsprofessionel sendes til patientlisten.
+visLogin().then(function (bruger) {
+    if (bruger && bruger.role === "professional") {
+        window.location.replace("/Patients/Patients.html");
+    }
+});

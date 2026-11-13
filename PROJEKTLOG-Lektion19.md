@@ -60,8 +60,10 @@ sundhedsprofessionelle, og databasen tillader højst én brugerkonto pr. patient
 5. `POST /api/logout` afslutter sessionen.
 
 Login og sessioner håndteres i `server.js`; databaseopslag håndteres i
-`brugere.js`. Login-siden ligger i `public/index.html`, og fælles
-sessionstjek/logout ligger i `public/Login/Auth.js`.
+`brugere.js`. Login-siden ligger i `public/index.html` med logikken i
+`public/Login/Login.js`. Fælles sessionstjek (`visLogin()`) og log ud
+(`logUd()`) ligger i `public/Login/Auth.js`, som indlæses på Forside, History,
+MeldSymptomer og Patients, men ikke på login-siden.
 
 ## Testskema
 
@@ -82,6 +84,8 @@ symptomregistrering blev oprettet og gemt i den konfigurerede database.
 | 9 | Patient rapporterer symptom for en anden patient | 403 | 403 |
 | 10 | `POST /api/logout`, derefter `GET /api/me` | 204, derefter 401 | 204, derefter 401 |
 | 11 | Genstart serveren, derefter `GET /api/me` | 401 (lokal MemoryStore-session er væk) | 401 |
+
+Login virker lokalt. På Vercel kræver det SESSION_SECRET (lektion 21).
 
 ## Resultat
 

@@ -2,30 +2,10 @@
 const dataStatus = document.getElementById("dataStatus");
 const dataFile = document.getElementById("dataFile");
 
-// Log brugeren ud ved at rydde sessionsdata og åbne login-siden.
-document.getElementById("logoutButton").onclick = function() {
-    navigator.sendBeacon("/api/logout"); // Lukker sessionen på serveren.
-    sessionStorage.clear();
-    window.location.href = "../index.html";
-};
-
 // Menuens links beholder den valgte patient (?patient=), når man skifter side.
 document.querySelectorAll("nav a").forEach(function (link) {
     link.search = window.location.search;
 });
-
-// Spørg serveren, hvem der er logget ind. Er det en sundhedsprofessionel,
-// vises "Patient list", så man kan gå tilbage og vælge en ny borger,
-// og "Report symptoms" skjules, da kun borgere melder symptomer.
-fetch("/api/me")
-    .then(response => response.json())
-    .then(bruger => {
-        if (bruger.role === "professional") {
-            document.getElementById("patientListLink").hidden = false;
-            document.getElementById("reportSymptomsLink").hidden = true;
-        }
-    })
-    .catch(() => {}); // Ved fejl forbliver linket skjult.
 
 // Åbn den skjulte filvælger, når brugeren klikker på importknappen.
 document.getElementById("importButton").addEventListener("click", function() {
@@ -287,40 +267,55 @@ function setStatus(message, isError = false) {
 const urlParams = new URLSearchParams(window.location.search);
 const patientId = Number(urlParams.get("patient")) || 1;
 
+// Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
+// Er det en sundhedsprofessionel, vises "Patient list", så man kan gå tilbage
+// og vælge en ny borger, og "Report symptoms" skjules, da kun borgere melder symptomer.
+// Dataene hentes først, når vi ved, hvem der er logget ind.
+visLogin().then(bruger => {
+    if (!bruger) return;
+    if (bruger.role === "professional") {
+        document.getElementById("patientListLink").hidden = false;
+        document.getElementById("reportSymptomsLink").hidden = true;
+    }
+    hentData();
+});
+
 // Hent patientens målinger fra databasen (Neon), når dashboardet åbnes.
-fetch("/api/patients/" + patientId + "/maalinger")
-    .then(response => {
-        // Vis en fejl, hvis serveren eller databasen ikke kunne levere målingerne.
-        if (!response.ok) throw new Error("Could not load measurements from the database.");
-        return response.json();
-    })
-    .then(maalinger => {
-        // Ingen målinger i databasen: vis en besked i stedet.
-        if (maalinger.length === 0) {
-            setStatus("No measurements yet.");
-            return;
-        }
-        // Lav databasens rækker om til samme format som en importeret fil.
-        // "2026-11-09 23:00:00" bliver til "2026-11-09T23:00:00", som JavaScript kan læse.
-        const data = { readings: [] };
-        for (const maaling of maalinger) {
-            data.readings.push({
-                timestamp: maaling.tidspunkt.replace(" ", "T"),
-                glucose: maaling.glukose_mmol
-            });
-        }
-        renderDashboard(parseReadings(data));
-        setStatus("Showing your measurements from the database. Import a JSON file to view other readings.");
-    })
-    // Vis fejl ved netværk eller databasen i statusfeltet.
-    .catch(error => setStatus(error.message, true))
-    // Når databasen er færdig, hentes eksempelfilen sample-glucose.json.
-    .then(() => fetch("sample-glucose.json"))
-    .then(response => response.json())
-    .then(data => {
-        // Grafen "Glucose today" tegnes kun ud fra eksempelfilens målinger.
-        const readings = parseReadings(data);
-        // Find dagen for den sidste måling i filen, og vis kun den dags målinger.
-        const day = readings[readings.length - 1].timestamp.toDateString();
-        renderChart(readings.filter(reading => reading.timestamp.toDateString() === day));
-    });
+function hentData() {
+    fetch("/api/patients/" + patientId + "/maalinger")
+        .then(response => {
+            // Vis en fejl, hvis serveren eller databasen ikke kunne levere målingerne.
+            if (!response.ok) throw new Error("Could not load measurements from the database.");
+            return response.json();
+        })
+        .then(maalinger => {
+            // Ingen målinger i databasen: vis en besked i stedet.
+            if (maalinger.length === 0) {
+                setStatus("No measurements yet.");
+                return;
+            }
+            // Lav databasens rækker om til samme format som en importeret fil.
+            // "2026-11-09 23:00:00" bliver til "2026-11-09T23:00:00", som JavaScript kan læse.
+            const data = { readings: [] };
+            for (const maaling of maalinger) {
+                data.readings.push({
+                    timestamp: maaling.tidspunkt.replace(" ", "T"),
+                    glucose: maaling.glukose_mmol
+                });
+            }
+            renderDashboard(parseReadings(data));
+            setStatus("Showing your measurements from the database. Import a JSON file to view other readings.");
+        })
+        // Vis fejl ved netværk eller databasen i statusfeltet.
+        .catch(error => setStatus(error.message, true))
+        // Når databasen er færdig, hentes eksempelfilen sample-glucose.json.
+        .then(() => fetch("sample-glucose.json"))
+        .then(response => response.json())
+        .then(data => {
+            // Grafen "Glucose today" tegnes kun ud fra eksempelfilens målinger.
+            const readings = parseReadings(data);
+            // Find dagen for den sidste måling i filen, og vis kun den dags målinger.
+            const day = readings[readings.length - 1].timestamp.toDateString();
+            renderChart(readings.filter(reading => reading.timestamp.toDateString() === day));
+        });
+}
