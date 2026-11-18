@@ -14,6 +14,7 @@ const symptomer = require("./symptomer");
 const brugere = require("./brugere");
 
 const app = express();
+app.set("trust proxy", 1);
 const sessionSecret = process.env.SESSION_SECRET;
 
 if (!sessionSecret) {
@@ -29,14 +30,16 @@ app.use(cors());
 app.use(express.json());
 app.use(
   session({
+    store: new PgSession({connectionString: process.env.DATABASE_URL}),
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    },
+  httpOnly: true,
+  sameSite: "lax",
+  secure: Boolean(process.env.VERCEL),
+  maxAge: 60 * 60 * 1000
+},
   })
 );
 
