@@ -6,7 +6,7 @@ const PgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcryptjs");
 
 // Serveren regner i dansk tid. Ellers kører Vercel i UTC-tid,
-// og et symptom meldt "lige nu" ville se ud til at ligge i fremtiden.
+// og et symptom meldt "lige nu" ville se ud til at ligge i fremtiden..
 process.env.TZ = "Europe/Copenhagen";
 
 // Repository-filerne. Al SQL ligger i dem, ikke her.
