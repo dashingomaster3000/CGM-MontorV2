@@ -22,10 +22,6 @@ if (!sessionSecret) {
   throw new Error("SESSION_SECRET must be set in .env.");
 }
 
-if (process.env.NODE_ENV === "production") {
-  app.set("trust proxy", 1);
-}
-
 app.use(cors());
 
 app.use(express.json());
@@ -36,11 +32,11 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-  httpOnly: true,
-  sameSite: "lax",
-  secure: Boolean(process.env.VERCEL),
-  maxAge: 60 * 60 * 1000
-},
+      httpOnly: true,
+      sameSite: "lax",
+      secure: Boolean(process.env.VERCEL),
+      maxAge: 60 * 60 * 1000,
+    },
   })
 );
 
