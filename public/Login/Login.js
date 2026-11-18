@@ -43,4 +43,20 @@ loginForm.addEventListener("submit", async function (event) {
         console.error("Could not log in:", error);
         loginMessage.textContent = "Could not connect to the server. Please try again.";
     }
+
+
+    if (!res.ok) {
+  fejl.hidden = false;
+  return;
+}
+await res.json(); // ny
+location.href = "index.html";
+
+
+if (res.status === 401) {
+  location.href = "login.html";
+  return;
+}
+
+
 });

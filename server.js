@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const session = require("express-session");
+const PgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcryptjs");
 
 // Serveren regner i dansk tid. Ellers kører Vercel i UTC-tid,
@@ -14,6 +15,7 @@ const symptomer = require("./symptomer");
 const brugere = require("./brugere");
 
 const app = express();
+app.set("trust proxy", 1);
 const sessionSecret = process.env.SESSION_SECRET;
 
 if (!sessionSecret) {
@@ -29,14 +31,16 @@ app.use(cors());
 app.use(express.json());
 app.use(
   session({
+    store: new PgSession({connectionString: process.env.DATABASE_URL}),
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    },
+  httpOnly: true,
+  sameSite: "lax",
+  secure: Boolean(process.env.VERCEL),
+  maxAge: 60 * 60 * 1000
+},
   })
 );
 
@@ -91,15 +95,15 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.get("/api/me", (req, res) => {
-  if (!req.session.bruger) {
+app.get("/api/me", kraevLogin, (req, res) => {
+  if(!req.session.bruger) {
     return res.status(401).json({ error: "Not logged in" });
   }
 
   res.json(req.session.bruger);
 });
 
-app.post("/api/logout", (req, res) => {
+app.post("/api/logout", kraevLogin, (req, res) => {
   req.session.destroy((error) => {
     if (error) {
       console.error("Could not log out:", error);
@@ -111,7 +115,7 @@ app.post("/api/logout", (req, res) => {
   });
 });
 
-function krævLogin(req, res, next) {
+function kraevLogin(req, res, next) {
   if (!req.session.bruger) {
     return res.status(401).json({ error: "Not logged in" });
   }
@@ -119,7 +123,7 @@ function krævLogin(req, res, next) {
   next();
 }
 
-function krævSundhedsprofessionel(req, res, next) {
+function kraevSundhedsprofessionel(req, res, next) {
   if (!req.session.bruger) {
     return res.status(401).json({ error: "Not logged in" });
   }
@@ -129,7 +133,7 @@ function krævSundhedsprofessionel(req, res, next) {
   next();
 }
 
-function krævPatientAdgang(req, res, next) {
+function kraevPatientAdgang(req, res, next) {
   if (!req.session.bruger) {
     return res.status(401).json({ error: "Not logged in" });
   }
@@ -147,7 +151,7 @@ function krævPatientAdgang(req, res, next) {
 }
 
 // Returnerer patientlisten til sundhedsprofessionelle.
-app.get("/api/patients", krævSundhedsprofessionel, async (req, res) => {
+app.get("/api/patients", kraevSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await patients.hentPatienter();
     res.json(liste);
@@ -158,7 +162,7 @@ app.get("/api/patients", krævSundhedsprofessionel, async (req, res) => {
 });
 
 // Returnerer én patients målinger, sorteret efter tidspunkt.
-app.get("/api/patients/:id/maalinger", krævPatientAdgang, async (req, res) => {
+app.get("/api/patients/:id/maalinger", kraevPatientAdgang, async (req, res) => {
   try {
     const maalinger = await patients.hentMaalinger(req.params.id);
     res.json(maalinger);
@@ -169,7 +173,7 @@ app.get("/api/patients/:id/maalinger", krævPatientAdgang, async (req, res) => {
 });
 
 // Returnerer én patients symptomer, sorteret efter tidspunkt.
-app.get("/api/patients/:id/symptomer", krævPatientAdgang, async (req, res) => {
+app.get("/api/patients/:id/symptomer", kraevPatientAdgang, async (req, res) => {
   try {
     const liste = await symptomer.hentSymptomer(req.params.id);
     res.status(200).json(liste);
@@ -180,7 +184,7 @@ app.get("/api/patients/:id/symptomer", krævPatientAdgang, async (req, res) => {
 });
 
 // Returnerer én patient ud fra CPR-nummeret til sundhedsprofessionelle.
-app.get("/api/patients/:cpr", krævSundhedsprofessionel, async (req, res) => {
+app.get("/api/patients/:cpr", kraevSundhedsprofessionel, async (req, res) => {
   try {
     const patient = await patients.hentPatientMedCpr(req.params.cpr);
     if (!patient) {
@@ -194,7 +198,7 @@ app.get("/api/patients/:cpr", krævSundhedsprofessionel, async (req, res) => {
 });
 
 // Gemmer en ny patient i tabellen patients.
-app.post("/api/patients", krævSundhedsprofessionel, async (req, res) => {
+app.post("/api/patients", kraevSundhedsprofessionel, async (req, res) => {
   const { cpr, navn } = req.body ?? {};
   if (!cpr || !navn) {
     return res.status(400).json({ error: "cpr and name are required" });
@@ -209,7 +213,7 @@ app.post("/api/patients", krævSundhedsprofessionel, async (req, res) => {
 });
 
 // Returnerer alle symptomer fra tabellen symptomer, sorteret efter id.
-app.get("/api/symptomer", krævSundhedsprofessionel, async (req, res) => {
+app.get("/api/symptomer", kraevSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await symptomer.hentAlleSymptomer();
     res.status(200).json(liste);
@@ -220,7 +224,7 @@ app.get("/api/symptomer", krævSundhedsprofessionel, async (req, res) => {
 });
 
 // Gemmer et nyt symptom i tabellen symptomer.
-app.post("/api/symptomer", krævLogin, async (req, res) => {
+app.post("/api/symptomer", kraevLogin, async (req, res) => {
   const { patient_id, tidspunkt, beskrivelse } = req.body ?? {};
 
   // Tjekker felterne FØR databasen. Tom tekst eller kun mellemrum tæller som manglende.
