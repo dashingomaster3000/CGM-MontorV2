@@ -43,6 +43,8 @@ function showPatients(patientList) {
 async function loadPatients() {
     try {
         const response = await fetch("/api/patients");
+        // Ikke logget ind (fx sessionen er udløbet): send til login-siden
+        if (response.status === 401) { window.location.replace("/index.html"); return; }
         if (!response.ok) {
             throw new Error("Server error");
         }

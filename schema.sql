@@ -37,3 +37,11 @@ CREATE TABLE symptomer (
   tidspunkt TIMESTAMP NOT NULL,
   beskrivelse TEXT NOT NULL
 );
+
+-- Sessioner fra login. Gemmes i databasen, så de overlever genstart og Vercel.
+CREATE TABLE session (
+  sid VARCHAR PRIMARY KEY,
+  sess JSON NOT NULL,
+  expire TIMESTAMP(6) NOT NULL
+);
+CREATE INDEX idx_session_expire ON session (expire);

@@ -284,6 +284,8 @@ visLogin().then(bruger => {
 function hentData() {
     fetch("/api/patients/" + patientId + "/maalinger")
         .then(response => {
+            // Ikke logget ind (fx sessionen er udløbet): send til login-siden
+            if (response.status === 401) { window.location.replace("/index.html"); return []; }
             // Vis en fejl, hvis serveren eller databasen ikke kunne levere målingerne.
             if (!response.ok) throw new Error("Could not load measurements from the database.");
             return response.json();

@@ -187,6 +187,8 @@ button14.addEventListener("click", function () {
 // Hent JSON fra serveren, fejl ved fejlsvar
 async function getJson(url) {
     const response = await fetch(url);
+    // Ikke logget ind (fx sessionen er udløbet): send til login-siden
+    if (response.status === 401) { window.location.replace("/index.html"); return []; }
     if (!response.ok) {
         throw new Error("Server error");
     }
