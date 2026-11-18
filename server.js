@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const session = require("express-session");
+const PgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcryptjs");
 
 // Serveren regner i dansk tid. Ellers kører Vercel i UTC-tid,
@@ -94,7 +95,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.get("/api/me", krævLogin, (req, res) => {
+app.get("/api/me", kraevLogin, (req, res) => {
   if(!req.session.bruger) {
     return res.status(401).json({ error: "Not logged in" });
   }
