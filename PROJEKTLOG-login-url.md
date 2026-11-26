@@ -21,12 +21,12 @@ og `POST /api/logout` kræver en session.
 | `POST /api/login` | Fælles | Alle | Åben | – |
 | `GET /api/me` | | | Lukket | `kraevLogin` |
 | `POST /api/logout` | | | Lukket | `kraevLogin` |
-| `GET /api/patients` | | | Lukket | `kraevSundhedsprofessionel` |
-| `GET /api/patients/:id/maalinger` | | | Lukket | `kraevPatientAdgang` |
-| `GET /api/patients/:id/symptomer` | | | Lukket | `kraevPatientAdgang` |
-| `GET /api/patients/:cpr` | | | Lukket | `kraevSundhedsprofessionel` |
-| `POST /api/patients` | | | Lukket | `kraevSundhedsprofessionel` |
-| `GET /api/symptomer` | | | Lukket | `kraevSundhedsprofessionel` |
+| `GET /api/patients` | | | Lukket | `kraevLogin`, `kraevSundhedsprofessionel` |
+| `GET /api/patients/:id/maalinger` | | | Lukket | `kraevLogin`, `kraevPatientAdgang` |
+| `GET /api/patients/:id/symptomer` | | | Lukket | `kraevLogin`, `kraevPatientAdgang` |
+| `GET /api/patients/:cpr` | | | Lukket | `kraevLogin`, `kraevSundhedsprofessionel` |
+| `POST /api/patients` | | | Lukket | `kraevLogin`, `kraevSundhedsprofessionel` |
+| `GET /api/symptomer` | | | Lukket | `kraevLogin`, `kraevSundhedsprofessionel` |
 | `POST /api/symptomer` | | | Lukket | `kraevLogin` |
 
 ## Testskema

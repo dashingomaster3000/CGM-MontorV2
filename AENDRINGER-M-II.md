@@ -76,7 +76,7 @@ Fælles grænser på alle sider: **Low = under 3.9 mmol/L**, **High = over 10.0 
 ### Datoer og tid
 - **Før:** Browserens eget format (fx `8/11/2026` eller `11/8/2026` og `6:00 AM`, afhængigt af computeren).
 - **Nu:** Altid `08.11.2026` og `06:00` (24-timers ur, dansk tid `Europe/Copenhagen`).
-- **Filer:** Ny fil `public/Assets/Glukose.js` (`formatDato()`, `formatTid()`, `formatDatoTid()`), `public/Forside/Forside.js` (`formatTime()`, `formatDateTime()`, `renderLowEvents()`)
+- **Filer:** Ny fil `public/Assets/Glukose.js` (`formatDato()`, `formatTid()`, `formatDatoTid()`), `public/Forside/Forside.js` (`renderLowEvents()`; `formatTime()`/`formatDateTime()` er senere fjernet, se "Oprydning og forenkling")
 - **Hvorfor:** Feedback: Samme dato- og tidsformat alle steder.
 
 ---
@@ -114,7 +114,7 @@ Dashboard (dagens JSON-data) og History (Neon) viser bevidst **ikke** de samme m
 
 ## Login
 
-**Ikke ændret.** Tjekket: `index.html`, `Login/Login.js` og `Login/Auth.js` er uændrede. Login virker som før.
+**Ikke ændret i M-II-designet.** `index.html`, `Login/Login.js` og `Login/Auth.js` er uændrede, og login virker som før. Ved oprydningen er kun et dobbelt login-tjek i `server.js` fjernet (se "Oprydning og forenkling").
 
 ---
 
@@ -153,3 +153,72 @@ Se History ovenfor (`hentMaalingerSeneste14Dage()` i `patients.js`). Dashboardet
   - `m2-testdata.js`: script, der bruger funktionerne. `node m2-testdata.js` viser kun, hvad der ville ske. `node m2-testdata.js --udfoer` gemmer i databasen.
   - `seed.sql`: samme ændring, så en ny database får de samme data.
 - **Hvorfor:** Feedback: Testdataene skal have 5 hændelser, hvoraf én er forhøjet. Ingen værdier er skrevet fast i frontend.
+
+---
+
+## Oprydning og forenkling
+
+Formål: enkel kode, som gruppen selv kan forklare til eksamen, uden at noget ændrer sig for brugeren.
+Hver oprydning har sin egen commit (`M-II cleanup: <fil/område> – <hvad>`).
+
+**Sådan er det testet:**
+- Alle API-routes er kaldt med curl før og efter (logget ud, som patient og som sundhedsprofessionel). Statuskoder og svar er identiske (401/403/400/404/201/204).
+- Dashboard og History er kørt før og efter med de samme data. Alt, hvad siderne skriver (tal, tabeller, hændelser, grafens punkter og etiketter), er identisk.
+- Skærmbilleder af alle sider før og efter oprydningen af CSS er pixel-identiske.
+- User stories er gennemført i browseren: login, Dashboard, Report symptoms (gemt og synligt i History efter genindlæsning), patientliste, "See history" og log ud. Ingen fejl i konsollen eller terminalen.
+
+| Fil | Hvad blev fjernet/forenklet | Hvorfor |
+|-----|-----------------------------|---------|
+| `Server/server.js`, `commands.txt` | Slettet (tomme filer) | ubrugt |
+| `download`, `desktop.ini`, `.DS_Store` | Slettet (løs kopi af `.gitignore` og systemfiler fra Windows/Mac). `desktop.ini` og `.DS_Store` står nu i `.gitignore` | ubrugt |
+| `server.js` | `kraevLogin` står først på alle data-routes. `kraevSundhedsprofessionel` og `kraevPatientAdgang` tjekker nu kun rollen, og `/api/me` havde et ekstra login-tjek, som er fjernet | dobbelt |
+| `server.js`, `package.json` | Pakken `cors` er fjernet. Frontend og API ligger på samme adresse, så den blev ikke brugt | ubrugt |
+| `server.js` | Alle databasefejl logges med `console.error` og svarer `500 {"error":"database error"}`. `res.status(200).json` er skrevet som `res.json` | for kompliceret (uens) |
+| `server.js`, `patients.js` | Kommentarer, der sagde, at Dashboard bruger `/api/patients/:id/maalinger`, er rettet. Kun History bruger den | forkert kommentar |
+| `schema.sql` | `ALTER TABLE brugere ADD COLUMN IF NOT EXISTS patient_id` er fjernet. Kolonnen oprettes allerede i `CREATE TABLE brugere`. Tabellerne er de samme | dobbelt |
+| `public/Assets/Glukose.js` | `Intl.DateTimeFormat().formatToParts()` er erstattet af `getDate()`, `getHours()` osv. `?:` i `findHaendelser()` er skrevet som `if/else`. Ny `formatTidsrum()` erstatter samme kode i Forside.js og History.js | uden for pensum / dobbelt |
+| `public/Assets/Menu.js` (ny) | Koden, der beholder `?patient=` i menuens links (stod 3 steder), og koden, der viser "Patient list" og skjuler "Report symptoms" for sundhedsprofessionelle (stod 2 steder), står nu ét sted: `tilpasMenu()` | dobbelt |
+| `public/Forside/Forside.js` | `formatTime()`/`formatDateTime()` var kun omveje til `formatTid()`/`formatDatoTid()` og er fjernet. `Map` + spread + `sort` (hyppigste lave time), `reduce` (gennemsnit), `Object.entries` + destructuring (`svgElement`), `Math.max(...)` og indlejrede `?:` er skrevet om til for-løkker og `if/else`. Den dobbelte variabel `axisStart` er fjernet. `hentData()` bruger `async/await` som de andre sider | dobbelt / uden for pensum / for kompliceret |
+| `public/History/History.js` | `lowLimit`/`highLimit` var kopier af `GLUKOSE_LAV`/`GLUKOSE_HOEJ` og er fjernet. `Math.min(...)`/`Math.max(...)` er erstattet af `getLowest()`/`getHighest()`. `.find()` og `?:` er skrevet som løkke og `if/else` | dobbelt / uden for pensum |
+| `public/History/History.js` | Patientlisten (`GET /api/patients`) hentes kun for sundhedsprofessionelle. En patient fik altid 403 (rød linje i konsollen) og så alligevel intet navn | gentaget/unødigt kald |
+| `public/Feedback/MeldSymptomer.js` | Dato- og tidsfeltet blev hentet to gange med `getElementById`. Nu bruges `datoFelt`/`tidFelt`. Logikken er ikke ændret | dobbelt |
+| `public/Assets/Diabeto.css`, `Forside.css`, `History.css` | Topbaren stod i alle tre CSS-filer. Nu står den kun i `Diabeto.css`, som alle sider med menu indlæser | dobbelt |
+| Alle sider med menu | `style="color: white;"` på brugernavnet er flyttet til CSS (`#currentUser`) | dobbelt |
+| `public/Assets/Diabeto.css` | Ubrugt CSS er fjernet: `.login-page section …` (demo-login-boksen findes ikke længere) og `.meld-symptomer-page select/table/th/td` (siden har ingen af dem). Ens regler for `input` og `textarea` er samlet | ubrugt / dobbelt |
+| `Forside.html`, `MeldSymptomer.html` | Klasserne `import-controls` og `stort-felt` er fjernet. Ingen CSS eller JS brugte dem | ubrugt |
+| `PROJEKTLOG-login-url.md` | Middleware-kolonnen viser nu `kraevLogin` på alle lukkede routes | dokumentation |
+
+**Bemærk:** Forside.js har nu flere linjer end før. Det skyldes, at korte one-liners er skrevet som almindelige løkker og `if/else`, som kan læses linje for linje.
+**Bemærk:** Datoer på Dashboardet vises nu med browserens egen tid i stedet for at blive omregnet til `Europe/Copenhagen`. For en browser i Danmark er det præcis det samme. Grafens timeakse brugte allerede browserens tid, så nu passer de to sammen overalt.
+
+### Bevidst beholdt
+Ting, der kan ligne overflødig kode, men som er nødvendige (D3) eller hører til andres del:
+
+- **Kontrol i både browser og server ved Report symptoms** (fremtid, 14 dage, dato/tid). Browserens kontrol giver en hurtig besked. Serverens kontrol er sikkerheden, fordi man kan sende requests uden om siden (Postman/curl).
+- **`kraevSundhedsprofessionel` og `kraevPatientAdgang`** ud over `kraevLogin`. De giver 403, når man er logget ind, men ikke må se data, fx en patient, der prøver at se en anden patients målinger.
+- **`GET /api/patients/:cpr`, `POST /api/patients` og `GET /api/symptomer`.** Ingen side bruger dem, men de er en del af REST-API'et (CRUD) og testes i `api.http` og projektlogs (201/400/401/403).
+- **`patients.js`: `opretMaaling()` og `aendrMaaling()`** og **`m2-testdata.js`.** Scriptet laver de syntetiske testdata (4 low + 1 high), og al SQL ligger i repository-filen.
+- **`opdater-maalinger.sql`, `ryd-dubletter.sql`, `ryd-symptomer.sql`.** Engangsscripts, der viser, hvordan Neon-dataene er ryddet op. Gruppen valgte at beholde dem.
+- **`process.env.TZ = "Europe/Copenhagen"` i `server.js`** og **`pg.types.setTypeParser(1114, …)` i `db.js`.** Uden dem bliver tidspunkter forskudt på Vercel (UTC).
+- **`pool.on("error", …)` i `db.js`.** Uden den går serveren ned, når Neon lukker en ledig forbindelse.
+- **`req.session.regenerate()` og `save()` ved login.** Det giver en ny session-id ved login (beskyttelse mod "session fixation").
+- **`app.set("trust proxy", 1)` og `secure: Boolean(process.env.VERCEL)`.** Uden dem virker cookien ikke på Vercel (HTTPS bag proxy).
+- **Den sidste `app.use(...)` med 404 JSON.** Ukendte adresser får et tydeligt svar.
+- **Samme menu-HTML på hver side.** Uden et framework eller JavaScript-skabeloner er det det enkleste. Koden *bag* menuen er samlet i `Menu.js`.
+- **`addCell()` i både `Patients.js` og `History.js`.** To forskellige sider med hver sin JS-fil. En ekstra fælles fil til fire linjer ville gøre det sværere at følge.
+
+### Uden for pensum, men beholdt
+| Bibliotek/teknik | Hvad det gør | Tættest på |
+|------------------|--------------|------------|
+| `express` | Webserveren: routes, `express.json()` og `express.static("public")` | L9/L15 (Node.js, REST) |
+| `express-session` | Session-cookien `connect.sid`, som husker, hvem der er logget ind | L21 (Sessions) |
+| `connect-pg-simple` | Gemmer sessionerne i tabellen `session` i Neon, så login overlever genstart og Vercel | L21 + L19 (Deployment) |
+| `bcryptjs` | Sammenligner passwordet med bcrypt-hashen i databasen | L21 (bcrypt) |
+| `pg` (Pool) | Forbindelsen til PostgreSQL/Neon med pladsholdere `$1, $2` | L13/L17 (SQL, Full-stack) |
+| `nodemon` (kun til udvikling) | Genstarter serveren, når man gemmer en fil (`npm run dev`) | L9 (Node.js) |
+| SVG-graf (`createElementNS`) | Glukosegrafen på Dashboardet tegnes med SVG-elementer uden et grafbibliotek | L7 (DOM) |
+| Regulært udtryk i `POST /api/symptomer` | Tjekker, at tidspunktet har formatet `ÅÅÅÅ-MM-DD TT:MM` (Report symptoms-delen, ikke omskrevet) | L17 (fejlhåndtering, 400) |
+| `?.` og `??` i login-routen og `Auth.js` | Sikrer, at koden ikke fejler, når `req.body` eller et element mangler (login-delen, ikke omskrevet) | L5 (JavaScript) |
+| `async/await` og `try/catch` | Venter på `fetch` og databasen og fanger fejl | L7/L17 (Fetch, fejlhåndtering) |
+| Template literals (`` `tekst ${tal}` ``) | Sætter tekst og tal sammen på Dashboardet | L5 (JavaScript) |
+| `req.session.regenerate()` | Ny session-id ved login | L21/L22 (Security) |
