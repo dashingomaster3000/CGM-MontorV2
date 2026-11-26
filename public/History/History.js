@@ -1,6 +1,7 @@
-// Grænser for blodsukker i mmol/L
-const lowLimit = 3.9;
-const highLimit = 10.0;
+// M-II: Grænser for blodsukker i mmol/L kommer nu fra den fælles fil Assets/Glukose.js,
+// så History bruger præcis de samme grænser som Dashboard.
+const lowLimit = GLUKOSE_LAV;
+const highLimit = GLUKOSE_HOEJ;
 
 // Læs patientnummer fra URL, fx ?patient=1
 // Uden nummer i URL vises patient 1
@@ -24,6 +25,8 @@ const lowCount = document.getElementById("lowCount");
 const tableBody = document.getElementById("tableBody");
 const measurementBody = document.getElementById("measurementBody");
 const symptomList = document.getElementById("symptomList");
+// M-II: Listen med lave og høje hændelser (samme som på Dashboard)
+const eventList = document.getElementById("eventList");
 
 // Menuens links beholder den valgte patient (?patient=), når man skifter side.
 document.querySelectorAll("nav a").forEach(function (link) {
@@ -62,8 +65,10 @@ function showHistory(dayCount) {
     tableBody.innerHTML = "";
     measurementBody.innerHTML = "";
 
-    // Tag de sidste dage med målinger
-    const chosenDays = days.slice(-dayCount);
+    // M-II: Tag de sidste 7 eller 14 KALENDERDAGE regnet fra nyeste måling
+    // (før: de sidste 7/14 dage MED målinger, som kunne række længere tilbage).
+    const chosenDays = daysInPeriod(dayCount);
+    eventList.innerHTML = "";
 
     // Ingen data: vis streger og en besked
     if (chosenDays.length === 0) {
@@ -134,6 +139,51 @@ function showHistory(dayCount) {
     timeInRange.textContent = Math.round(inRange / allValues.length * 100) + " % (" +
         lowLimit.toFixed(1) + "–" + highLimit.toFixed(1) + " mmol/L)";
     lowCount.textContent = low;
+
+    // M-II: Vis lave og høje hændelser med den fælles funktion findHaendelser,
+    // så listen er den samme som på Dashboardet.
+    showEvents(chosenDays);
+}
+
+// M-II: Finder dagene i perioden: den nyeste dag og (dayCount - 1) dage tilbage.
+function daysInPeriod(dayCount) {
+    if (days.length === 0) return [];
+    const newest = new Date(days[days.length - 1].date + "T00:00:00Z");
+    newest.setUTCDate(newest.getUTCDate() - (dayCount - 1));
+    const firstDate = newest.toISOString().slice(0, 10);
+    return days.filter(function (day) {
+        return day.date >= firstDate;
+    });
+}
+
+// M-II: Viser hver lav/høj hændelse som en række: dato, tid, type og værdi.
+function showEvents(chosenDays) {
+    const measurements = [];
+    for (const day of chosenDays) {
+        for (let i = 0; i < day.values.length; i++) {
+            measurements.push({ tid: day.date + " " + day.times[i], vaerdi: day.values[i] });
+        }
+    }
+    const events = findHaendelser(measurements);
+    if (events.length === 0) {
+        const row = document.createElement("tr");
+        addCell(row, "No low or high glucose events in this period");
+        row.firstChild.colSpan = 4;
+        eventList.appendChild(row);
+        return;
+    }
+    // Nyeste først, ligesom på Dashboardet
+    for (const event of events.slice().reverse()) {
+        const row = document.createElement("tr");
+        row.classList.add(event.type);
+        addCell(row, formatDato(event.start));
+        addCell(row, event.start === event.slut
+            ? formatTid(event.start)
+            : formatTid(event.start) + " – " + formatTid(event.slut));
+        addCell(row, event.type === "low" ? "Low" : "High");
+        addCell(row, event.vaerdi.toFixed(1) + " mmol/L");
+        eventList.appendChild(row);
+    }
 }
 
 // Tilføj ét punkt med tekst til symptomlisten
@@ -243,12 +293,13 @@ async function loadData() {
             patientName.textContent = "";
         }
         days = groupByDate(maalinger);
-        selectDays(7);
+        // M-II: Start på 14 dage, så siden viser samme periode som Dashboardet
+        selectDays(14);
     } catch (error) {
         // Fejl fra serveren eller databasen: vis besked og fejl i tabellen
         loadFailed = true;
         patientName.textContent = "Could not connect to the server.";
-        selectDays(7);
+        selectDays(14);
     }
 }
 

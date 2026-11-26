@@ -49,3 +49,39 @@ function formatTid(vaerdi) {
 function formatDatoTid(vaerdi) {
     return formatDato(vaerdi) + " " + formatTid(vaerdi);
 }
+
+// M-II: Laver et tidspunkt (tekst fra databasen eller Date) om til millisekunder.
+function tilMillisekunder(vaerdi) {
+    if (typeof vaerdi === "string") {
+        return new Date(vaerdi.replace(" ", "T")).getTime();
+    }
+    return vaerdi.getTime();
+}
+
+// M-II: Fælles funktion, der finder lave og høje hændelser. Bruges af både Dashboard og History,
+// så de altid viser de samme hændelser.
+// maalinger: liste med { tid, vaerdi }, sorteret efter tid.
+// Målinger af samme type (low/high) inden for 30 minutter samles til én hændelse.
+// Svar: liste med { type: "low" | "high", start, slut, vaerdi } (vaerdi = laveste/højeste).
+function findHaendelser(maalinger) {
+    const haendelser = [];
+    for (const maaling of maalinger) {
+        let type = null;
+        if (maaling.vaerdi < GLUKOSE_LAV) type = "low";
+        if (maaling.vaerdi > GLUKOSE_HOEJ) type = "high";
+        if (!type) continue;
+
+        const forrige = haendelser[haendelser.length - 1];
+        const taetPaa = forrige && forrige.type === type &&
+            tilMillisekunder(maaling.tid) - tilMillisekunder(forrige.slut) <= 30 * 60 * 1000;
+        if (taetPaa) {
+            forrige.slut = maaling.tid;
+            forrige.vaerdi = type === "low"
+                ? Math.min(forrige.vaerdi, maaling.vaerdi)
+                : Math.max(forrige.vaerdi, maaling.vaerdi);
+        } else {
+            haendelser.push({ type: type, start: maaling.tid, slut: maaling.tid, vaerdi: maaling.vaerdi });
+        }
+    }
+    return haendelser;
+}

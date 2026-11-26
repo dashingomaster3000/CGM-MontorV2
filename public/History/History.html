@@ -38,8 +38,9 @@
 
         <!-- KNAPPER TIL AT VÆLGE PERIODEN -->
         <!-- Vælg om der vises 7 eller 14 dage -->
-        <button id="button7" class="day-button selected">7 days</button>
-        <button id="button14" class="day-button">14 days</button>
+        <!-- M-II: 14 dage er valgt fra start, så History viser samme periode som Dashboardet -->
+        <button id="button7" class="day-button">7 days</button>
+        <button id="button14" class="day-button selected">14 days</button>
 
         <!-- NØGLETAL FOR DE VALGTE DAGE -->
         <!-- Tre kort ved siden af hinanden -->
@@ -57,6 +58,20 @@
                 Low measurements
                 <p id="lowCount" class="number">–</p>
             </div>
+        </section>
+
+        <!-- M-II: LAVE OG HØJE HÆNDELSER – samme liste som på Dashboardet (fælles funktion) -->
+        <section class="card">
+            <h2>Low and high glucose events</h2>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Glucose</th>
+                </tr>
+                <tbody id="eventList"></tbody>
+            </table>
         </section>
 
         <!-- TABEL MED MÅLINGER FOR HVER DAG -->

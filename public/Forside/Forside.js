@@ -68,9 +68,9 @@ function renderDashboard(readings) {
     // Find dagens målinger til grafen og den daglige optælling.
     const today = latest.timestamp.toDateString();
     const todayReadings = readings.filter(reading => reading.timestamp.toDateString() === today);
-    // Tæl lave målinger og dem i målområdet 3,9–10 mmol/L.
-    const lowReadings = readings.filter(reading => reading.glucose < 3.9);
-    const inRange = readings.filter(reading => reading.glucose >= 3.9 && reading.glucose <= 10).length;
+    // M-II: Tæl lave målinger og dem i målområdet med de fælles grænser fra Assets/Glukose.js.
+    const lowReadings = readings.filter(reading => reading.glucose < GLUKOSE_LAV);
+    const inRange = readings.filter(reading => reading.glucose >= GLUKOSE_LAV && reading.glucose <= GLUKOSE_HOEJ).length;
 
     // Opdatér den viste værdi, tendens og måletidspunkt.
     document.getElementById("currentGlucose").textContent = `${latest.glucose.toFixed(1)} mmol/L`;
@@ -83,8 +83,8 @@ function renderDashboard(readings) {
     // Vis dagens antal målinger, og fortæl om der blev fundet lave værdier.
     document.getElementById("readingCount").textContent = todayReadings.length;
     document.getElementById("patternSummary").textContent = lowReadings.length
-        ? `${lowReadings.length} low reading${lowReadings.length === 1 ? "" : "s"} below 3.9 mmol/L found.`
-        : "No readings below 3.9 mmol/L found.";
+        ? `${lowReadings.length} low reading${lowReadings.length === 1 ? "" : "s"} below ${GLUKOSE_LAV} mmol/L found.`
+        : `No readings below ${GLUKOSE_LAV} mmol/L found.`;
 
     // Opdatér grafen, listen over lave hændelser og det hyppigste tidspunkt.
     renderChart(todayReadings);
@@ -183,23 +183,13 @@ function renderChart(readings) {
     }
 }
 
-// Saml nærliggende lave målinger i hændelser, og vis de nyeste.
+// M-II: Finder lave OG høje hændelser med den fælles funktion findHaendelser (Assets/Glukose.js),
+// så Dashboard viser præcis de samme hændelser som History.
 function renderLowEvents(readings) {
     // Fjern kort fra det forrige datasæt, før de nye oprettes.
     const container = document.getElementById("lowEvents");
     container.replaceChildren();
-    const events = [];
-    // Målinger under 3,9 er lave; målinger inden for 30 minutter samles.
-    readings.forEach(reading => {
-        if (reading.glucose >= 3.9) return;
-        const current = events[events.length - 1];
-        if (current && reading.timestamp - current.end <= 30 * 60 * 1000) {
-            current.end = reading.timestamp;
-            current.lowest = Math.min(current.lowest, reading.glucose);
-        } else {
-            events.push({ start: reading.timestamp, end: reading.timestamp, lowest: reading.glucose });
-        }
-    });
+    const events = findHaendelser(readings.map(reading => ({ tid: reading.timestamp, vaerdi: reading.glucose })));
 
     // Vis en besked, hvis der ikke er lave målinger.
     if (events.length === 0) {
@@ -208,19 +198,24 @@ function renderLowEvents(readings) {
         container.append(empty);
         return;
     }
-    // Vis højst seks hændelser med den nyeste først.
-    events.slice(-6).reverse().forEach(event => {
+    // M-II: Vis alle hændelser i perioden (ikke kun seks), med den nyeste først.
+    events.slice().reverse().forEach(event => {
         const card = document.createElement("div");
-        card.className = "event-card";
+        // M-II: Kortet får klassen "low" eller "high", så det kan farves som grafen.
+        card.className = `event-card ${event.type}`;
         const date = document.createElement("strong");
         // M-II: Dato som dag.måned.år via den fælles hjælpefunktion
         date.textContent = formatDato(event.start);
         const time = document.createElement("span");
-        time.textContent = event.start.getTime() === event.end.getTime()
+        time.textContent = event.start.getTime() === event.slut.getTime()
             ? formatTime(event.start)
-            : `${formatTime(event.start)} – ${formatTime(event.end)}`;
+            : `${formatTime(event.start)} – ${formatTime(event.slut)}`;
         const low = document.createElement("span");
-        low.textContent = `Lowest: ${event.lowest.toFixed(1)} mmol/L`;
+        // M-II: Lave hændelser viser "Lowest", høje viser "Highest".
+        low.className = "event-value";
+        low.textContent = event.type === "low"
+            ? `Lowest: ${event.vaerdi.toFixed(1)} mmol/L`
+            : `Highest: ${event.vaerdi.toFixed(1)} mmol/L`;
         card.append(date, time, low);
         container.append(card);
     });

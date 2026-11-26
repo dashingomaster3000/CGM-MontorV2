@@ -15,10 +15,20 @@ async function hentPatientMedCpr(cpr) {
   return result.rows[0];
 }
 
-// Henter én patients målinger, sorteret efter tidspunkt.
-async function hentMaalinger(patientId) {
+// M-II: Henter én patients målinger for de seneste 14 dage, sorteret efter tidspunkt.
+// De 14 dage regnes fra patientens nyeste måling (den dag og 13 dage tilbage).
+// Dashboard og History bruger begge denne funktion, så de viser samme periode.
+async function hentMaalingerSeneste14Dage(patientId) {
   const result = await pool.query(
-    "SELECT tidspunkt, glukose_mmol FROM maalinger WHERE patient_id = $1 ORDER BY tidspunkt",
+    `SELECT tidspunkt, glukose_mmol
+     FROM maalinger
+     WHERE patient_id = $1
+       AND tidspunkt >= (
+         SELECT date_trunc('day', MAX(tidspunkt)) - INTERVAL '13 days'
+         FROM maalinger
+         WHERE patient_id = $1
+       )
+     ORDER BY tidspunkt`,
     [patientId]
   );
   return result.rows;
@@ -34,4 +44,4 @@ async function opretPatient(cpr, navn) {
 }
 
 // Gør funktionerne tilgængelige for server.js.
-module.exports = { hentPatienter, hentPatientMedCpr, hentMaalinger, opretPatient };
+module.exports = { hentPatienter, hentPatientMedCpr, hentMaalingerSeneste14Dage, opretPatient };

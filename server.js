@@ -157,10 +157,11 @@ app.get("/api/patients", kraevSundhedsprofessionel, async (req, res) => {
   }
 });
 
-// Returnerer én patients målinger, sorteret efter tidspunkt.
+// M-II: Returnerer én patients målinger for de seneste 14 dage (fra nyeste måling).
+// Dashboard og History bruger begge denne route og samme repository-funktion.
 app.get("/api/patients/:id/maalinger", kraevPatientAdgang, async (req, res) => {
   try {
-    const maalinger = await patients.hentMaalinger(req.params.id);
+    const maalinger = await patients.hentMaalingerSeneste14Dage(req.params.id);
     res.json(maalinger);
   } catch (error) {
     console.log(error);
