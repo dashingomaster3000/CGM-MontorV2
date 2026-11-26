@@ -1,7 +1,5 @@
-// M-II: Grænser for blodsukker i mmol/L kommer nu fra den fælles fil Assets/Glukose.js,
-// så History bruger præcis de samme grænser som Dashboard.
-const lowLimit = GLUKOSE_LAV;
-const highLimit = GLUKOSE_HOEJ;
+// M-II: Grænserne for blodsukker (GLUKOSE_LAV og GLUKOSE_HOEJ) kommer fra den fælles fil
+// Assets/Glukose.js, så History bruger præcis de samme grænser som Dashboard.
 
 // Læs patientnummer fra URL, fx ?patient=1
 // Uden nummer i URL vises patient 1
@@ -35,6 +33,24 @@ function getAverage(values) {
         sum = sum + value;
     }
     return sum / values.length;
+}
+
+// Find den laveste værdi i en liste tal
+function getLowest(values) {
+    let lowest = values[0];
+    for (const value of values) {
+        if (value < lowest) lowest = value;
+    }
+    return lowest;
+}
+
+// Find den højeste værdi i en liste tal
+function getHighest(values) {
+    let highest = values[0];
+    for (const value of values) {
+        if (value > highest) highest = value;
+    }
+    return highest;
 }
 
 // Tilføj én celle med tekst til række
@@ -84,12 +100,12 @@ function showHistory(dayCount) {
 
     // Lav én tabelrække for hver dag
     for (const day of chosenDays) {
-        const lowest = Math.min(...day.values);
-        const highest = Math.max(...day.values);
+        const lowest = getLowest(day.values);
+        const highest = getHighest(day.values);
 
         const row = document.createElement("tr");
         // Dage med lav måling får rød række
-        if (lowest < lowLimit) {
+        if (lowest < GLUKOSE_LAV) {
             row.classList.add("low");
         }
         // M-II: Dato som dag.måned.år via den fælles hjælpefunktion
@@ -103,7 +119,7 @@ function showHistory(dayCount) {
         for (let i = 0; i < day.values.length; i++) {
             const measurementRow = document.createElement("tr");
             // Lave målinger får rød række
-            if (day.values[i] < lowLimit) {
+            if (day.values[i] < GLUKOSE_LAV) {
                 measurementRow.classList.add("low");
             }
             // M-II: Dato som dag.måned.år via den fælles hjælpefunktion
@@ -120,10 +136,10 @@ function showHistory(dayCount) {
     let inRange = 0;
     let low = 0;
     for (const value of allValues) {
-        if (value >= lowLimit && value <= highLimit) {
+        if (value >= GLUKOSE_LAV && value <= GLUKOSE_HOEJ) {
             inRange = inRange + 1;
         }
-        if (value < lowLimit) {
+        if (value < GLUKOSE_LAV) {
             low = low + 1;
         }
     }
@@ -132,7 +148,7 @@ function showHistory(dayCount) {
     average.textContent = getAverage(allValues).toFixed(1) + " mmol/L";
     // Viser procenten sammen med grænserne, fx "73 % (3.9–10.0 mmol/L)"
     timeInRange.textContent = Math.round(inRange / allValues.length * 100) + " % (" +
-        lowLimit.toFixed(1) + "–" + highLimit.toFixed(1) + " mmol/L)";
+        GLUKOSE_LAV.toFixed(1) + "–" + GLUKOSE_HOEJ.toFixed(1) + " mmol/L)";
     lowCount.textContent = low;
 
     // M-II: Vis lave og høje hændelser med den fælles funktion findHaendelser,
@@ -167,15 +183,18 @@ function showEvents(chosenDays) {
         eventList.appendChild(row);
         return;
     }
-    // Nyeste først, ligesom på Dashboardet
-    for (const event of events.slice().reverse()) {
+    // Nyeste først, ligesom på Dashboardet (baglæns løkke)
+    for (let i = events.length - 1; i >= 0; i--) {
+        const event = events[i];
         const row = document.createElement("tr");
         row.classList.add(event.type);
         addCell(row, formatDato(event.start));
-        addCell(row, event.start === event.slut
-            ? formatTid(event.start)
-            : formatTid(event.start) + " – " + formatTid(event.slut));
-        addCell(row, event.type === "low" ? "Low" : "High");
+        addCell(row, formatTidsrum(event.start, event.slut));
+        if (event.type === "low") {
+            addCell(row, "Low");
+        } else {
+            addCell(row, "High");
+        }
         addCell(row, event.vaerdi.toFixed(1) + " mmol/L");
         eventList.appendChild(row);
     }
@@ -267,25 +286,26 @@ function groupByDate(maalinger) {
 
 // Vis patientens navn eller en fejlbesked
 function showPatientName(patientList) {
-    const patient = patientList.find(function (p) {
-        return p.id === patientId;
-    });
-    if (patient) {
-        patientName.textContent = "Patient: " + patient.navn;
-    } else {
-        patientName.textContent = "Patient not found";
+    patientName.textContent = "Patient not found";
+    for (const patient of patientList) {
+        if (patient.id === patientId) {
+            patientName.textContent = "Patient: " + patient.navn;
+        }
     }
 }
 
-// Hent patient og målinger, vis 7 dage
-async function loadData() {
+// Hent målinger (og patientens navn), vis 14 dage
+async function loadData(bruger) {
     try {
         const maalinger = await getJson("/api/patients/" + patientId + "/maalinger");
-        // Kun sundhedsprofessionelle må hente patientlisten. En patient ser siden uden navn.
-        try {
-            showPatientName(await getJson("/api/patients"));
-        } catch (error) {
-            patientName.textContent = "";
+        // Kun sundhedsprofessionelle må hente patientlisten (en patient får 403).
+        // Derfor spørges der kun for dem. En patient ser siden uden navn.
+        if (bruger.role === "professional") {
+            try {
+                showPatientName(await getJson("/api/patients"));
+            } catch (error) {
+                patientName.textContent = "";
+            }
         }
         days = groupByDate(maalinger);
         // M-II: Start på 14 dage, så siden viser samme periode som Dashboardet
@@ -304,6 +324,6 @@ async function loadData() {
 visLogin().then(function (bruger) {
     if (!bruger) return;
     tilpasMenu(bruger);
-    loadData();
+    loadData(bruger);
     loadSymptoms();
 });
