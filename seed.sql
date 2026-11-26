@@ -1,9 +1,8 @@
--- Testdata (kun syntetiske data) til patients og maalinger.
--- Køres manuelt i Neons SQL Editor, efter schema.sql.
--- Kan køres flere gange: ON CONFLICT DO NOTHING springer rækker over, der allerede findes.
+-- Syntetiske testdata til patients, brugere og maalinger
+-- Køres i Neons SQL Editor efter schema.sql
+-- ON CONFLICT springer rækker over, der allerede findes
 
--- Fem syntetiske testpatienter.
--- Findes CPR-nummeret allerede, indsættes patienten ikke igen.
+-- Fem syntetiske testpatienter
 INSERT INTO patients (cpr, navn) VALUES
   ('2512489996', 'Nancy Ann Test Berggren'),
   ('0107729995', 'Max Test Berggren'),
@@ -12,8 +11,7 @@ INSERT INTO patients (cpr, navn) VALUES
   ('3103979995', 'Anders Test Jensen')
 ON CONFLICT (cpr) DO NOTHING;
 
--- Syntetiske patientkonti med hver sin bcrypt-hash og unikke salt.
--- Kontiene kobles via CPR, ikke antagne patient-id'er.
+-- Patientkonti med bcrypt-hash, koblet til patienten via CPR
 INSERT INTO brugere (brugernavn, password_hash, patient_id)
 SELECT konto.brugernavn,
        konto.password_hash,
@@ -31,7 +29,7 @@ DO UPDATE SET
   password_hash = EXCLUDED.password_hash,
   patient_id = EXCLUDED.patient_id;
 
--- Syntetisk sundhedsprofessionel: har adgang til patientlisten og CPR-søgning.
+-- Sundhedsprofessionel konto uden patient_id
 INSERT INTO brugere (brugernavn, password_hash, patient_id)
 VALUES (
   'sundhed@diabeto.test',
@@ -43,10 +41,8 @@ DO UPDATE SET
   password_hash = EXCLUDED.password_hash,
   patient_id = NULL;
 
--- Én måling for Max og fire målinger om dagen for Nancy
--- fra 27/10 til 9/11 (14 dage, vises på History-siden).
--- Patientnumrene i værdilisten oversættes til syntetiske CPR-numre nedenfor.
--- Har patienten allerede en måling på samme tidspunkt, indsættes den ikke igen.
+-- Én måling for Max og fire målinger om dagen for Nancy (27/10-9/11)
+-- Testpatient 1 og 2 kobles til CPR-numrene nederst
 INSERT INTO maalinger (patient_id, tidspunkt, glukose_mmol)
 SELECT patient.id, maaling.tidspunkt::timestamp, maaling.glukose_mmol
 FROM (VALUES
@@ -79,12 +75,12 @@ FROM (VALUES
 
   (1, '2026-11-01 06:00', 3.6),
   (1, '2026-11-01 12:00', 5.8),
-  (1, '2026-11-01 18:00', 9.8),  -- M-II: før 10.5 (under 10, så der kun er én High)
+  (1, '2026-11-01 18:00', 9.8),
   (1, '2026-11-01 23:00', 9.1),
 
   (1, '2026-11-02 06:00', 4.3),
   (1, '2026-11-02 12:00', 7.6),
-  (1, '2026-11-02 18:00', 9.6),  -- M-II: før 10.6 (under 10, så der kun er én High)
+  (1, '2026-11-02 18:00', 9.6),
   (1, '2026-11-02 23:00', 5.6),
 
   (1, '2026-11-03 06:00', 5.6),
@@ -104,7 +100,7 @@ FROM (VALUES
 
   (1, '2026-11-06 06:00', 5.3),
   (1, '2026-11-06 12:00', 7.1),
-  (1, '2026-11-06 15:00', 13.2), -- M-II: den ene forhøjede måling (High)
+  (1, '2026-11-06 15:00', 13.2), -- Eneste måling over 10 (High)
   (1, '2026-11-06 18:00', 6.8),
   (1, '2026-11-06 23:00', 8.9),
 

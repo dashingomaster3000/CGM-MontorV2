@@ -1,8 +1,6 @@
--- Sletter testsymptomer med urealistiske årstal, en dublet og en testrække.
--- Køres manuelt i Neons SQL Editor. Det er ufarligt at køre den igen.
--- Vi beholder tre symptomer: id 1 (Dizzy), id 3 (Shaky hands) og id 14 (Ømhed i skulderen).
+-- Sletter testsymptomer med urealistiske årstal, en dublet og en testrække
+-- Køres i Neons SQL Editor; id 1, 3 og 14 beholdes
 
--- id 5 er en dublet af id 1, id 13 hedder bare "test",
--- og resten har årstal som 0001, 1212 og 4000.
+-- id 5 er en dublet, id 13 er en testrække, resten har årstal som 0001 og 4000
 DELETE FROM symptomer
 WHERE id IN (4, 5, 6, 7, 8, 9, 10, 11, 12, 13);

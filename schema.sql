@@ -1,5 +1,5 @@
--- Opretter databasens tabeller: patients, brugere, maalinger og symptomer.
--- Køres manuelt i Neons SQL Editor, før seed.sql.
+-- Opretter tabellerne patients, brugere, maalinger, symptomer og session
+-- Køres i Neons SQL Editor før seed.sql
 
 CREATE TABLE patients (
   id SERIAL PRIMARY KEY,
@@ -7,6 +7,7 @@ CREATE TABLE patients (
   navn VARCHAR(200) NOT NULL
 );
 
+-- Brugere uden patient_id er sundhedsprofessionelle
 CREATE TABLE brugere (
   id SERIAL PRIMARY KEY,
   brugernavn VARCHAR(254) NOT NULL UNIQUE,
@@ -14,7 +15,7 @@ CREATE TABLE brugere (
   patient_id INTEGER REFERENCES patients (id)
 );
 
--- Tillad flere sundhedsprofessionelle uden patient_id, men kun én konto pr. patient.
+-- Højst én konto pr. patient
 CREATE UNIQUE INDEX IF NOT EXISTS brugere_patient_id_unique
   ON brugere (patient_id)
   WHERE patient_id IS NOT NULL;
@@ -24,7 +25,7 @@ CREATE TABLE maalinger (
   patient_id INTEGER NOT NULL REFERENCES patients (id),
   tidspunkt TIMESTAMP NOT NULL,
   glukose_mmol NUMERIC(4,1) NOT NULL,
-  -- Samme patient kan ikke have to målinger på samme tidspunkt (ingen dubletter)
+  -- Ingen to målinger for samme patient på samme tidspunkt
   UNIQUE (patient_id, tidspunkt)
 );
 
@@ -35,7 +36,7 @@ CREATE TABLE symptomer (
   beskrivelse TEXT NOT NULL
 );
 
--- Sessioner fra login. Gemmes i databasen, så de overlever genstart og Vercel.
+-- Login-sessioner (bruges af connect-pg-simple)
 CREATE TABLE session (
   sid VARCHAR PRIMARY KEY,
   sess JSON NOT NULL,

@@ -1,9 +1,7 @@
--- Sletter dobbelte målinger i tabellen maalinger.
--- De opstod, fordi seed.sql blev kørt to gange.
--- Køres manuelt i Neons SQL Editor. Det er ufarligt at køre den igen.
+-- Sletter dobbelte målinger i tabellen maalinger
+-- Køres i Neons SQL Editor
 
--- To rækker er en dublet, når patient, tidspunkt og værdi er ens.
--- Vi beholder rækken med det laveste id og sletter den anden.
+-- Dublet: samme patient, tidspunkt og værdi; rækken med laveste id beholdes
 DELETE FROM maalinger a
 USING maalinger b
 WHERE a.patient_id = b.patient_id
