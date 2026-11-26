@@ -213,7 +213,8 @@ function renderLowEvents(readings) {
     // Vis en besked, hvis der ikke er lave målinger.
     if (events.length === 0) {
         const empty = document.createElement("p");
-        empty.textContent = "No low glucose events in this data.";
+        // M-II: Teksten passer til perioden på 2 uger
+        empty.textContent = "No low or high glucose events in the past 2 weeks.";
         container.append(empty);
         return;
     }
