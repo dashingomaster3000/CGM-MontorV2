@@ -164,7 +164,7 @@ Hver oprydning har sin egen commit (`M-II cleanup: <fil/område> – <hvad>`).
 **Sådan er det testet:**
 - Alle API-routes er kaldt med curl før og efter (logget ud, som patient og som sundhedsprofessionel). Statuskoder og svar er identiske (401/403/400/404/201/204).
 - Dashboard og History er kørt før og efter med de samme data. Alt, hvad siderne skriver (tal, tabeller, hændelser, grafens punkter og etiketter), er identisk.
-- Skærmbilleder af alle sider før og efter oprydningen af CSS er pixel-identiske.
+- Skærmbilleder af alle sider før og efter oprydningen af CSS (også med data i graf og tabeller) er pixel-identiske.
 - User stories er gennemført i browseren: login, Dashboard, Report symptoms (gemt og synligt i History efter genindlæsning), patientliste, "See history" og log ud. Ingen fejl i konsollen eller terminalen.
 
 | Fil | Hvad blev fjernet/forenklet | Hvorfor |
@@ -172,7 +172,6 @@ Hver oprydning har sin egen commit (`M-II cleanup: <fil/område> – <hvad>`).
 | `Server/server.js`, `commands.txt` | Slettet (tomme filer) | ubrugt |
 | `download`, `desktop.ini`, `.DS_Store` | Slettet (løs kopi af `.gitignore` og systemfiler fra Windows/Mac). `desktop.ini` og `.DS_Store` står nu i `.gitignore` | ubrugt |
 | `server.js` | `kraevLogin` står først på alle data-routes. `kraevSundhedsprofessionel` og `kraevPatientAdgang` tjekker nu kun rollen, og `/api/me` havde et ekstra login-tjek, som er fjernet | dobbelt |
-| `server.js`, `package.json` | Pakken `cors` er fjernet. Frontend og API ligger på samme adresse, så den blev ikke brugt | ubrugt |
 | `server.js` | Alle databasefejl logges med `console.error` og svarer `500 {"error":"database error"}`. `res.status(200).json` er skrevet som `res.json` | for kompliceret (uens) |
 | `server.js`, `patients.js` | Kommentarer, der sagde, at Dashboard bruger `/api/patients/:id/maalinger`, er rettet. Kun History bruger den | forkert kommentar |
 | `schema.sql` | `ALTER TABLE brugere ADD COLUMN IF NOT EXISTS patient_id` er fjernet. Kolonnen oprettes allerede i `CREATE TABLE brugere`. Tabellerne er de samme | dobbelt |
@@ -183,6 +182,7 @@ Hver oprydning har sin egen commit (`M-II cleanup: <fil/område> – <hvad>`).
 | `public/History/History.js` | Patientlisten (`GET /api/patients`) hentes kun for sundhedsprofessionelle. En patient fik altid 403 (rød linje i konsollen) og så alligevel intet navn | gentaget/unødigt kald |
 | `public/Feedback/MeldSymptomer.js` | Dato- og tidsfeltet blev hentet to gange med `getElementById`. Nu bruges `datoFelt`/`tidFelt`. Logikken er ikke ændret | dobbelt |
 | `public/Assets/Diabeto.css`, `Forside.css`, `History.css` | Topbaren stod i alle tre CSS-filer. Nu står den kun i `Diabeto.css`, som alle sider med menu indlæser | dobbelt |
+| `Forside.css`, `History.css` | Slettet. Indholdet er flyttet ind i `Assets/Diabeto.css`, som nu er projektets **eneste** CSS-fil. Hver side har en klasse på `<body>` (`login-page`, `dashboard-page`, `history-page`, `meld-symptomer-page`), så regler som `body`, `main` og `table` kun gælder på deres egen side. Patients bruger `history-page` (samme udseende som History) | gruppens ønske: én CSS-fil |
 | Alle sider med menu | `style="color: white;"` på brugernavnet er flyttet til CSS (`#currentUser`) | dobbelt |
 | `public/Assets/Diabeto.css` | Ubrugt CSS er fjernet: `.login-page section …` (demo-login-boksen findes ikke længere) og `.meld-symptomer-page select/table/th/td` (siden har ingen af dem). Ens regler for `input` og `textarea` er samlet | ubrugt / dobbelt |
 | `Forside.html`, `MeldSymptomer.html` | Klasserne `import-controls` og `stort-felt` er fjernet. Ingen CSS eller JS brugte dem | ubrugt |
@@ -195,6 +195,7 @@ Hver oprydning har sin egen commit (`M-II cleanup: <fil/område> – <hvad>`).
 Ting, der kan ligne overflødig kode, men som er nødvendige (D3) eller hører til andres del:
 
 - **Kontrol i både browser og server ved Report symptoms** (fremtid, 14 dage, dato/tid). Browserens kontrol giver en hurtig besked. Serverens kontrol er sikkerheden, fordi man kan sende requests uden om siden (Postman/curl).
+- **`cors` (`app.use(cors())` i `server.js`).** Er en del af pensum. Den tillader, at API'et kaldes fra en side på en anden adresse (origin). Vores egne sider ligger på samme adresse som API'et, så de virker også uden. Den blev fjernet under oprydningen og er lagt tilbage efter ønske fra gruppen.
 - **`kraevSundhedsprofessionel` og `kraevPatientAdgang`** ud over `kraevLogin`. De giver 403, når man er logget ind, men ikke må se data, fx en patient, der prøver at se en anden patients målinger.
 - **`GET /api/patients/:cpr`, `POST /api/patients` og `GET /api/symptomer`.** Ingen side bruger dem, men de er en del af REST-API'et (CRUD) og testes i `api.http` og projektlogs (201/400/401/403).
 - **`patients.js`: `opretMaaling()` og `aendrMaaling()`** og **`m2-testdata.js`.** Scriptet laver de syntetiske testdata (4 low + 1 high), og al SQL ligger i repository-filen.

@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 const session = require("express-session");
 const PgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcryptjs");
@@ -20,6 +21,10 @@ const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
   throw new Error("SESSION_SECRET must be set in .env.");
 }
+
+// CORS: tillader, at API'et kaldes fra en side på en anden adresse (origin).
+// Vores egne sider ligger på samme adresse som API'et, så de virker også uden.
+app.use(cors());
 
 app.use(express.json());
 app.use(
