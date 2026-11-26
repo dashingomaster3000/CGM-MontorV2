@@ -17,7 +17,6 @@ SELECT konto.brugernavn,
        konto.password_hash,
        patient.id
 FROM (VALUES
-  ('nancy.berggren@diabeto.test', '2512489996', '$2b$10$6ikGJJr1xZ9tKFd74oDJH.Mibfxa9dlqgTFaQxVcvNcABV3DUZIVq'),
   ('max.berggren@diabeto.test', '0107729995', '$2b$10$q6QBpbJmegXo4cNt8VclSuT//iU4HSBnryYV62bBgU4/etn/iwdYK'),
   ('kirsten.berggren@diabeto.test', '2911829996', '$2b$10$GYke80LwZz3wUfyZdu8wl.TqiHKhbx3VouXGoCFZPIYUcVbxwXbXu'),
   ('brita.berggren@diabeto.test', '1509819996', '$2b$10$faPaYeTVDLVQckQ1otBf9OmFkI8EfhMq6wilfbUczrdM0bViNI2w2'),
@@ -29,17 +28,8 @@ DO UPDATE SET
   password_hash = EXCLUDED.password_hash,
   patient_id = EXCLUDED.patient_id;
 
--- Sundhedsprofessionel konto uden patient_id
-INSERT INTO brugere (brugernavn, password_hash, patient_id)
-VALUES (
-  'sundhed@diabeto.test',
-  '$2b$10$tPSVZSUUmZx8IoBJPwsNUuKMOh8kC/syqmLLhCU5R2pmxVJ4ocIVy',
-  NULL
-)
-ON CONFLICT (brugernavn)
-DO UPDATE SET
-  password_hash = EXCLUDED.password_hash,
-  patient_id = NULL;
+-- Testkontiene (sundhedsprofessionel og Nancy) oprettes med "node opret-testbrugere.js",
+-- som læser brugernavn og password fra .env
 
 -- Én måling for Max og fire målinger om dagen for Nancy (27/10-9/11)
 -- Testpatient 1 og 2 kobles til CPR-numrene nederst

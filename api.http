@@ -20,19 +20,19 @@ GET http://localhost:3000/api/symptomer
 POST http://localhost:3000/api/login
 Content-Type: application/json
 
-{"brugernavn":"sundhed@diabeto.test"}
+{"brugernavn":"{{$dotenv TEST_BRUGER_SUNDHED}}"}
 
 ### Login med forkert password — forventet 401
 POST http://localhost:3000/api/login
 Content-Type: application/json
 
-{"brugernavn":"sundhed@diabeto.test","password":"forkert"}
+{"brugernavn":"{{$dotenv TEST_BRUGER_SUNDHED}}","password":"forkert"}
 
 ### Login som sundhedsprofessionel — forventet 200 og Set-Cookie
 POST http://localhost:3000/api/login
 Content-Type: application/json
 
-{"brugernavn":"sundhed@diabeto.test","password":"{{$dotenv TEST_PASSWORD_SUNDHED}}"}
+{"brugernavn":"{{$dotenv TEST_BRUGER_SUNDHED}}","password":"{{$dotenv TEST_PASSWORD_SUNDHED}}"}
 
 ### Hvem er jeg — forventet 200 og samme brugernavn
 GET http://localhost:3000/api/me
@@ -96,7 +96,7 @@ Content-Type: application/json
 POST http://localhost:3000/api/login
 Content-Type: application/json
 
-{"brugernavn":"nancy.berggren@diabeto.test","password":"{{$dotenv TEST_PASSWORD_NANCY}}"}
+{"brugernavn":"{{$dotenv TEST_BRUGER_PATIENT}}","password":"{{$dotenv TEST_PASSWORD_PATIENT}}"}
 
 ### Patientens egen session indeholder patient_id — forventet 200
 GET http://localhost:3000/api/me
