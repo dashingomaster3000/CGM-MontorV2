@@ -2,11 +2,6 @@
 const patientTable = document.getElementById("patientTable");
 const message = document.getElementById("message");
 
-// Vis kun de første 6 cifre af CPR
-function hideCpr(cpr) {
-    return cpr.slice(0, 6) + "-xxxx";
-}
-
 // Tilføj en celle med tekst til en række
 function addCell(row, text) {
     const cell = document.createElement("td");
@@ -33,7 +28,9 @@ function showPatients(patientList) {
     for (const patient of patientList) {
         const row = document.createElement("tr");
         addCell(row, patient.navn);
-        addCell(row, hideCpr(patient.cpr));
+        // M-II: Viser hele CPR-nummeret (før maskeret som "251248-xxxx").
+        // Alle CPR-numre i databasen er syntetiske testnumre.
+        addCell(row, patient.cpr);
         addHistoryButton(row, patient.id);
         patientTable.appendChild(row);
     }
