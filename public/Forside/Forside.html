@@ -1,76 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Vælger tegnsættet, så bogstaver og symboler vises korrekt. -->
+    <!-- Tegnsæt og tilpasning til mobil -->
     <meta charset="UTF-8">
-    <!-- Tilpasser layoutet til skærmbredden på mobil og tablet. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <!-- Projektets eneste CSS-fil (fælles for alle sider) -->
+    <!-- Projektets CSS-fil -->
     <link rel="stylesheet" href="../Assets/Diabeto.css">
 </head>
 <body class="dashboard-page">
-    <!-- Topbjælken indeholder knapperne til sidens navigation. -->
+    <!-- Navigation -->
     <nav class="topbar" aria-label="Main navigation">
         <a class="brand" href="Forside.html">Diabeto</a>
-        <!-- Skjult som standard. Vises kun for sundhedsprofessionelle (styres i JavaScript) -->
+        <!-- Kun synlig for sundhedsprofessionelle -->
         <a href="../Patients/Patients.html" id="patientListLink" hidden>Patient list</a>
-        <!-- M-II: Dashboard står nu før Report symptoms (rækkefølge: Dashboard, Report symptoms, History) -->
         <a href="Forside.html" class="active" aria-current="page">Dashboard</a>
-        <!-- Skjules for sundhedsprofessionelle (styres i JavaScript) – kun borgere melder symptomer -->
+        <!-- Skjult for sundhedsprofessionelle -->
         <a href="../Feedback/MeldSymptomer.html" id="reportSymptomsLink">Report symptoms</a>
         <a href="../History/History.html">History</a>
-        <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
+        <!-- Brugernavn (udfyldes af Auth.js) -->
         <span id="currentUser"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
-    <!-- Dashboardets hovedindhold, centreret under topbjælken. -->
+    <!-- Dashboardets indhold -->
     <main class="dashboard">
         <h2>Good day</h2>
-        <!-- Knappen åbner filvælgeren, så man kan importere glukosedata. -->
+        <!-- Import af glukosedata fra en JSON-fil -->
         <div>
             <button id="importButton" type="button">Import data</button>
-            <!-- Filvælgeren tager imod JSON-filer og åbnes med knappen ovenfor. -->
             <input id="dataFile" type="file" accept=".json,application/json" hidden>
         </div>
-        <!-- JavaScript opdaterer beskeden, når data indlæses eller importeres. -->
+        <!-- Statusbesked -->
         <p id="dataStatus" class="status" role="status" aria-live="polite">Loading glucose data…</p>
 
-        <!-- Viser den nyeste glukoseværdi, dens retning og måletidspunkt. -->
+        <!-- Nyeste glukoseværdi og tendens -->
         <section class="panel" aria-labelledby="currentHeading">
             <h2 id="currentHeading">Current glucose</h2>
             <div class="current-reading">
-                <!-- JavaScript udfylder felterne med værdier fra målingerne. -->
                 <strong id="currentGlucose">--</strong>
                 <span id="currentTrend">Waiting for data</span>
                 <small id="readingTime"></small>
             </div>
         </section>
 
-        <!-- Viser dagens graf og beregnede glukoseoversigt. -->
+        <!-- Dagens graf og nøgletal -->
         <section class="panel" aria-labelledby="todayHeading">
             <h2 id="todayHeading">Glucose today</h2>
             <div class="chart-wrap">
-                <!-- JavaScript tegner grafens linje og målepunkter i denne SVG. -->
+                <!-- Graf over glukosemålinger (tegnes i Forside.js) -->
                 <svg id="glucoseChart" role="img" aria-label="Glucose readings chart" viewBox="0 0 760 280"></svg>
             </div>
-            <!-- Forklarer farverne for glukoseområderne i grafen. -->
+            <!-- Farveforklaring -->
             <div class="chart-legend" aria-label="Glucose range legend">
                 <span><i class="legend-swatch optimal" aria-hidden="true"></i>Optimal glucose</span>
-                <!-- M-II: Forklarer, at røde punkter er mærket Low/High -->
                 <span><i class="legend-swatch dangerous" aria-hidden="true"></i>Dangerous glucose (Low / High)</span>
             </div>
-            <!-- M-II: Forklarer, hvad en "reading" er -->
             <p class="chart-note">Each reading is a glucose measurement from the CGM sensor (mmol/L).</p>
-            <!-- Tallene her beregnes ud fra de indlæste målinger. -->
+            <!-- Nøgletal for dagens målinger -->
             <div class="summary" aria-label="Glucose summary">
                 <div><span>Average</span><strong id="averageGlucose">--</strong></div>
-                <!-- M-II: "in-range" = grøn tekst, "readings" = rød tekst (samme farver som grafen) -->
                 <div class="in-range"><span>Time in range</span><strong id="timeInRange">--</strong></div>
                 <div class="readings">
                     <span>Readings</span><strong id="readingCount">--</strong>
-                    <!-- M-II: Viser både antal høje og lave målinger -->
+                    <!-- Antal høje og lave målinger -->
                     <ul class="reading-split">
                         <li>High-Glucose: <b id="highCount">--</b></li>
                         <li>Low-Glucose: <b id="lowCount">--</b></li>
@@ -79,14 +72,13 @@
             </div>
         </section>
 
-        <!-- JavaScript tilføjer et kort for hver registreret lav måling. -->
+        <!-- Kort for hver lav eller høj hændelse -->
         <section class="panel" aria-labelledby="eventsHeading">
-            <!-- M-II: Overskriften siger nu, hvilken periode kortet dækker (dagens data i grafen) -->
             <h2 id="eventsHeading">Critical glucose events today</h2>
             <div id="lowEvents" class="event-list"></div>
         </section>
 
-        <!-- Opsummerer lave målinger og det klokkeslæt, de oftest forekommer. -->
+        <!-- Antal lave målinger og hyppigste tidspunkt -->
         <section class="panel" aria-labelledby="patternHeading">
             <h2 id="patternHeading">Pattern overview</h2>
             <p id="patternSummary">Low-glucose patterns will appear here when data is loaded.</p>
@@ -94,14 +86,14 @@
             <strong id="frequentLowPeriod" class="period">--</strong>
         </section>
 
-        <!-- M-II: Tidsrummet for dataene vises nederst på dashboardet (udfyldes af JavaScript) -->
+        <!-- Tidsrummet for dataene -->
         <p id="dataPeriod" class="data-period"></p>
     </main>
-    <!-- Indlæser scriptet, der læser data og opdaterer dashboardet. -->
+    <!-- Login-tjek -->
     <script src="../Login/Auth.js"></script>
-    <!-- Fælles menu-kode (beholder ?patient= i links, viser/skjuler menupunkter efter rolle) -->
+    <!-- Fælles menukode -->
     <script src="../Assets/Menu.js"></script>
-    <!-- M-II: Fælles grænser og dato/tid-format (deles med History) -->
+    <!-- Fælles grænser og datoformat -->
     <script src="../Assets/Glukose.js"></script>
     <script src="Forside.js"></script>
 </body>
