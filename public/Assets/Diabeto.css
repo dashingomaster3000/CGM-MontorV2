@@ -1,6 +1,6 @@
-/* Fælles CSS for Diabeto. Indlæses på alle sider. */
+/* Fælles CSS for alle sider */
 
-/* ---------- Den blå navigationslinje (topbaren) – samme på alle sider med menu ---------- */
+/* Navigation (topbaren) */
 .topbar {
     padding: 12px;
     display: flex;
@@ -10,7 +10,7 @@
     background-color: #1f6feb;
 }
 
-/* "Diabeto" står til venstre, og resten af menuen skubbes til højre. */
+/* Logoteksten til venstre, menuen til højre */
 .brand {
     margin-right: auto;
     color: white;
@@ -33,13 +33,13 @@
     cursor: pointer;
 }
 
-/* Den side, man er på, får hvid baggrund. */
+/* Aktiv side får hvid baggrund */
 .topbar a.active {
     color: #1f6feb;
     background-color: white;
 }
 
-/* Brugernavnet på den, der er logget ind (udfyldes af Auth.js). */
+/* Brugernavnet på den, der er logget ind */
 #currentUser {
     color: white;
 }
@@ -50,9 +50,8 @@
     }
 }
 
-/* ---------- Login-siden ---------- */
+/* Login-siden */
 
-/* Grundopsætning for hele login-siden. */
 .login-page {
     min-height: 100vh;
     margin: 0;
@@ -65,14 +64,14 @@
     font-family: Arial, sans-serif;
 }
 
-/* * rammer alle elementer; ::before og ::after rammer CSS-skabt indhold før og efter dem. */
+/* Bredde og højde medregner padding og kant */
 .login-page *,
 .login-page *::before,
 .login-page *::after {
     box-sizing: inherit;
 }
 
-/* Boksen omkring loginformularen og demo-loginoplysningerne. */
+/* Hvid boks omkring loginformularen */
 .login-page main {
     width: 100%;
     max-width: 460px;
@@ -82,7 +81,7 @@
     box-shadow: 0 4px 18px rgb(0 0 0 / 8%);
 }
 
-/* Logoet øverst i loginboksen. */
+/* Logoet øverst i loginboksen */
 .login-page main > img {
     display: block;
     width: min(100%, 240px);
@@ -90,25 +89,24 @@
     margin: 0 auto 24px;
 }
 
-/* Overskriften "Log ind". */
+/* Overskriften "Log in" */
 .login-page h2 {
     margin: 0 0 20px;
     color: #202124;
 }
 
-/* Giver afstand mellem felterne til e-mail og adgangskode. */
+/* Afstand mellem felterne */
 .login-page form > div {
     margin-bottom: 16px;
 }
 
-/* Etiketterne "E-mail" og "Adgangskode". */
 .login-page label {
     display: block;
     margin-bottom: 6px;
     font-weight: bold;
 }
 
-/* Fælles udseende for felterne til e-mail og adgangskode. */
+/* Felterne til e-mail og password */
 .login-page input {
     width: 100%;
     min-height: 42px;
@@ -118,13 +116,13 @@
     font: inherit;
 }
 
-/* Fremhæver inputfeltet, mens det er aktivt. */
+/* Blå kant på det aktive felt */
 .login-page input:focus {
     border-color: #1f6feb;
     outline: 2px solid rgb(31 111 235 / 20%);
 }
 
-/* Den blå knap, der sender loginformularen. */
+/* Log in-knappen */
 .login-page button {
     width: 100%;
     min-height: 42px;
@@ -138,30 +136,28 @@
     cursor: pointer;
 }
 
-/* Knapfarve, når markøren holdes over knappen. */
 .login-page button:hover {
     background-color: #195fc9;
     border-color: #195fc9;
 }
 
-/* Fokusmarkering, når knappen vælges med tastatur. */
+/* Fokusmarkering ved brug af tastatur */
 .login-page button:focus-visible {
     outline: 3px solid rgb(31 111 235 / 35%);
     outline-offset: 2px;
 }
 
-/* Fejlbeskeden, som Login.js viser ved forkerte loginoplysninger. */
+/* Fejlbesked ved forkert login */
 .login-page #loginMessage {
     margin: 12px 0 0;
     color: #b42318;
 }
 
-/* Skjuler fejlbeskeden, når den er tom. */
 .login-page #loginMessage:empty {
     display: none;
 }
 
-/* Tilpasninger til skærme, der er højst 520 px brede. */
+/* Smalle skærme (højst 520 px) */
 @media (max-width: 520px) {
     .login-page {
         padding: 16px;
@@ -172,9 +168,8 @@
     }
 }
 
-/* ---------- Report symptoms-siden ---------- */
+/* Report symptoms-siden */
 
-/* Hele siden */
 .meld-symptomer-page {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -182,14 +177,13 @@
     color: #202124;
 }
 
-/* Centrerer indholdet */
 .meld-symptomer-page main {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* Hvid kasse rundt om formularen */
+/* Hvid boks omkring formularen */
 .meld-symptomer-page .kort {
     background-color: white;
     border-radius: 8px;
@@ -197,8 +191,7 @@
     margin-top: 20px;
 }
 
-/* M-II: Mindre afstand mellem overskriften og "Here you can report…",
-   så teksten står lige under overskriften. Kun spacing, ingen logik ændret. */
+/* Teksten står tæt under overskriften */
 .meld-symptomer-page .kort h1 {
     margin: 0 0 4px;
 }
@@ -207,7 +200,7 @@
     margin-top: 0;
 }
 
-/* Inputfelter og tekstfeltet til symptomet */
+/* Felterne til dato, tid og symptom */
 .meld-symptomer-page input,
 .meld-symptomer-page textarea {
     display: block;
@@ -220,7 +213,7 @@
     font-size: 16px;
 }
 
-/* Tekstfeltet er højere og bruger sidens skrifttype. */
+/* Symptomfeltet er højere */
 .meld-symptomer-page textarea {
     font-family: inherit;
     min-height: 120px;
@@ -246,33 +239,30 @@
     color: #21c526;
 }
 
-/* ---------- Dashboard (Forside.html, <body class="dashboard-page">) ---------- */
+/* Dashboard (Forside.html) */
 
-/* M-II: Fælles farver for dashboardet. Rød = lav/høj (samme som grafens røde punkter),
-   grøn = i målområdet (mørkere udgave af grafens grønne zone, så teksten kan læses).
-   Lyserød baggrund = samme som grafens røde zone og History-sidens lave rækker. */
+/* Farver: rød for lav/høj, grøn for målområdet, lyserød baggrund */
 :root {
     --lav-farve: #b42318;
     --maal-farve: #2e7d4f;
     --lav-baggrund: #fce8e6;
 }
 
-/* Medregn indre afstand og kanter i elementernes bredde og højde. */
+/* Bredde og højde medregner padding og kant */
 .dashboard-page * {
     box-sizing: border-box;
 }
 
-/* Vælg sidens standardskrifttype, tekstfarve og lyse baggrund. */
+/* Skrift, farver og baggrund for dashboardet */
 .dashboard-page {
     margin: 0;
     color: #17212f;
     font-family: Arial, sans-serif;
     background: #f4f6f8;
-    /* M-II: Lidt større grundtekst på dashboardet */
     font-size: 17px;
 }
 
-/* Gør importknappen større og tydeligere end navigationsknapperne. */
+/* Knappen Import data */
 #importButton {
     padding: 12px 20px;
     border: 0;
@@ -284,13 +274,12 @@
     cursor: pointer;
 }
 
-/* Gør importknappen mørkere ved musemarkør eller tastaturfokus. */
 #importButton:hover,
 #importButton:focus-visible {
     background: #1558bd;
 }
 
-/* Centrer dashboardet, og placer indholdet i en lodret kolonne med afstand. */
+/* Dashboardet centreret i én kolonne */
 .dashboard {
     width: min(100% - 32px, 860px);
     margin: 24px auto;
@@ -298,27 +287,25 @@
     gap: 16px;
 }
 
-/* Fremhæv velkomstteksten som sidens hovedoverskrift. */
+/* Overskriften "Good day" */
 .dashboard > h2 {
     margin: 0;
-    /* M-II: større overskrift (før 30px) */
     font-size: 34px;
 }
 
-/* Stil beskeden, der fortæller, hvilke data der vises. */
+/* Statusbeskeden under importknappen */
 .status {
     margin: -8px 0 0;
     color: #536273;
-    /* M-II: større tekst (før 14px) */
     font-size: 15px;
 }
 
-/* Brug rød tekst, så indlæsnings- og importfejl er nemme at se. */
+/* Fejl i statusbeskeden vises med rødt */
 .status.error {
     color: #b42318;
 }
 
-/* Vis hver datasektion som et hvidt kort med runde hjørner og let skygge. */
+/* Hvide kort til hver sektion */
 .panel {
     min-width: 0;
     padding: 18px;
@@ -327,14 +314,12 @@
     box-shadow: 0 1px 3px rgba(20, 33, 50, 0.08);
 }
 
-/* Skab afstand mellem kortets overskrift og indhold. */
 .panel h2 {
     margin: 0 0 16px;
-    /* M-II: større kortoverskrifter (før 20px) */
     font-size: 24px;
 }
 
-/* Placér måling og tendens ved siden af hinanden; lad dem bryde på små skærme. */
+/* Aktuel måling og tendens på én linje */
 .current-reading {
     display: flex;
     flex-wrap: wrap;
@@ -342,30 +327,27 @@
     gap: 12px;
 }
 
-/* Gør den aktuelle glukoseværdi nem at få øje på. */
 .current-reading strong {
-    /* M-II: større tal (før 32px) */
     font-size: 38px;
 }
 
-/* Brug en afdæmpet tekstfarve til tendensbeskrivelsen. */
 .current-reading span {
     color: #536273;
 }
 
-/* Placér måletidspunktet på sin egen linje under glukoseværdien. */
+/* Måletidspunktet på egen linje */
 .current-reading small {
     flex-basis: 100%;
     color: #687789;
 }
 
-/* Gør grafen vandret rulbar, hvis den ikke kan være på skærmen. */
+/* Grafen kan rulles vandret */
 .chart-wrap {
     width: 100%;
     overflow-x: auto;
 }
 
-/* Behold nok bredde til at vise alle timeetiketter uden overlap. */
+/* Mindste bredde, så timeetiketterne ikke overlapper */
 #glucoseChart {
     display: block;
     width: 100%;
@@ -373,23 +355,23 @@
     height: auto;
 }
 
-/* Tegn diskrete vandrette hjælpelinjer bag glukosegrafen. */
+/* Hjælpelinjer i grafen */
 .chart-grid {
     stroke: #e4e9ef;
     stroke-width: 1;
 }
 
-/* Farvelæg målområdet bag grafens linje. */
+/* Grøn zone: målområdet */
 .range-band {
     fill: #eaf5ee;
 }
 
-/* Farvelæg områderne under og over målområdet med en diskret rød tone. */
+/* Røde zoner under og over målområdet */
 .out-of-range-band {
     fill: #fce8e6;
 }
 
-/* Stil linjen, der forbinder glukosemålingerne. */
+/* Linjen mellem målingerne */
 .chart-line {
     fill: none;
     stroke: #1f6feb;
@@ -398,34 +380,33 @@
     stroke-width: 3;
 }
 
-/* Vis hver måling som et rundt punkt på grafen. */
+/* Et punkt for hver måling */
 .chart-point {
     fill: #1f6feb;
     stroke: white;
     stroke-width: 2;
 }
 
-/* M-II: Lave og høje punkter er røde ligesom de røde zoner (samme farve som tal og tekst under grafen). */
+/* Lave og høje punkter er røde */
 .chart-point.low,
 .chart-point.high {
     fill: var(--lav-farve);
 }
 
-/* M-II: "Low"/"High"-teksten ved punkterne i grafen. */
+/* Teksten Low/High ved punkterne */
 .chart-point-label {
     fill: var(--lav-farve);
     font-size: 13px;
     font-weight: bold;
 }
 
-/* Gør grafens etiketter mindre fremtrædende end målingerne. */
+/* Akseetiketter */
 .chart-label {
     fill: #687789;
-    /* M-II: større akse-tekst (før 12px) */
     font-size: 14px;
 }
 
-/* Vis forklaringerne til grafens farver på en række med lidt afstand. */
+/* Farveforklaring under grafen */
 .chart-legend {
     display: flex;
     flex-wrap: wrap;
@@ -433,43 +414,41 @@
     margin-top: 8px;
 }
 
-/* Placér en lille farveboks før hver forklaring i grafens signatur. */
 .chart-legend span {
     display: inline-flex;
     align-items: center;
     gap: 7px;
     color: #536273;
-    /* M-II: større tekst (før 13px) */
     font-size: 15px;
 }
 
-/* Gør farvefeltet til en lille firkant med afrundede hjørner. */
+/* Lille farvefirkant */
 .legend-swatch {
     width: 14px;
     height: 14px;
     border-radius: 3px;
 }
 
-/* Grøn signatur viser grafens optimale område. */
+/* Grøn: optimal glukose */
 .legend-swatch.optimal {
     background: #eaf5ee;
     border: 1px solid #b8d9c2;
 }
 
-/* Rød signatur viser grafens farlige områder. */
+/* Rød: farlig glukose */
 .legend-swatch.dangerous {
     background: #fce8e6;
     border: 1px solid #f2b8b5;
 }
 
-/* M-II: Kort forklaring af "readings" under grafens signatur. */
+/* Forklaring af "readings" */
 .chart-note {
     margin: 8px 0 0;
     color: #536273;
     font-size: 14px;
 }
 
-/* M-II: Tidsrummet nederst på dashboardet. */
+/* Tidsrummet nederst på siden */
 .data-period {
     margin: 0;
     color: #536273;
@@ -477,7 +456,7 @@
     text-align: center;
 }
 
-/* Vis gennemsnit, tid i målområdet og antal målinger i kolonner. */
+/* Average, Time in range og Readings i tre kolonner */
 .summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -485,32 +464,27 @@
     margin-top: 12px;
 }
 
-/* Placér hver overskrift over dens beregnede værdi. */
 .summary div {
     display: grid;
     gap: 5px;
 }
 
-/* Brug afdæmpet tekst til overskrifterne i oversigten. */
 .summary span {
     color: #687789;
-    /* M-II: større labels (før 13px) */
     font-size: 16px;
 }
 
-/* Fremhæv de beregnede værdier i oversigten. */
 .summary strong {
-    /* M-II: større tal (før 18px) */
     font-size: 24px;
 }
 
-/* M-II: "Time in range" står med grøn tekst (som grafens grønne målområde). */
+/* Time in range med grøn tekst */
 .summary .in-range span,
 .summary .in-range strong {
     color: var(--maal-farve);
 }
 
-/* M-II: "Readings" og antallet i normal tekst til venstre, High/Low-listen til højre. */
+/* Readings til venstre, High/Low-listen til højre */
 .summary .readings {
     grid-template-columns: auto 1fr;
     column-gap: 14px;
@@ -527,7 +501,7 @@
     grid-row: 2;
 }
 
-/* M-II: High-Glucose/Low-Glucose i rød tekst (som grafens røde punkter). */
+/* High/Low-listen med rød tekst */
 .summary .reading-split {
     grid-column: 2;
     grid-row: 1 / span 2;
@@ -542,99 +516,87 @@
     font-weight: 600;
 }
 
-/* Vis så mange kort over lave målinger på hver række, som skærmen tillader. */
+/* Hændelseskort i et gitter */
 .event-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: 12px;
 }
 
-/* Giv hvert kort med lave målinger en lys baggrund og indre afstand. */
 .event-card {
     padding: 14px;
     border-radius: 6px;
     background: #f4f6f8;
 }
 
-/* M-II: Lave og høje hændelser får samme lyserøde baggrund som grafens røde zone
-   og History-sidens lave rækker, så de ser ens ud overalt. */
+/* Lave og høje hændelser får lyserød baggrund */
 .event-card.low,
 .event-card.high {
     background: var(--lav-baggrund);
 }
 
-/* Vis dato og detaljer på separate linjer i hvert målingskort. */
+/* Dato og detaljer på hver sin linje */
 .event-card strong,
 .event-card span {
     display: block;
 }
 
-/* Tilføj lidt afstand under datoen for målingen. */
 .event-card strong {
     margin-bottom: 6px;
-    /* M-II: større dato */
     font-size: 18px;
 }
 
-/* Gør målingsdetaljerne læsbare uden at overdøve datoen. */
 .event-card span {
     color: #536273;
-    /* M-II: større tekst (før 14px) */
     font-size: 16px;
 }
 
-/* M-II: "Lowest"/"Highest" vises i almindelig sort tekst – kun kortets baggrund er rød. */
+/* Lowest/Highest med fed sort tekst */
 .event-card .event-value {
     color: #17212f;
     font-weight: bold;
 }
 
-/* Stil underoverskriften over det hyppigste tidspunkt med lav glukose. */
+/* Underoverskriften i Pattern overview */
 .panel h3 {
     margin: 18px 0 6px;
-    /* M-II: større tekst (før 15px) */
     font-size: 17px;
     font-weight: normal;
 }
 
-/* Fremhæv tidspunktet, hvor lav glukose forekommer oftest. */
+/* Tidspunktet med flest lave målinger */
 .period {
-    /* M-II: større tal (før 24px), almindelig sort tekst */
     font-size: 28px;
     color: #17212f;
 }
 
-/* Tilpas afstande og kort på mindre mobilskærme. */
+/* Smalle skærme (højst 600 px) */
 @media (max-width: 600px) {
-    /* Brug mindre sidemargener, så dashboardet passer på mobilen. */
     .dashboard {
         width: min(100% - 24px, 860px);
         margin: 16px auto;
     }
 
-    /* Reducér kortenes indre afstand for at give indholdet mere plads. */
     .panel {
         padding: 14px;
     }
 }
 
-/* ---------- History og patientlisten (History.html og Patients.html, <body class="history-page">) ---------- */
+/* History og patientlisten (History.html og Patients.html) */
 
-/* Hele siden: margen, skrift og baggrund. */
 .history-page {
     margin: 0;
     font-family: Arial;
     background-color: #f4f6f8;
 }
 
-/* Centrerer sidens indhold og giver luft rundt. */
 .history-page main {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* Knapperne til at vælge 7 eller 14 dage. */
+/* Knapperne 7 days, 14 days og See history */
 .day-button {
     padding: 8px 16px;
     border: 2px solid #1f6feb;
@@ -642,31 +604,30 @@
     cursor: pointer;
 }
 
-/* Den valgte knap bliver blå med hvid tekst. */
+/* Den valgte knap er blå */
 .day-button.selected {
     background-color: #1f6feb;
     color: white;
 }
 
-/* Nøgletallene står på én række. */
+/* Nøgletal på én række */
 .key-figures {
     display: flex;
     gap: 16px;
 }
 
-/* Kortene får samme bredde og centreret tekst. */
 .key-figures .card {
     flex: 1;
     text-align: center;
 }
 
-/* Det store tal i nøgletalskortene. */
+/* Det store tal i nøgletalskortene */
 .number {
     font-size: 28px;
     font-weight: bold;
 }
 
-/* Hvide bokse rundt om indholdet. */
+/* Hvide kort */
 .card {
     background-color: white;
     border-radius: 8px;
@@ -674,13 +635,12 @@
     margin-top: 20px;
 }
 
-/* Tabellen fylder hele bredden af kortet. */
 .history-page table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/* Grå linje under hver række i tabellen. */
+/* Grå linje under hver tabelrække */
 .history-page th,
 .history-page td {
     padding: 8px;
@@ -688,9 +648,7 @@
     text-align: left;
 }
 
-/* Dage med lavt blodsukker bliver røde. */
-/* M-II: Samme lyserøde baggrund som grafens røde zone og Dashboardets hændelseskort
-   (før #ffdddd). Høje hændelser får samme farve, ligesom i grafen. */
+/* Lave og høje målinger får lyserød baggrund */
 .history-page tr.low,
 .history-page tr.high {
     background-color: #fce8e6;
