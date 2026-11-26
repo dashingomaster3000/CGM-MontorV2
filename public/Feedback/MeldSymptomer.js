@@ -1,14 +1,13 @@
-// Elementerne på siden
+// Elementer på siden
 const form = document.getElementById("symptomForm");
 const fejlBesked = document.getElementById("fejlBesked");
 const feedback = document.getElementById("feedback");
 
-// Læs patientnummer fra URL, fx ?patient=1 (samme som History)
-// Uden nummer i URL bruges patient 1
+// Patientnummer fra adressen, fx ?patient=1 (ellers patient 1)
 const urlParams = new URLSearchParams(window.location.search);
 const patientId = Number(urlParams.get("patient")) || 1;
 
-// Laver en dato om til tekst som "2026-11-10", som datofeltet bruger
+// Dato som "2026-11-10" til datofeltet
 function lavDatoTekst(dato) {
     const aar = dato.getFullYear();
     const maaned = String(dato.getMonth() + 1).padStart(2, "0"); // Januar er 0 i JavaScript
@@ -16,15 +15,14 @@ function lavDatoTekst(dato) {
     return aar + "-" + maaned + "-" + dag;
 }
 
-// Laver klokkeslættet om til tekst som "14:30", som tidsfeltet bruger
+// Klokkeslæt som "14:30" til tidsfeltet
 function lavTidTekst(dato) {
     const timer = String(dato.getHours()).padStart(2, "0");
     const minutter = String(dato.getMinutes()).padStart(2, "0");
     return timer + ":" + minutter;
 }
 
-// Kalenderen må kun vise datoer fra 14 dage tilbage til i dag (samme periode som History).
-// Så kan man ikke vælge andre årstal.
+// Kalenderen viser kun de seneste 14 dage
 const datoFelt = document.getElementById("dato");
 const tidFelt = document.getElementById("tid");
 const idag = new Date();
@@ -33,7 +31,7 @@ fjortenDageSiden.setDate(idag.getDate() - 14);
 datoFelt.max = lavDatoTekst(idag);
 datoFelt.min = lavDatoTekst(fjortenDageSiden);
 
-// Udfylder felterne med dagens dato og klokkeslættet lige nu
+// Udfylder felterne med dato og klokkeslæt lige nu
 function udfyldNu() {
     const nu = new Date();
     datoFelt.value = lavDatoTekst(nu);
@@ -41,7 +39,7 @@ function udfyldNu() {
 }
 udfyldNu();
 
-// Når formularen sendes: gem symptomet med POST
+// Gemmer symptomet med POST, når formularen sendes
 form.addEventListener("submit", async function (event) {
     event.preventDefault(); // Stopper browseren i at genindlæse siden
     fejlBesked.textContent = "";
@@ -51,23 +49,22 @@ form.addEventListener("submit", async function (event) {
     const tid = tidFelt.value;   // fx "14:30"
     const tekst = document.getElementById("symptomer").value.trim();
 
-    // Sætter dato og tid sammen til ét tidspunkt
     const valgtTidspunkt = new Date(dato + "T" + tid);
 
-    // Tjekker at dato og tid er udfyldt og gyldige
+    // Dato og tid skal være udfyldt og gyldige
     if (!dato || !tid || isNaN(valgtTidspunkt.getTime())) {
         fejlBesked.textContent = "Please choose a valid date and time.";
         return;
     }
 
-    // Tjekker at tidspunktet ikke ligger i fremtiden
+    // Tidspunktet må ikke ligge i fremtiden
     const nu = new Date();
     if (valgtTidspunkt > nu) {
         fejlBesked.textContent = "The date and time cannot be in the future.";
         return;
     }
 
-    // Tjekker at tidspunktet højst er 14 dage gammelt (samme periode som History)
+    // Tidspunktet må højst være 14 dage gammelt
     const graense = new Date();
     graense.setDate(nu.getDate() - 14);
     if (valgtTidspunkt < graense) {
@@ -86,37 +83,36 @@ form.addEventListener("submit", async function (event) {
             })
         });
 
-        // Ikke logget ind (401), fx logget ud i en anden fane
+        // 401: ikke logget ind
         if (res.status === 401) {
             fejlBesked.textContent = "Please log in first.";
             return;
         }
 
-        // Serveren afviste felterne (400): vis serverens fejlbesked
+        // 400: serverens fejlbesked vises
         if (res.status === 400) {
             const svar = await res.json();
             fejlBesked.textContent = svar.error;
             return;
         }
 
-        // Serveren svarede med en anden fejl (fx 500)
+        // Anden fejl, fx 500
         if (!res.ok) {
             fejlBesked.textContent = "Could not save the symptom. Please check the fields.";
             return;
         }
 
-        // Succes (201): vis besked og tøm formularen
+        // 201: gemt, formularen tømmes
         feedback.textContent = "Saved";
         form.reset();
-        udfyldNu(); // Sæt dato og tid til nu igen efter at formularen er tømt
+        udfyldNu(); // Dato og tid sættes til nu igen
     } catch (error) {
         // Ingen forbindelse til serveren
         fejlBesked.textContent = "Something went wrong. Please try again.";
     }
 });
 
-// Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
-// Kun borgere melder symptomer. En sundhedsprofessionel sendes til patientlisten.
+// Kun patienter melder symptomer, sundhedsprofessionelle sendes til patientlisten
 visLogin().then(function (bruger) {
     if (bruger && bruger.role === "professional") {
         window.location.replace("/Patients/Patients.html");

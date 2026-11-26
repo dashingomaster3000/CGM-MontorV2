@@ -12,13 +12,12 @@
 
 <nav class="topbar" aria-label="Main navigation">
     <a class="brand" href="../Forside/Forside.html">Diabeto</a>
-    <!-- Skjult som standard. Vises kun for sundhedsprofessionelle (styres i JavaScript) -->
+    <!-- Kun synlig for sundhedsprofessionelle -->
     <a href="../Patients/Patients.html" id="patientListLink" hidden>Patient list</a>
-    <!-- M-II: Dashboard står nu før Report symptoms (rækkefølge: Dashboard, Report symptoms, History) -->
     <a href="../Forside/Forside.html">Dashboard</a>
     <a href="MeldSymptomer.html" class="active" aria-current="page">Report symptoms</a>
     <a href="../History/History.html">History</a>
-    <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
+    <!-- Brugernavn (udfyldes af Auth.js) -->
     <span id="currentUser"></span>
     <button id="logoutButton" type="button">Log out</button>
 </nav>
@@ -29,12 +28,11 @@
         <p>Here you can report your symptoms:</p>
         <p id="fejlBesked" class="fejl"></p>
 
-        <!-- Formularen. Patienten er den, der er logget ind (fra URL, fx ?patient=1) -->
+        <!-- Formular til at melde et symptom -->
         <form id="symptomForm">
             <label for="dato">Date</label>
             <input type="date" id="dato" required>
 
-            <!-- Klokkeslæt for symptomet (M02 kræver dato og tidspunkt) -->
             <label for="tid">Time</label>
             <input type="time" id="tid" required>
 
@@ -49,7 +47,7 @@
 </main>
 
 <script src="../Login/Auth.js"></script>
-<!-- Fælles menu-kode (beholder ?patient= i links, viser/skjuler menupunkter efter rolle) -->
+<!-- Fælles menukode -->
 <script src="../Assets/Menu.js"></script>
 <script src="MeldSymptomer.js"></script>
 </body>
