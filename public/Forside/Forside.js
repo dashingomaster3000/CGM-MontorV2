@@ -160,6 +160,8 @@ function renderChart(readings) {
         `${index === 0 ? "M" : "L"} ${x(index)} ${y(reading.glucose)}`
     ).join(" ");
     svg.append(svgElement("path", { d: path, class: "chart-line" }));
+    // M-II: Husker det forrige punkt med en Low/High-tekst (bruges til at undgå overlap).
+    let lastLabel = null;
     readings.forEach((reading, index) => {
         // M-II: Find ud af, om punktet er Low (under 3.9) eller High (over 10.0).
         let type = "";
@@ -174,11 +176,15 @@ function renderChart(readings) {
         point.append(title);
         svg.append(point);
 
-        // M-II: Skriv "Low" eller "High" lige over punktet.
+        // M-II: Skriv "Low" eller "High" lige over punktet. Ligger det forrige mærkede punkt
+        // tæt på (under 40px), skrives teksten under punktet i stedet, så teksterne ikke overlapper.
         if (type) {
+            const close = lastLabel && x(index) - lastLabel.x < 40 && lastLabel.above;
             const pointLabel = svgElement("text", {
-                x: x(index), y: y(reading.glucose) - 10, "text-anchor": "middle", class: `chart-point-label ${type}`
+                x: x(index), y: close ? y(reading.glucose) + 20 : y(reading.glucose) - 10,
+                "text-anchor": "middle", class: `chart-point-label ${type}`
             });
+            lastLabel = { x: x(index), above: !close };
             pointLabel.textContent = type === "low" ? "Low" : "High";
             svg.append(pointLabel);
         }
