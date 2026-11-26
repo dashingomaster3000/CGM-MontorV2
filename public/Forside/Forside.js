@@ -86,6 +86,10 @@ function renderDashboard(readings) {
         ? `${lowReadings.length} low reading${lowReadings.length === 1 ? "" : "s"} below ${GLUKOSE_LAV} mmol/L found.`
         : `No readings below ${GLUKOSE_LAV} mmol/L found.`;
 
+    // M-II: Vis tidsrummet for dataene nederst, fx "Showing data from 02.11.2026 to 15.11.2026".
+    document.getElementById("dataPeriod").textContent =
+        `Showing data from ${formatDato(readings[0].timestamp)} to ${formatDato(latest.timestamp)}`;
+
     // Opdatér grafen, listen over lave hændelser og det hyppigste tidspunkt.
     renderChart(todayReadings);
     renderLowEvents(readings);

@@ -58,8 +58,11 @@
             <!-- Forklarer farverne for glukoseområderne i grafen. -->
             <div class="chart-legend" aria-label="Glucose range legend">
                 <span><i class="legend-swatch optimal" aria-hidden="true"></i>Optimal glucose</span>
-                <span><i class="legend-swatch dangerous" aria-hidden="true"></i>Dangerous glucose</span>
+                <!-- M-II: Forklarer, at røde punkter er mærket Low/High -->
+                <span><i class="legend-swatch dangerous" aria-hidden="true"></i>Dangerous glucose (Low / High)</span>
             </div>
+            <!-- M-II: Forklarer, hvad en "reading" er -->
+            <p class="chart-note">Each reading is a glucose measurement from the CGM sensor (mmol/L).</p>
             <!-- Tallene her beregnes ud fra de indlæste målinger. -->
             <div class="summary" aria-label="Glucose summary">
                 <div><span>Average</span><strong id="averageGlucose">--</strong></div>
@@ -81,6 +84,9 @@
             <h3>Most frequent low period</h3>
             <strong id="frequentLowPeriod" class="period">--</strong>
         </section>
+
+        <!-- M-II: Tidsrummet for dataene vises nederst på dashboardet (udfyldes af JavaScript) -->
+        <p id="dataPeriod" class="data-period"></p>
     </main>
     <!-- Indlæser scriptet, der læser data og opdaterer dashboardet. -->
     <script src="../Login/Auth.js"></script>
