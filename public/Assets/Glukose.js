@@ -6,12 +6,14 @@
 const GLUKOSE_LAV = 3.9;
 const GLUKOSE_HOEJ = 10.0;
 
-// M-II: Al tid vises i dansk tid.
-const DANSK_TIDSZONE = "Europe/Copenhagen";
+// Laver et tal om til tekst med to cifre, fx 6 -> "06".
+function toCifre(tal) {
+    return String(tal).padStart(2, "0");
+}
 
 // M-II: Deler et tidspunkt op i dag, måned, år, time og minut.
 // Tekst fra databasen, fx "2026-11-08 06:00:00", er allerede dansk tid og bruges direkte.
-// Et Date-objekt omregnes til dansk tid.
+// Et Date-objekt (fra JSON-filen på Dashboardet) læses med browserens egne get-funktioner.
 function tidsDele(vaerdi) {
     if (typeof vaerdi === "string") {
         return {
@@ -22,15 +24,13 @@ function tidsDele(vaerdi) {
             minut: vaerdi.slice(14, 16) || "00"
         };
     }
-    const dele = {};
-    new Intl.DateTimeFormat("en-GB", {
-        timeZone: DANSK_TIDSZONE,
-        day: "2-digit", month: "2-digit", year: "numeric",
-        hour: "2-digit", minute: "2-digit", hourCycle: "h23"
-    }).formatToParts(vaerdi).forEach(function (del) {
-        dele[del.type] = del.value;
-    });
-    return { dag: dele.day, maaned: dele.month, aar: dele.year, time: dele.hour, minut: dele.minute };
+    return {
+        dag: toCifre(vaerdi.getDate()),
+        maaned: toCifre(vaerdi.getMonth() + 1), // Januar er 0 i JavaScript
+        aar: String(vaerdi.getFullYear()),
+        time: toCifre(vaerdi.getHours()),
+        minut: toCifre(vaerdi.getMinutes())
+    };
 }
 
 // M-II: Dato som dag.måned.år, fx "08.11.2026".
@@ -58,6 +58,15 @@ function tilMillisekunder(vaerdi) {
     return vaerdi.getTime();
 }
 
+// Tidsrummet for en hændelse, fx "03:00 – 04:00". Er start og slut ens, vises kun "03:00".
+// Bruges af både Dashboard og History.
+function formatTidsrum(start, slut) {
+    if (tilMillisekunder(start) === tilMillisekunder(slut)) {
+        return formatTid(start);
+    }
+    return formatTid(start) + " – " + formatTid(slut);
+}
+
 // M-II: Fælles funktion, der finder lave og høje hændelser. Bruges af både Dashboard og History,
 // så de altid viser de samme hændelser.
 // maalinger: liste med { tid, vaerdi }, sorteret efter tid.
@@ -65,20 +74,30 @@ function tilMillisekunder(vaerdi) {
 // Svar: liste med { type: "low" | "high", start, slut, vaerdi } (vaerdi = laveste/højeste).
 function findHaendelser(maalinger) {
     const haendelser = [];
+    const halvTime = 30 * 60 * 1000; // 30 minutter i millisekunder
+
     for (const maaling of maalinger) {
+        // Find typen. Normale målinger springes over.
         let type = null;
         if (maaling.vaerdi < GLUKOSE_LAV) type = "low";
         if (maaling.vaerdi > GLUKOSE_HOEJ) type = "high";
         if (!type) continue;
 
+        // Er den forrige hændelse af samme type og højst 30 min gammel? Så forlæng den.
         const forrige = haendelser[haendelser.length - 1];
-        const taetPaa = forrige && forrige.type === type &&
-            tilMillisekunder(maaling.tid) - tilMillisekunder(forrige.slut) <= 30 * 60 * 1000;
+        let taetPaa = false;
+        if (forrige && forrige.type === type) {
+            taetPaa = tilMillisekunder(maaling.tid) - tilMillisekunder(forrige.slut) <= halvTime;
+        }
+
         if (taetPaa) {
             forrige.slut = maaling.tid;
-            forrige.vaerdi = type === "low"
-                ? Math.min(forrige.vaerdi, maaling.vaerdi)
-                : Math.max(forrige.vaerdi, maaling.vaerdi);
+            // Gem den laveste værdi for lave hændelser og den højeste for høje.
+            if (type === "low") {
+                forrige.vaerdi = Math.min(forrige.vaerdi, maaling.vaerdi);
+            } else {
+                forrige.vaerdi = Math.max(forrige.vaerdi, maaling.vaerdi);
+            }
         } else {
             haendelser.push({ type: type, start: maaling.tid, slut: maaling.tid, vaerdi: maaling.vaerdi });
         }
