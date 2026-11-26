@@ -92,7 +92,8 @@ function showHistory(dayCount) {
         if (lowest < lowLimit) {
             row.classList.add("low");
         }
-        addCell(row, day.date);
+        // M-II: Dato som dag.måned.år via den fælles hjælpefunktion
+        addCell(row, formatDato(day.date));
         addCell(row, getAverage(day.values).toFixed(1) + " mmol/L");
         addCell(row, lowest.toFixed(1) + " mmol/L");
         addCell(row, highest.toFixed(1) + " mmol/L");
@@ -105,7 +106,8 @@ function showHistory(dayCount) {
             if (day.values[i] < lowLimit) {
                 measurementRow.classList.add("low");
             }
-            addCell(measurementRow, day.date);
+            // M-II: Dato som dag.måned.år via den fælles hjælpefunktion
+            addCell(measurementRow, formatDato(day.date));
             addCell(measurementRow, day.times[i]);
             addCell(measurementRow, day.values[i].toFixed(1) + " mmol/L");
             measurementBody.appendChild(measurementRow);
@@ -151,10 +153,10 @@ function showSymptoms(symptoms) {
         return;
     }
 
-    // Lav ét listepunkt for hvert symptom, fx "2026-11-04 08:30: Dizzy"
-    // tidspunkt ser sådan ud: "2026-11-04 08:30:00", så vi tager de første 16 tegn
+    // M-II: Lav ét listepunkt for hvert symptom, fx "04.11.2026 08:30: Dizzy"
+    // (samme dato/tid-format som resten af siden)
     for (const symptom of symptoms) {
-        addSymptomItem(symptom.tidspunkt.slice(0, 16) + ": " + symptom.beskrivelse);
+        addSymptomItem(formatDatoTid(symptom.tidspunkt) + ": " + symptom.beskrivelse);
     }
 }
 

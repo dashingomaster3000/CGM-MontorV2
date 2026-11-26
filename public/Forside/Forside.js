@@ -213,7 +213,8 @@ function renderLowEvents(readings) {
         const card = document.createElement("div");
         card.className = "event-card";
         const date = document.createElement("strong");
-        date.textContent = event.start.toLocaleDateString();
+        // M-II: Dato som dag.måned.år via den fælles hjælpefunktion
+        date.textContent = formatDato(event.start);
         const time = document.createElement("span");
         time.textContent = event.start.getTime() === event.end.getTime()
             ? formatTime(event.start)
@@ -247,14 +248,14 @@ function svgElement(name, attributes = {}) {
     return element;
 }
 
-// Vis et tidspunkt i lokalt format til grafer og hændelser.
+// M-II: Tid og dato bruger nu de fælles funktioner i Assets/Glukose.js
+// (24-timers ur i dansk tid og dag.måned.år), så Dashboard og History er ens.
 function formatTime(date) {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return formatTid(date);
 }
 
-// Sæt lokal dato og tid sammen til detaljer om målingen.
 function formatDateTime(date) {
-    return `${date.toLocaleDateString()} ${formatTime(date)}`;
+    return formatDatoTid(date);
 }
 
 // Opdatér statusbeskeden, og markér den eventuelt som en fejl.
