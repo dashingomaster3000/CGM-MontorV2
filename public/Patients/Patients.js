@@ -1,15 +1,15 @@
-// Elementer på siden, vi skal bruge
+// Elementer på siden
 const patientTable = document.getElementById("patientTable");
 const message = document.getElementById("message");
 
-// Tilføj en celle med tekst til en række
+// Tilføjer en celle med tekst til en række
 function addCell(row, text) {
     const cell = document.createElement("td");
     cell.textContent = text;
     row.appendChild(cell);
 }
 
-// Lav knap, der åbner patientens History-side
+// Knap, der åbner patientens History-side
 function addHistoryButton(row, id) {
     const cell = document.createElement("td");
     const button = document.createElement("button");
@@ -22,25 +22,24 @@ function addHistoryButton(row, id) {
     row.appendChild(cell);
 }
 
-// Lav én række i tabellen pr. patient
+// Én række pr. patient
 function showPatients(patientList) {
     patientTable.innerHTML = "";
     for (const patient of patientList) {
         const row = document.createElement("tr");
         addCell(row, patient.navn);
-        // M-II: Viser hele CPR-nummeret (før maskeret som "251248-xxxx").
-        // Alle CPR-numre i databasen er syntetiske testnumre.
+        // Alle CPR-numre er syntetiske testnumre
         addCell(row, patient.cpr);
         addHistoryButton(row, patient.id);
         patientTable.appendChild(row);
     }
 }
 
-// Hent alle patienterne fra serveren og vis
+// Henter og viser alle patienter
 async function loadPatients() {
     try {
         const response = await fetch("/api/patients");
-        // Ikke logget ind (fx sessionen er udløbet): send til login-siden
+        // Ved 401 sendes brugeren til login-siden
         if (response.status === 401) { window.location.replace("/index.html"); return; }
         if (!response.ok) {
             throw new Error("Server error");
@@ -52,8 +51,7 @@ async function loadPatients() {
     }
 }
 
-// Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
-// Hent derefter patienterne. Log ud håndteres af Auth.js.
+// Tjekker login, før patienterne hentes
 visLogin().then(function (bruger) {
     if (!bruger) return;
     loadPatients();

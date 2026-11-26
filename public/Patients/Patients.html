@@ -1,46 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- INFORMATION OM SIDEN TIL BROWSEREN -->
 <head>
-    <!-- Gør at æ, ø og å virker -->
+    <!-- Tegnsæt, så æ, ø og å virker -->
     <meta charset="UTF-8">
-    <!-- Får siden til at passe på mobil -->
+    <!-- Tilpasning til mobil -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Teksten der vises i browserfanen -->
     <title>Patients</title>
-    <!-- Projektets eneste CSS-fil (fælles for alle sider) -->
+    <!-- Projektets CSS-fil -->
     <link rel="stylesheet" href="../Assets/Diabeto.css">
 </head>
 
 <body class="history-page">
 
-    <!-- Den blå menu. class="topbar" giver samme udseende som de andre sider -->
+    <!-- Navigation -->
     <nav class="topbar" aria-label="Main navigation">
         <a class="brand" href="Patients.html">Diabeto</a>
-        <!-- "active" markerer den side, du er på -->
         <a href="Patients.html" class="active" aria-current="page">Patient list</a>
-        <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
+        <!-- Brugernavn (udfyldes af Auth.js) -->
         <span id="currentUser"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
-    <!-- Alt indholdet under menuen på siden -->
     <main>
         <h1>Patients</h1>
         <!-- Fejlbesked, hvis serveren ikke svarer -->
         <p id="message"></p>
 
-        <!-- TABEL MED ALLE PATIENTERNE I SYSTEMET -->
+        <!-- Tabel med alle patienter -->
         <section class="card">
             <table>
-                <!-- Overskrifter til tabellens kolonner her -->
                 <tr>
                     <th>Name</th>
                     <th>CPR</th>
                     <th></th>
                 </tr>
-                <!-- JavaScript laver rækkerne her inde -->
                 <tbody id="patientTable"></tbody>
             </table>
         </section>
