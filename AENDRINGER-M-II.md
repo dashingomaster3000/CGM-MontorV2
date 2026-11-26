@@ -6,6 +6,11 @@ markeret med en kommentar, der starter med `M-II:`. Søg efter `M-II:` i projekt
 
 Fælles grænser på alle sider: **Low = under 3.9 mmol/L**, **High = over 10.0 mmol/L**.
 
+**Datakilder (gruppens beslutning):**
+- **Dashboard** viser et dagsbillede fra CGM-sensoren: filen `public/Forside/sample-glucose.json`. *Alt* på dashboardet (graf, Current glucose, Average, Time in range, Readings, hændelser, mønster og tidsrum) beregnes ud fra de samme målinger, som grafen viser.
+- **History** viser de målinger, der er gemt i Neon-databasen (de seneste 14 dage).
+- De to sider behøver ikke at vise de samme data. En mulig udvidelse: dagens grafdata uploades til Neon, så gårsdagens graf bliver en del af History næste dag.
+
 ---
 
 ## Navigation / header
@@ -20,11 +25,17 @@ Fælles grænser på alle sider: **Low = under 3.9 mmol/L**, **High = over 10.0 
 
 ## Dashboard / forside
 
+### Alle tal bygger på grafens data
+- **Før:** Grafen blev tegnet fra `sample-glucose.json`, mens Current glucose, Average, Time in range, Readings, Low glucose events og Pattern overview kom fra Neon-databasen. Tallene under grafen passede derfor ikke til punkterne i grafen.
+- **Nu:** Dashboardet henter kun `sample-glucose.json`, og alt beregnes ud fra den dag, grafen viser (15 readings, gennemsnit 5.9 mmol/L, 67 % time in range, 4 Low + 1 High). "Import data" virker som før og opdaterer hele dashboardet.
+- **Filer:** `public/Forside/Forside.js` (`renderDashboard()`, `hentData()`; `patientId` er fjernet, fordi den ikke længere bruges)
+- **Hvorfor:** Feedback: Tallene og farverne under grafen skal hænge sammen med grafen.
+
 ### Low/High-labels på grafen
 - **Før:** Alle punkter var blå uden tekst. De røde zoner gik fra 4 og 10 (ikke de samme grænser som resten af appen).
 - **Nu:** Punkter under 3.9 er røde med teksten **"Low"**, punkter over 10.0 er røde med **"High"**. Zonerne følger de fælles grænser 3.9/10.0.
 - **Filer:** `public/Forside/Forside.js` (`renderChart()`), `public/Forside/Forside.css` (`.chart-point.low/.high`, `.chart-point-label`)
-- **Hvorfor:** Feedback: Det skal være tydeligt, hvilke punkter der er lave/høje. Grafen bruger stadig sin egen dagsfil `sample-glucose.json` (det er gruppens beslutning). Den har 4 lave punkter og 1 højt (10.4 kl. 16:00), så grafen viser 4×Low og 1×High.
+- **Hvorfor:** Feedback: Det skal være tydeligt, hvilke punkter der er lave/høje. Dagsfilen har 4 lave punkter (3.7, 3.4, 3.8, 3.8) og 1 højt (10.4 kl. 16:00), så grafen viser **5 markerede readings: 4×Low og 1×High**.
 
 ### Forklaring af "readings"
 - **Før:** Det stod ikke, hvad en "reading" er.
@@ -34,7 +45,7 @@ Fælles grænser på alle sider: **Low = under 3.9 mmol/L**, **High = over 10.0 
 
 ### Tidsrum nederst på dashboardet
 - **Før:** Det stod ingen steder, hvilken periode dataene dækker.
-- **Nu:** Nederst står fx *"Showing data from 02.11.2026 to 15.11.2026"* (første og nyeste måling i perioden på 14 dage).
+- **Nu:** Nederst står *"Showing data from 06.11.2026 00:00 to 06.11.2026 23:00"* (første og sidste måling i grafen).
 - **Filer:** `public/Forside/Forside.html` (`#dataPeriod`), `public/Forside/Forside.js` (`renderDashboard()`), `public/Forside/Forside.css` (`.data-period`)
 - **Hvorfor:** Feedback: Det skal være tydeligt, hvilken periode tallene gælder for.
 
@@ -56,8 +67,9 @@ Fælles grænser på alle sider: **Low = under 3.9 mmol/L**, **High = over 10.0 
 - **Hvorfor:** Feedback: Farverne i grafen og teksten under grafen skal hænge sammen.
 
 ### "Low glucose events"-kortet
-- **Før:** Overskriften var "Low glucose events". Kortet viste kun lave hændelser fra *alle* målinger (højst 6), med grå "Lowest".
-- **Nu:** Overskriften er **"Low glucose events past 2 weeks"**. Kortet viser alle lave **og** høje hændelser fra de seneste 14 dage (4 low + 1 high), med rød "Lowest"/"Highest".
+- **Før:** Overskriften var "Low glucose events". Kortet viste kun lave hændelser fra *alle* målinger i databasen (højst 6), med grå "Lowest".
+- **Nu:** Overskriften er **"Low glucose events today"**. Kortet viser lave **og** høje hændelser fra grafens dag, med rød "Lowest"/"Highest": lav 03:00–04:00 (3.4), høj 16:00 (10.4), lav 22:00 (3.8). Lave målinger inden for 30 min er samlet til én hændelse (03:00, 03:30 og 04:00).
+- **Bemærk:** Feedbacken bad om "past 2 weeks", men da dashboardet nu kun viser dagens data, ville det være forkert. Derfor står der "today".
 - **Filer:** `public/Forside/Forside.html`, `public/Forside/Forside.js` (`renderLowEvents()`)
 - **Hvorfor:** Feedback: Det skal fremgå, hvilken periode kortet dækker, og farven skal matche grafen.
 
@@ -71,16 +83,18 @@ Fælles grænser på alle sider: **Low = under 3.9 mmol/L**, **High = over 10.0 
 
 ## History
 
-### Samme data og hændelser som Dashboardet
+### Samme grænser og regler som Dashboardet
+Dashboard (dagens JSON-data) og History (Neon) viser bevidst **ikke** de samme målinger (se "Datakilder" øverst). Men de bruger nu de samme grænser, den samme måde at finde lave/høje hændelser på og det samme dato/tid-format.
+
 - **Før:** History og Dashboard viste ikke de samme lave perioder. **Årsagen var:**
-  1. **Forskellige perioder:** Dashboardets kort brugte *alle* målinger i databasen. History brugte "de sidste 7/14 dage *med målinger*" (`days.slice(-dayCount)`). Det er ikke det samme som kalenderdage, så der kunne være flere eller færre dage med.
+  1. **Forskellige data og perioder:** Dashboardets graf kom fra JSON-filen, men dets kort brugte *alle* målinger i databasen. History brugte "de sidste 7/14 dage *med målinger*" (`days.slice(-dayCount)`). Det er ikke det samme som kalenderdage, så der kunne være flere eller færre dage med.
   2. **Forskellig logik:** Dashboardet samlede lave målinger inden for 30 min til én hændelse. History talte hver lav måling for sig. Ingen af siderne viste høje målinger.
   3. **Grænserne stod to steder:** `3.9`/`10` var skrevet direkte i `Forside.js`, mens History havde sine egne konstanter.
 - **Nu:**
-  - Begge sider henter fra den **samme repository-funktion**, `hentMaalingerSeneste14Dage()` i `patients.js` (via `GET /api/patients/:id/maalinger`). Den henter den nyeste dag og 13 dage tilbage, regnet fra patientens nyeste måling.
-  - Begge sider bruger de **samme grænser** (`GLUKOSE_LAV`, `GLUKOSE_HOEJ`) og den **samme funktion** `findHaendelser()` fra `public/Assets/Glukose.js`.
-  - History har fået en ny tabel, **"Low and high glucose events"**, med de samme hændelser som Dashboardets kort (dato, tid, type, værdi).
-  - 7/14 days er nu kalenderdage fra nyeste måling, og **14 days er valgt fra start**, så siden viser samme periode som Dashboardet.
+  - History henter fra én repository-funktion, `hentMaalingerSeneste14Dage()` i `patients.js` (via `GET /api/patients/:id/maalinger`). Den henter den nyeste dag og 13 dage tilbage, regnet fra patientens nyeste måling.
+  - Dashboard og History bruger de **samme grænser** (`GLUKOSE_LAV`, `GLUKOSE_HOEJ`) og den **samme funktion** `findHaendelser()` fra `public/Assets/Glukose.js`.
+  - History har fået en ny tabel, **"Low and high glucose events"**, der er bygget på samme måde som Dashboardets kort (dato, tid, type, værdi).
+  - 7/14 days er nu kalenderdage fra nyeste måling, og **14 days er valgt fra start**.
 - **Filer:** `patients.js` (`hentMaalingerSeneste14Dage()`, erstatter `hentMaalinger()`), `server.js` (route `/api/patients/:id/maalinger`), `public/Assets/Glukose.js` (`findHaendelser()`), `public/History/History.js` (`showHistory()`, `daysInPeriod()`, `showEvents()`, `loadData()`), `public/History/History.html` (ny sektion + 14 days valgt)
 - **Hvorfor:** Feedback: Dashboard og History skal vise de samme lavperioder.
 
@@ -129,7 +143,7 @@ Menuen er også byttet om (se Navigation). Datofeltet er browserens eget `<input
 ## Backend / database
 
 ### Én repository-funktion for de 14 dage
-Se History ovenfor (`hentMaalingerSeneste14Dage()` i `patients.js`).
+Se History ovenfor (`hentMaalingerSeneste14Dage()` i `patients.js`). Dashboardet bruger den ikke længere.
 
 ### Syntetiske testdata: 4 low + 1 high
 - **Før:** Nancys seneste 14 dage havde 4 lave målinger (3.4, 3.6, 3.2, 3.7) og 2 målinger lige over 10 (10.5 og 10.6).

@@ -56,7 +56,13 @@ function parseReadings(data) {
 }
 
 // Beregn dashboardets tal, og send målingerne til hver visning.
-function renderDashboard(readings) {
+// M-II: ALT på dashboardet (graf, tal, hændelser, mønster og tidsrum) beregnes nu ud fra
+// den samme dag, som grafen viser. Før kom tallene fra databasen og grafen fra JSON-filen,
+// så tallene under grafen passede ikke til punkterne i grafen.
+function renderDashboard(allReadings) {
+    // M-II: Brug kun den sidste dag i datasættet, altså præcis de målinger grafen viser.
+    const lastDay = allReadings[allReadings.length - 1].timestamp.toDateString();
+    const readings = allReadings.filter(reading => reading.timestamp.toDateString() === lastDay);
     // Den sidste måling i den sorterede liste er den nyeste.
     const latest = readings[readings.length - 1];
     // Sammenlign med den forrige måling for at finde tendensen.
@@ -65,9 +71,6 @@ function renderDashboard(readings) {
     const trend = !previous || Math.abs(difference) < 0.2
         ? "Stable"
         : difference > 0 ? "Rising" : "Falling";
-    // Find dagens målinger til grafen og den daglige optælling.
-    const today = latest.timestamp.toDateString();
-    const todayReadings = readings.filter(reading => reading.timestamp.toDateString() === today);
     // M-II: Tæl lave målinger og dem i målområdet med de fælles grænser fra Assets/Glukose.js.
     const lowReadings = readings.filter(reading => reading.glucose < GLUKOSE_LAV);
     const inRange = readings.filter(reading => reading.glucose >= GLUKOSE_LAV && reading.glucose <= GLUKOSE_HOEJ).length;
@@ -81,17 +84,17 @@ function renderDashboard(readings) {
         `${(readings.reduce((sum, reading) => sum + reading.glucose, 0) / readings.length).toFixed(1)} mmol/L`;
     document.getElementById("timeInRange").textContent = `${Math.round(inRange / readings.length * 100)}%`;
     // Vis dagens antal målinger, og fortæl om der blev fundet lave værdier.
-    document.getElementById("readingCount").textContent = todayReadings.length;
+    document.getElementById("readingCount").textContent = readings.length;
     document.getElementById("patternSummary").textContent = lowReadings.length
         ? `${lowReadings.length} low reading${lowReadings.length === 1 ? "" : "s"} below ${GLUKOSE_LAV} mmol/L found.`
         : `No readings below ${GLUKOSE_LAV} mmol/L found.`;
 
-    // M-II: Vis tidsrummet for dataene nederst, fx "Showing data from 02.11.2026 to 15.11.2026".
+    // M-II: Vis tidsrummet for grafens data nederst, fx "Showing data from 06.11.2026 00:00 to 06.11.2026 23:00".
     document.getElementById("dataPeriod").textContent =
-        `Showing data from ${formatDato(readings[0].timestamp)} to ${formatDato(latest.timestamp)}`;
+        `Showing data from ${formatDateTime(readings[0].timestamp)} to ${formatDateTime(latest.timestamp)}`;
 
     // Opdatér grafen, listen over lave hændelser og det hyppigste tidspunkt.
-    renderChart(todayReadings);
+    renderChart(readings);
     renderLowEvents(readings);
     renderFrequentLowPeriod(lowReadings);
 }
@@ -214,7 +217,7 @@ function renderLowEvents(readings) {
     if (events.length === 0) {
         const empty = document.createElement("p");
         // M-II: Teksten passer til perioden på 2 uger
-        empty.textContent = "No low or high glucose events in the past 2 weeks.";
+        empty.textContent = "No low or high glucose events today.";
         container.append(empty);
         return;
     }
@@ -279,9 +282,8 @@ function setStatus(message, isError = false) {
     dataStatus.classList.toggle("error", isError);
 }
 
-// Læs patientnummer fra URL, fx ?patient=1. Uden nummer vises patient 1 (samme som History).
-const urlParams = new URLSearchParams(window.location.search);
-const patientId = Number(urlParams.get("patient")) || 1;
+// M-II: patientId er fjernet her, fordi dashboardet ikke længere henter patientens målinger
+// fra databasen. Menuens links beholder stadig ?patient= (se toppen af filen).
 
 // Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
 // Er det en sundhedsprofessionel, vises "Patient list", så man kan gå tilbage
@@ -296,44 +298,18 @@ visLogin().then(bruger => {
     hentData();
 });
 
-// Hent patientens målinger fra databasen (Neon), når dashboardet åbnes.
+// M-II: Dashboardet viser dagens data fra filen sample-glucose.json (et dagsbillede fra CGM-sensoren).
+// Før blev tallene hentet fra databasen og kun grafen fra filen. Nu kommer alt fra filen.
+// History-siden bruger stadig målingerne i Neon-databasen.
 function hentData() {
-    fetch("/api/patients/" + patientId + "/maalinger")
+    fetch("sample-glucose.json")
         .then(response => {
-            // Ikke logget ind (fx sessionen er udløbet): send til login-siden
-            if (response.status === 401) { window.location.replace("/index.html"); return []; }
-            // Vis en fejl, hvis serveren eller databasen ikke kunne levere målingerne.
-            if (!response.ok) throw new Error("Could not load measurements from the database.");
+            if (!response.ok) throw new Error("Could not load today's glucose data.");
             return response.json();
         })
-        .then(maalinger => {
-            // Ingen målinger i databasen: vis en besked i stedet.
-            if (maalinger.length === 0) {
-                setStatus("No measurements yet.");
-                return;
-            }
-            // Lav databasens rækker om til samme format som en importeret fil.
-            // "2026-11-09 23:00:00" bliver til "2026-11-09T23:00:00", som JavaScript kan læse.
-            const data = { readings: [] };
-            for (const maaling of maalinger) {
-                data.readings.push({
-                    timestamp: maaling.tidspunkt.replace(" ", "T"),
-                    glucose: maaling.glukose_mmol
-                });
-            }
-            renderDashboard(parseReadings(data));
-            setStatus("Showing your measurements from the database. Import a JSON file to view other readings.");
-        })
-        // Vis fejl ved netværk eller databasen i statusfeltet.
-        .catch(error => setStatus(error.message, true))
-        // Når databasen er færdig, hentes eksempelfilen sample-glucose.json.
-        .then(() => fetch("sample-glucose.json"))
-        .then(response => response.json())
         .then(data => {
-            // Grafen "Glucose today" tegnes kun ud fra eksempelfilens målinger.
-            const readings = parseReadings(data);
-            // Find dagen for den sidste måling i filen, og vis kun den dags målinger.
-            const day = readings[readings.length - 1].timestamp.toDateString();
-            renderChart(readings.filter(reading => reading.timestamp.toDateString() === day));
-        });
+            renderDashboard(parseReadings(data));
+            setStatus("Showing today's readings from the CGM sensor. Import a JSON file to view other readings.");
+        })
+        .catch(error => setStatus(error.message, true));
 }
