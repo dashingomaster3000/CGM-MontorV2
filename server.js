@@ -144,18 +144,18 @@ app.get("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res)
     res.json(liste);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "database error" });
   }
 });
 
 // M-II: Returnerer én patients målinger for de seneste 14 dage (fra nyeste måling).
-// Dashboard og History bruger begge denne route og samme repository-funktion.
+// Bruges af History. (Dashboardet viser dagens data fra sample-glucose.json, se AENDRINGER-M-II.md.)
 app.get("/api/patients/:id/maalinger", kraevLogin, kraevPatientAdgang, async (req, res) => {
   try {
     const maalinger = await patients.hentMaalingerSeneste14Dage(req.params.id);
     res.json(maalinger);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "database error" });
   }
 });
@@ -164,9 +164,9 @@ app.get("/api/patients/:id/maalinger", kraevLogin, kraevPatientAdgang, async (re
 app.get("/api/patients/:id/symptomer", kraevLogin, kraevPatientAdgang, async (req, res) => {
   try {
     const liste = await symptomer.hentSymptomer(req.params.id);
-    res.status(200).json(liste);
+    res.json(liste);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "database error" });
   }
 });
@@ -180,7 +180,7 @@ app.get("/api/patients/:cpr", kraevLogin, kraevSundhedsprofessionel, async (req,
     }
     res.json(patient);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "database error" });
   }
 });
@@ -195,7 +195,7 @@ app.post("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res
     const patient = await patients.opretPatient(cpr, navn);
     res.status(201).json(patient);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "database error" });
   }
 });
@@ -204,7 +204,7 @@ app.post("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res
 app.get("/api/symptomer", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await symptomer.hentAlleSymptomer();
-    res.status(200).json(liste);
+    res.json(liste);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "database error" });

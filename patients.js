@@ -17,7 +17,7 @@ async function hentPatientMedCpr(cpr) {
 
 // M-II: Henter én patients målinger for de seneste 14 dage, sorteret efter tidspunkt.
 // De 14 dage regnes fra patientens nyeste måling (den dag og 13 dage tilbage).
-// Dashboard og History bruger begge denne funktion, så de viser samme periode.
+// Bruges af History (via GET /api/patients/:id/maalinger) og af m2-testdata.js.
 async function hentMaalingerSeneste14Dage(patientId) {
   const result = await pool.query(
     `SELECT tidspunkt, glukose_mmol
