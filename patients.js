@@ -43,5 +43,27 @@ async function opretPatient(cpr, navn) {
   return result.rows[0];
 }
 
+// M-II: Gemmer én syntetisk testmåling. Findes målingen allerede på samme tidspunkt,
+// sker der ingenting (så scriptet kan køres flere gange).
+async function opretMaaling(patientId, tidspunkt, glukose) {
+  const result = await pool.query(
+    "INSERT INTO maalinger (patient_id, tidspunkt, glukose_mmol) VALUES ($1, $2, $3) ON CONFLICT (patient_id, tidspunkt) DO NOTHING RETURNING tidspunkt, glukose_mmol",
+    [patientId, tidspunkt, glukose]
+  );
+  return result.rows[0];
+}
+
+// M-II: Ændrer værdien af én eksisterende måling (bruges til syntetiske testdata).
+async function aendrMaaling(patientId, tidspunkt, glukose) {
+  const result = await pool.query(
+    "UPDATE maalinger SET glukose_mmol = $3 WHERE patient_id = $1 AND tidspunkt = $2 RETURNING tidspunkt, glukose_mmol",
+    [patientId, tidspunkt, glukose]
+  );
+  return result.rows[0];
+}
+
 // Gør funktionerne tilgængelige for server.js.
-module.exports = { hentPatienter, hentPatientMedCpr, hentMaalingerSeneste14Dage, opretPatient };
+module.exports = {
+  hentPatienter, hentPatientMedCpr, hentMaalingerSeneste14Dage, opretPatient,
+  opretMaaling, aendrMaaling
+};
