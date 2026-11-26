@@ -85,6 +85,9 @@ function renderDashboard(allReadings) {
     document.getElementById("timeInRange").textContent = `${Math.round(inRange / readings.length * 100)}%`;
     // Vis dagens antal målinger, og fortæl om der blev fundet lave værdier.
     document.getElementById("readingCount").textContent = readings.length;
+    // M-II: Vis både antal høje og lave målinger under "Readings".
+    document.getElementById("highCount").textContent = readings.filter(reading => reading.glucose > GLUKOSE_HOEJ).length;
+    document.getElementById("lowCount").textContent = lowReadings.length;
     document.getElementById("patternSummary").textContent = lowReadings.length
         ? `${lowReadings.length} low reading${lowReadings.length === 1 ? "" : "s"} below ${GLUKOSE_LAV} mmol/L found.`
         : `No readings below ${GLUKOSE_LAV} mmol/L found.`;

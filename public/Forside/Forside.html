@@ -68,14 +68,21 @@
                 <div><span>Average</span><strong id="averageGlucose">--</strong></div>
                 <!-- M-II: "in-range" = grøn tekst, "readings" = rød tekst (samme farver som grafen) -->
                 <div class="in-range"><span>Time in range</span><strong id="timeInRange">--</strong></div>
-                <div class="readings"><span>Readings</span><strong id="readingCount">--</strong></div>
+                <div class="readings">
+                    <span>Readings</span><strong id="readingCount">--</strong>
+                    <!-- M-II: Viser både antal høje og lave målinger -->
+                    <ul class="reading-split">
+                        <li>High-Glucose: <b id="highCount">--</b></li>
+                        <li>Low-Glucose: <b id="lowCount">--</b></li>
+                    </ul>
+                </div>
             </div>
         </section>
 
         <!-- JavaScript tilføjer et kort for hver registreret lav måling. -->
         <section class="panel" aria-labelledby="eventsHeading">
             <!-- M-II: Overskriften siger nu, hvilken periode kortet dækker (dagens data i grafen) -->
-            <h2 id="eventsHeading">Low glucose events today</h2>
+            <h2 id="eventsHeading">Critical glucose events today</h2>
             <div id="lowEvents" class="event-list"></div>
         </section>
 

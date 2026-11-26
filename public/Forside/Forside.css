@@ -298,10 +298,36 @@ body {
     color: var(--maal-farve);
 }
 
-/* M-II: "Readings" står med rød tekst (som grafens røde punkter). */
-.summary .readings span,
+/* M-II: "Readings" og antallet i normal tekst til venstre, High/Low-listen til højre. */
+.summary .readings {
+    grid-template-columns: auto 1fr;
+    column-gap: 14px;
+    align-items: center;
+}
+
+.summary .readings span {
+    grid-column: 1;
+    grid-row: 1;
+}
+
 .summary .readings strong {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+/* M-II: High-Glucose/Low-Glucose i rød tekst (som grafens røde punkter). */
+.summary .reading-split {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin: 0;
+    padding-left: 14px;
     color: var(--lav-farve);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.summary .reading-split b {
+    font-weight: 600;
 }
 
 /* Vis så mange kort over lave målinger på hver række, som skærmen tillader. */
@@ -345,9 +371,9 @@ body {
     font-size: 16px;
 }
 
-/* M-II: "Lowest"/"Highest" er rød, så den matcher grafens røde punkter. */
+/* M-II: "Lowest"/"Highest" vises i almindelig sort tekst – kun kortets baggrund er rød. */
 .event-card .event-value {
-    color: var(--lav-farve);
+    color: #17212f;
     font-weight: bold;
 }
 
@@ -361,9 +387,9 @@ body {
 
 /* Fremhæv tidspunktet, hvor lav glukose forekommer oftest. */
 .period {
-    /* M-II: større tal (før 24px), rød fordi det er tidspunktet for lav glukose */
+    /* M-II: større tal (før 24px), almindelig sort tekst */
     font-size: 28px;
-    color: var(--lav-farve);
+    color: #17212f;
 }
 
 /* Tilpas afstande og kort på mindre mobilskærme. */
