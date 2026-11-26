@@ -91,11 +91,8 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+// Svarer med den bruger, der er logget ind (bruges af Auth.js på alle sider).
 app.get("/api/me", kraevLogin, (req, res) => {
-  if(!req.session.bruger) {
-    return res.status(401).json({ error: "Not logged in" });
-  }
-
   res.json(req.session.bruger);
 });
 
@@ -111,6 +108,7 @@ app.post("/api/logout", kraevLogin, (req, res) => {
   });
 });
 
+// Middleware: stopper requests uden login med 401. Står først på alle data-routes.
 function kraevLogin(req, res, next) {
   if (!req.session.bruger) {
     return res.status(401).json({ error: "Not logged in" });
@@ -119,20 +117,16 @@ function kraevLogin(req, res, next) {
   next();
 }
 
+// Middleware (efter kraevLogin): kun sundhedsprofessionelle (uden patient_id) må komme videre.
 function kraevSundhedsprofessionel(req, res, next) {
-  if (!req.session.bruger) {
-    return res.status(401).json({ error: "Not logged in" });
-  }
   if (req.session.bruger.patient_id != null) {
     return res.status(403).json({ error: "Healthcare professional access required" });
   }
   next();
 }
 
+// Middleware (efter kraevLogin): en patient må kun se sine egne data (:id i adressen).
 function kraevPatientAdgang(req, res, next) {
-  if (!req.session.bruger) {
-    return res.status(401).json({ error: "Not logged in" });
-  }
   const patientId = Number(req.params.id);
   if (!Number.isInteger(patientId)) {
     return res.status(400).json({ error: "Invalid patient id" });
@@ -147,7 +141,7 @@ function kraevPatientAdgang(req, res, next) {
 }
 
 // Returnerer patientlisten til sundhedsprofessionelle.
-app.get("/api/patients", kraevSundhedsprofessionel, async (req, res) => {
+app.get("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await patients.hentPatienter();
     res.json(liste);
@@ -159,7 +153,7 @@ app.get("/api/patients", kraevSundhedsprofessionel, async (req, res) => {
 
 // M-II: Returnerer én patients målinger for de seneste 14 dage (fra nyeste måling).
 // Dashboard og History bruger begge denne route og samme repository-funktion.
-app.get("/api/patients/:id/maalinger", kraevPatientAdgang, async (req, res) => {
+app.get("/api/patients/:id/maalinger", kraevLogin, kraevPatientAdgang, async (req, res) => {
   try {
     const maalinger = await patients.hentMaalingerSeneste14Dage(req.params.id);
     res.json(maalinger);
@@ -170,7 +164,7 @@ app.get("/api/patients/:id/maalinger", kraevPatientAdgang, async (req, res) => {
 });
 
 // Returnerer én patients symptomer, sorteret efter tidspunkt.
-app.get("/api/patients/:id/symptomer", kraevPatientAdgang, async (req, res) => {
+app.get("/api/patients/:id/symptomer", kraevLogin, kraevPatientAdgang, async (req, res) => {
   try {
     const liste = await symptomer.hentSymptomer(req.params.id);
     res.status(200).json(liste);
@@ -181,7 +175,7 @@ app.get("/api/patients/:id/symptomer", kraevPatientAdgang, async (req, res) => {
 });
 
 // Returnerer én patient ud fra CPR-nummeret til sundhedsprofessionelle.
-app.get("/api/patients/:cpr", kraevSundhedsprofessionel, async (req, res) => {
+app.get("/api/patients/:cpr", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   try {
     const patient = await patients.hentPatientMedCpr(req.params.cpr);
     if (!patient) {
@@ -195,7 +189,7 @@ app.get("/api/patients/:cpr", kraevSundhedsprofessionel, async (req, res) => {
 });
 
 // Gemmer en ny patient i tabellen patients.
-app.post("/api/patients", kraevSundhedsprofessionel, async (req, res) => {
+app.post("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   const { cpr, navn } = req.body ?? {};
   if (!cpr || !navn) {
     return res.status(400).json({ error: "cpr and name are required" });
@@ -210,7 +204,7 @@ app.post("/api/patients", kraevSundhedsprofessionel, async (req, res) => {
 });
 
 // Returnerer alle symptomer fra tabellen symptomer, sorteret efter id.
-app.get("/api/symptomer", kraevSundhedsprofessionel, async (req, res) => {
+app.get("/api/symptomer", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await symptomer.hentAlleSymptomer();
     res.status(200).json(liste);
