@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const cors = require("cors");
 const session = require("express-session");
 const PgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcryptjs");
@@ -21,8 +20,6 @@ const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
   throw new Error("SESSION_SECRET must be set in .env.");
 }
-
-app.use(cors());
 
 app.use(express.json());
 app.use(
