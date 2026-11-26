@@ -4,7 +4,7 @@
 const GLUKOSE_LAV = 3.9;
 const GLUKOSE_HOEJ = 10.0;
 
-// Laver et tal om til to cifre, fx 6 bliver "06"
+// Laver et tal om til to cifre, fx 6 bliver "06."
 function toCifre(tal) {
     return String(tal).padStart(2, "0");
 }
