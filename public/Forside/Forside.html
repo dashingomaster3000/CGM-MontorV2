@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <!-- Indlæser sidens farver og layout fra CSS-filen. -->
+    <!-- Fælles udseende (topbaren) for alle Diabeto-sider -->
+    <link rel="stylesheet" href="../Assets/Diabeto.css">
     <link rel="stylesheet" href="Forside.css">
 </head>
 <body>
@@ -21,7 +23,7 @@
         <a href="../Feedback/MeldSymptomer.html" id="reportSymptomsLink">Report symptoms</a>
         <a href="../History/History.html">History</a>
         <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
-        <span id="currentUser" style="color: white;"></span>
+        <span id="currentUser"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
@@ -29,7 +31,7 @@
     <main class="dashboard">
         <h2>Good day</h2>
         <!-- Knappen åbner filvælgeren, så man kan importere glukosedata. -->
-        <div class="import-controls">
+        <div>
             <button id="importButton" type="button">Import data</button>
             <!-- Filvælgeren tager imod JSON-filer og åbnes med knappen ovenfor. -->
             <input id="dataFile" type="file" accept=".json,application/json" hidden>

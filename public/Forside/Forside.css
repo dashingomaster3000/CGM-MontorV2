@@ -22,43 +22,7 @@ body {
     font-size: 17px;
 }
 
-/* Lav den blå navigationslinje. */
-.topbar {
-    padding: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 20px;
-    background: #1f6feb;
-}
-
-/* Hold Diabeto til venstre for navigationslinksene. */
-.brand {
-    margin-right: auto;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.topbar a,
-.topbar button {
-    padding: 6px 12px;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font: inherit;
-}
-
-.topbar button {
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-}
-
-.topbar a.active {
-    color: #1f6feb;
-    background: white;
-}
+/* Den blå navigationslinje (topbaren) står i Assets/Diabeto.css. */
 
 /* Gør importknappen større og tydeligere end navigationsknapperne. */
 #importButton {
@@ -394,10 +358,6 @@ body {
 
 /* Tilpas afstande og kort på mindre mobilskærme. */
 @media (max-width: 600px) {
-    .topbar {
-        gap: 8px;
-    }
-
     /* Brug mindre sidemargener, så dashboardet passer på mobilen. */
     .dashboard {
         width: min(100% - 24px, 860px);

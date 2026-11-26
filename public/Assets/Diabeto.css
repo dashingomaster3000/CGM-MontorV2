@@ -1,3 +1,56 @@
+/* Fælles CSS for Diabeto. Indlæses på alle sider. */
+
+/* ---------- Den blå navigationslinje (topbaren) – samme på alle sider med menu ---------- */
+.topbar {
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    background-color: #1f6feb;
+}
+
+/* "Diabeto" står til venstre, og resten af menuen skubbes til højre. */
+.brand {
+    margin-right: auto;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.topbar a,
+.topbar button {
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font: inherit;
+}
+
+.topbar button {
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Den side, man er på, får hvid baggrund. */
+.topbar a.active {
+    color: #1f6feb;
+    background-color: white;
+}
+
+/* Brugernavnet på den, der er logget ind (udfyldes af Auth.js). */
+#currentUser {
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .topbar {
+        gap: 8px;
+    }
+}
+
+/* ---------- Login-siden ---------- */
 
 /* Grundopsætning for hele login-siden. */
 .login-page {
@@ -108,33 +161,6 @@
     display: none;
 }
 
-/* Den lysegrå boks med demo-loginoplysningerne. */
-.login-page section {
-    margin-top: 24px;
-    padding: 16px;
-    border-radius: 8px;
-    background-color: #f4f6f8;
-}
-
-/* Overskriften "Demo-login". */
-.login-page section h2 {
-    margin-bottom: 14px;
-    font-size: 1.2rem;
-}
-
-/* Overskrifterne for demo-kontiene. */
-.login-page section h3 {
-    margin: 14px 0 4px;
-    color: #1f6feb;
-    font-size: 1rem;
-}
-
-/* Teksten med demo-kontienes loginoplysninger. */
-.login-page section p {
-    margin: 0;
-    line-height: 1.5;
-}
-
 /* Tilpasninger til skærme, der er højst 520 px brede. */
 @media (max-width: 520px) {
     .login-page {
@@ -146,53 +172,14 @@
     }
 }
 
+/* ---------- Report symptoms-siden ---------- */
 
-
-
-/* Grundopsætning for hele meldsymptomer-siden. */
 /* Hele siden */
 .meld-symptomer-page {
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #f4f6f8;
     color: #202124;
-}
-
-/* Den blå navigationslinje. */
-.meld-symptomer-page .topbar {
-    padding: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 20px;
-    background-color: #1f6feb;
-}
-
-.meld-symptomer-page .brand {
-    margin-right: auto;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.meld-symptomer-page .topbar a,
-.meld-symptomer-page .topbar button {
-    padding: 6px 12px;
-    border: 0;
-    border-radius: 6px;
-    color: white;
-    text-decoration: none;
-    font: inherit;
-}
-
-.meld-symptomer-page .topbar button {
-    background: transparent;
-    cursor: pointer;
-}
-
-.meld-symptomer-page .topbar a.active {
-    color: #1f6feb;
-    background-color: white;
 }
 
 /* Centrerer indholdet */
@@ -220,20 +207,8 @@
     margin-top: 0;
 }
 
-/* Inputfelter */
+/* Inputfelter og tekstfeltet til symptomet */
 .meld-symptomer-page input,
-.meld-symptomer-page select {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 8px;
-    margin-bottom: 12px;
-    border: 1px solid #dddddd;
-    border-radius: 6px;
-    font-size: 16px;
-    
-}
-
 .meld-symptomer-page textarea {
     display: block;
     width: 100%;
@@ -243,6 +218,10 @@
     border: 1px solid #dddddd;
     border-radius: 6px;
     font-size: 16px;
+}
+
+/* Tekstfeltet er højere og bruger sidens skrifttype. */
+.meld-symptomer-page textarea {
     font-family: inherit;
     min-height: 120px;
     resize: vertical;
@@ -265,23 +244,4 @@
 
 .meld-symptomer-page .feedback {
     color: #21c526;
-}
-
-/* Tabellen med gemte symptomer */
-.meld-symptomer-page table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.meld-symptomer-page th,
-.meld-symptomer-page td {
-    text-align: left;
-    padding: 8px;
-    border-bottom: 1px solid #dddddd;
-}
-
-@media (max-width: 600px) {
-    .meld-symptomer-page .topbar {
-        gap: 8px;
-    }
 }

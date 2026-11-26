@@ -7,42 +7,7 @@ body {
     background-color: #f4f6f8;
 }
 
-/* Den blå navigationslinje. */
-.topbar {
-    padding: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 20px;
-    background-color: #1f6feb;
-}
-
-.brand {
-    margin-right: auto;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.topbar a,
-.topbar button {
-    padding: 6px 12px;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font: inherit;
-}
-
-.topbar button {
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-}
-
-.topbar a.active {
-    color: #1f6feb;
-    background: white;
-}
+/* Den blå navigationslinje (topbaren) står i Assets/Diabeto.css. */
 
 /* Centrerer sidens indhold og giver luft rundt. */
 main {
@@ -112,8 +77,3 @@ tr.high {
     background-color: #fce8e6;
 }
 
-@media (max-width: 600px) {
-    .topbar {
-        gap: 8px;
-    }
-}

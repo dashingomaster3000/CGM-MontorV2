@@ -10,6 +10,8 @@
     <!-- Teksten der vises i browserfanen -->
     <title>History</title>
     <!-- Henter sidens udseende fra CSS-filen her -->
+    <!-- Fælles udseende (topbaren) for alle Diabeto-sider -->
+    <link rel="stylesheet" href="../Assets/Diabeto.css">
     <link rel="stylesheet" href="History.css">
 </head>
 
@@ -26,7 +28,7 @@
         <a href="../Feedback/MeldSymptomer.html" id="reportSymptomsLink">Report symptoms</a>
         <a href="History.html" class="active" aria-current="page">History</a>
         <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
-        <span id="currentUser" style="color: white;"></span>
+        <span id="currentUser"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
