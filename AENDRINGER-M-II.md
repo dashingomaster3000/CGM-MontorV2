@@ -34,7 +34,7 @@ Fælles grænser på alle sider: **Low = under 3.9 mmol/L**, **High = over 10.0 
 ### Low/High-labels på grafen
 - **Før:** Alle punkter var blå uden tekst. De røde zoner gik fra 4 og 10 (ikke de samme grænser som resten af appen).
 - **Nu:** Punkter under 3.9 er røde med teksten **"Low"**, punkter over 10.0 er røde med **"High"**. Zonerne følger de fælles grænser 3.9/10.0.
-- **Filer:** `public/Forside/Forside.js` (`renderChart()`), `public/Forside/Forside.css` (`.chart-point.low/.high`, `.chart-point-label`)
+- **Filer:** `public/Forside/Forside.js` (`renderChart()`; ligger to mærkede punkter tæt, skrives hver anden tekst under punktet, så de ikke overlapper), `public/Forside/Forside.css` (`.chart-point.low/.high`, `.chart-point-label`)
 - **Hvorfor:** Feedback: Det skal være tydeligt, hvilke punkter der er lave/høje. Dagsfilen har 4 lave punkter (3.7, 3.4, 3.8, 3.8) og 1 højt (10.4 kl. 16:00), så grafen viser **5 markerede readings: 4×Low og 1×High**.
 
 ### Forklaring af "readings"
