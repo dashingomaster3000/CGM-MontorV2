@@ -178,6 +178,19 @@ body {
     stroke-width: 2;
 }
 
+/* M-II: Lave og høje punkter er røde ligesom de røde zoner (samme farve som tal og tekst under grafen). */
+.chart-point.low,
+.chart-point.high {
+    fill: #b42318;
+}
+
+/* M-II: "Low"/"High"-teksten ved punkterne i grafen. */
+.chart-point-label {
+    fill: #b42318;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 /* Gør grafens etiketter mindre fremtrædende end målingerne. */
 .chart-label {
     fill: #687789;

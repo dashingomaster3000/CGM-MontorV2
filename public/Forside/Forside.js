@@ -127,14 +127,15 @@ function renderChart(readings) {
     const y = value => top + (maxValue - value) / (maxValue - minValue) * (height - top - bottom);
 
     // Tegn rød zone under målområdet, grøn målzone og rød zone over målområdet.
+    // M-II: Zonerne følger de fælles grænser (3.9 og 10.0), så farven passer med Low/High-labels.
     svg.append(svgElement("rect", {
-        x: left, y: y(4), width: width - left - right, height: y(0) - y(4), class: "out-of-range-band"
+        x: left, y: y(GLUKOSE_LAV), width: width - left - right, height: y(0) - y(GLUKOSE_LAV), class: "out-of-range-band"
     }));
     svg.append(svgElement("rect", {
-        x: left, y: y(10), width: width - left - right, height: y(4) - y(10), class: "range-band"
+        x: left, y: y(GLUKOSE_HOEJ), width: width - left - right, height: y(GLUKOSE_LAV) - y(GLUKOSE_HOEJ), class: "range-band"
     }));
     svg.append(svgElement("rect", {
-        x: left, y: y(13), width: width - left - right, height: y(10) - y(13), class: "out-of-range-band"
+        x: left, y: y(13), width: width - left - right, height: y(GLUKOSE_HOEJ) - y(13), class: "out-of-range-band"
     }));
 
     // Tilføj vandrette hjælpelinjer og glukoseværdier.
@@ -153,13 +154,27 @@ function renderChart(readings) {
     ).join(" ");
     svg.append(svgElement("path", { d: path, class: "chart-line" }));
     readings.forEach((reading, index) => {
+        // M-II: Find ud af, om punktet er Low (under 3.9) eller High (over 10.0).
+        let type = "";
+        if (reading.glucose < GLUKOSE_LAV) type = "low";
+        if (reading.glucose > GLUKOSE_HOEJ) type = "high";
+
         const point = svgElement("circle", {
-            cx: x(index), cy: y(reading.glucose), r: 4, class: "chart-point"
+            cx: x(index), cy: y(reading.glucose), r: 4, class: `chart-point ${type}`
         });
         const title = svgElement("title");
         title.textContent = `${formatDateTime(reading.timestamp)}: ${reading.glucose.toFixed(1)} mmol/L`;
         point.append(title);
         svg.append(point);
+
+        // M-II: Skriv "Low" eller "High" lige over punktet.
+        if (type) {
+            const pointLabel = svgElement("text", {
+                x: x(index), y: y(reading.glucose) - 10, "text-anchor": "middle", class: `chart-point-label ${type}`
+            });
+            pointLabel.textContent = type === "low" ? "Low" : "High";
+            svg.append(pointLabel);
+        }
     });
 
     // Tilføj en etiket for hver time, og lad grafen rulle på smalle skærme.
