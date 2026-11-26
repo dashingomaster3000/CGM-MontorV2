@@ -15,9 +15,6 @@ CREATE TABLE brugere (
 );
 
 -- Tillad flere sundhedsprofessionelle uden patient_id, men kun én konto pr. patient.
-ALTER TABLE brugere
-  ADD COLUMN IF NOT EXISTS patient_id INTEGER REFERENCES patients (id);
-
 CREATE UNIQUE INDEX IF NOT EXISTS brugere_patient_id_unique
   ON brugere (patient_id)
   WHERE patient_id IS NOT NULL;
