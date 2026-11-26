@@ -47,8 +47,8 @@ form.addEventListener("submit", async function (event) {
     fejlBesked.textContent = "";
     feedback.textContent = "";
 
-    const dato = document.getElementById("dato").value; // fx "2026-11-10"
-    const tid = document.getElementById("tid").value;   // fx "14:30"
+    const dato = datoFelt.value; // fx "2026-11-10"
+    const tid = tidFelt.value;   // fx "14:30"
     const tekst = document.getElementById("symptomer").value.trim();
 
     // Sætter dato og tid sammen til ét tidspunkt
