@@ -1,28 +1,26 @@
 const pg = require("pg");
 
-// Læser .env lokalt. På Vercel findes filen ikke, så fejlen ignoreres.
+// Læser .env lokalt (filen findes ikke på Vercel)
 try {
   process.loadEnvFile();
 } catch (error) {
   console.log("No .env file found");
 }
 
-// Tidspunkter sendes som tekst fra databasen.
-// Så passer datoen uanset computerens tidszone.
+// TIMESTAMP (type 1114) returneres som tekst, så tidszonen ikke flytter tiden
 pg.types.setTypeParser(1114, function (tekst) {
   return tekst;
 });
 
-// Forbindelse til Neon-databasen. Projektets eneste Pool.
+// Forbindelse til Neon-databasen
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
-// Neon kan lukke en ledig forbindelse. Uden denne linje går serveren ned.
+// Undgår nedbrud, når Neon lukker en ledig forbindelse
 pool.on("error", (err) => {
   console.error("Databasen lukkede forbindelsen:", err.message);
 });
 
-// Gør forbindelsen tilgængelig for de andre filer.
 module.exports = pool;

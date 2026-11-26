@@ -1,11 +1,5 @@
-// M-II: Syntetiske testdata til D3. Køres manuelt fra terminalen:
-//   node m2-testdata.js            -> viser kun, hvad der ville ske (ændrer intet)
-//   node m2-testdata.js --udfoer   -> ændrer dataene i databasen
-//
-// Målet: Nancys seneste 14 dage skal have 4 lave målinger og præcis 1 høj måling.
-// 1) Målinger over 10.0 (fx 10.5 og 10.6) sænkes til lige under 10, så de ikke tæller som High.
-// 2) Én forhøjet måling (13.2 mmol/L) tilføjes kl. 15:00, 3 dage før nyeste måling.
-// Al SQL ligger i patients.js og bruger pladsholdere ($1, $2, $3).
+// Syntetiske testdata: 4 lave og 1 høj måling for testpatienten Nancy
+// Kør "node m2-testdata.js" for at se ændringerne og tilføj --udfoer for at gemme dem
 
 const patients = require("./patients");
 const pool = require("./db");
@@ -22,7 +16,7 @@ async function main() {
   const maalinger = await patients.hentMaalingerSeneste14Dage(nancy.id);
   if (maalinger.length === 0) throw new Error("Nancy har ingen målinger.");
 
-  // Tidspunktet for den nye høje måling: 3 dage før nyeste dag, kl. 15:00
+  // Den nye høje måling: 3 dage før nyeste dag kl. 15:00
   const nyeste = maalinger[maalinger.length - 1].tidspunkt;
   const dag = new Date(nyeste.slice(0, 10) + "T00:00:00Z");
   dag.setUTCDate(dag.getUTCDate() - 3);
@@ -31,7 +25,7 @@ async function main() {
   console.log(`Patient ${nancy.id} (${nancy.navn}): ${maalinger.length} målinger, ${maalinger[0].tidspunkt} til ${nyeste}`);
   console.log("Lave:", maalinger.filter(m => Number(m.glukose_mmol) < 3.9).map(m => `${m.tidspunkt} ${m.glukose_mmol}`));
 
-  // 1) Sænk eksisterende høje målinger (dog ikke den nye testmåling)
+  // Sænker de eksisterende høje målinger til under 10
   const hoeje = maalinger.filter(m => Number(m.glukose_mmol) > HOEJ_GRAENSE && m.tidspunkt !== nytTidspunkt);
   let nyVaerdi = 9.8;
   for (const m of hoeje) {
@@ -40,7 +34,7 @@ async function main() {
     nyVaerdi = Math.round((nyVaerdi - 0.2) * 10) / 10;
   }
 
-  // 2) Tilføj den ene høje måling
+  // Tilføjer én høj måling
   console.log(`${udfoer ? "Tilføjer" : "Ville tilføje"} ${nytTidspunkt}: ${NY_HOEJ_VAERDI} mmol/L`);
   if (udfoer) {
     const ny = await patients.opretMaaling(nancy.id, nytTidspunkt, NY_HOEJ_VAERDI);

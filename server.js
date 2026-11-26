@@ -5,28 +5,29 @@ const session = require("express-session");
 const PgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcryptjs");
 
-// Serveren regner i dansk tid. Ellers kører Vercel i UTC-tid,
-// og et symptom meldt "lige nu" ville se ud til at ligge i fremtiden..
+// Dansk tid, så tidspunkter passer på Vercel (der kører i UTC)
 process.env.TZ = "Europe/Copenhagen";
 
-// Repository-filerne. Al SQL ligger i dem, ikke her.
+// Repository-filer med al SQL
 const patients = require("./patients");
 const symptomer = require("./symptomer");
 const brugere = require("./brugere");
 
 const app = express();
+// Vercel ligger bag en proxy, ellers virker sikre cookies ikke
 app.set("trust proxy", 1);
 const sessionSecret = process.env.SESSION_SECRET;
 
+// Stopper serveren, hvis SESSION_SECRET mangler
 if (!sessionSecret) {
   throw new Error("SESSION_SECRET must be set in .env.");
 }
 
-// CORS: tillader, at API'et kaldes fra en side på en anden adresse (origin).
-// Vores egne sider ligger på samme adresse som API'et, så de virker også uden.
+// Tillader kald til API'et fra andre adresser (CORS)
 app.use(cors());
 
 app.use(express.json());
+// Login-session gemt i tabellen session, cookien udløber efter 1 time
 app.use(
   session({
     store: new PgSession({connectionString: process.env.DATABASE_URL}),
@@ -42,13 +43,15 @@ app.use(
   })
 );
 
+// Leverer HTML, CSS og JS fra mappen public
 app.use(express.static("public"));
 
-// Sender forsiden, når klienten åbner /. Vercel sender / videre til Express.
+// Sender login-siden, når man åbner /
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// Logger brugeren ind og gemmer brugeren i sessionen
 app.post("/api/login", async (req, res) => {
   const brugernavn =
     typeof req.body?.brugernavn === "string" ? req.body.brugernavn.trim() : "";
@@ -60,17 +63,20 @@ app.post("/api/login", async (req, res) => {
   }
 
   try {
+    // Sammenligner password med bcrypt-hashen fra databasen
     const bruger = await brugere.findBruger(brugernavn);
     if (!bruger || !(await bcrypt.compare(password, bruger.password_hash))) {
       return res.status(401).json({ error: "Invalid e-mail or password" });
     }
 
+    // Ny session-id ved login
     req.session.regenerate((error) => {
       if (error) {
         console.error("Could not create login session:", error);
         return res.status(500).json({ error: "server error" });
       }
 
+      // Brugere uden patient_id er sundhedsprofessionelle
       req.session.bruger = {
         id: bruger.id,
         brugernavn: bruger.brugernavn,
@@ -93,11 +99,12 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Svarer med den bruger, der er logget ind (bruges af Auth.js på alle sider).
+// Returnerer den bruger, der er logget ind
 app.get("/api/me", kraevLogin, (req, res) => {
   res.json(req.session.bruger);
 });
 
+// Logger ud: sletter sessionen og cookien
 app.post("/api/logout", kraevLogin, (req, res) => {
   req.session.destroy((error) => {
     if (error) {
@@ -110,7 +117,7 @@ app.post("/api/logout", kraevLogin, (req, res) => {
   });
 });
 
-// Middleware: stopper requests uden login med 401. Står først på alle data-routes.
+// Afviser kaldet med 401, hvis brugeren ikke er logget ind
 function kraevLogin(req, res, next) {
   if (!req.session.bruger) {
     return res.status(401).json({ error: "Not logged in" });
@@ -119,7 +126,7 @@ function kraevLogin(req, res, next) {
   next();
 }
 
-// Middleware (efter kraevLogin): kun sundhedsprofessionelle (uden patient_id) må komme videre.
+// Kun sundhedsprofessionelle (uden patient_id) får adgang
 function kraevSundhedsprofessionel(req, res, next) {
   if (req.session.bruger.patient_id != null) {
     return res.status(403).json({ error: "Healthcare professional access required" });
@@ -127,7 +134,7 @@ function kraevSundhedsprofessionel(req, res, next) {
   next();
 }
 
-// Middleware (efter kraevLogin): en patient må kun se sine egne data (:id i adressen).
+// En patient må kun se sine egne data
 function kraevPatientAdgang(req, res, next) {
   const patientId = Number(req.params.id);
   if (!Number.isInteger(patientId)) {
@@ -142,7 +149,7 @@ function kraevPatientAdgang(req, res, next) {
   next();
 }
 
-// Returnerer patientlisten til sundhedsprofessionelle.
+// Henter alle patienter
 app.get("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await patients.hentPatienter();
@@ -153,8 +160,7 @@ app.get("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res)
   }
 });
 
-// M-II: Returnerer én patients målinger for de seneste 14 dage (fra nyeste måling).
-// Bruges af History. (Dashboardet viser dagens data fra sample-glucose.json, se AENDRINGER-M-II.md.)
+// Henter én patients målinger for de seneste 14 dage
 app.get("/api/patients/:id/maalinger", kraevLogin, kraevPatientAdgang, async (req, res) => {
   try {
     const maalinger = await patients.hentMaalingerSeneste14Dage(req.params.id);
@@ -165,7 +171,7 @@ app.get("/api/patients/:id/maalinger", kraevLogin, kraevPatientAdgang, async (re
   }
 });
 
-// Returnerer én patients symptomer, sorteret efter tidspunkt.
+// Henter én patients symptomer
 app.get("/api/patients/:id/symptomer", kraevLogin, kraevPatientAdgang, async (req, res) => {
   try {
     const liste = await symptomer.hentSymptomer(req.params.id);
@@ -176,7 +182,7 @@ app.get("/api/patients/:id/symptomer", kraevLogin, kraevPatientAdgang, async (re
   }
 });
 
-// Returnerer én patient ud fra CPR-nummeret til sundhedsprofessionelle.
+// Henter én patient ud fra CPR-nummeret
 app.get("/api/patients/:cpr", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   try {
     const patient = await patients.hentPatientMedCpr(req.params.cpr);
@@ -190,7 +196,7 @@ app.get("/api/patients/:cpr", kraevLogin, kraevSundhedsprofessionel, async (req,
   }
 });
 
-// Gemmer en ny patient i tabellen patients.
+// Opretter en ny patient
 app.post("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   const { cpr, navn } = req.body ?? {};
   if (!cpr || !navn) {
@@ -205,7 +211,7 @@ app.post("/api/patients", kraevLogin, kraevSundhedsprofessionel, async (req, res
   }
 });
 
-// Returnerer alle symptomer fra tabellen symptomer, sorteret efter id.
+// Henter alle symptomer fra alle patienter
 app.get("/api/symptomer", kraevLogin, kraevSundhedsprofessionel, async (req, res) => {
   try {
     const liste = await symptomer.hentAlleSymptomer();
@@ -216,19 +222,20 @@ app.get("/api/symptomer", kraevLogin, kraevSundhedsprofessionel, async (req, res
   }
 });
 
-// Gemmer et nyt symptom i tabellen symptomer.
+// Opretter et nyt symptom
 app.post("/api/symptomer", kraevLogin, async (req, res) => {
   const { patient_id, tidspunkt, beskrivelse } = req.body ?? {};
 
-  // Tjekker felterne FØR databasen. Tom tekst eller kun mellemrum tæller som manglende.
+  // Tomme felter eller kun mellemrum giver 400
   if (!patient_id || !String(tidspunkt ?? "").trim() || !String(beskrivelse ?? "").trim()) {
     return res.status(400).json({ error: "patient_id, tidspunkt and beskrivelse are required" });
   }
 
-  // Tjekker at patient_id er et helt tal, fx 1 og ikke "abc"
+  // patient_id skal være et helt tal
   if (!Number.isInteger(Number(patient_id))) {
     return res.status(400).json({ error: "Invalid patient id" });
   }
+  // En patient må kun melde symptomer for sig selv
   if (
     req.session.bruger.patient_id != null &&
     Number(patient_id) !== req.session.bruger.patient_id
@@ -236,30 +243,30 @@ app.post("/api/symptomer", kraevLogin, async (req, res) => {
     return res.status(403).json({ error: "You can only report symptoms for your own patient account" });
   }
 
-  // Tjekker formatet: præcis "ÅÅÅÅ-MM-DD TT:MM", fx "2026-11-10 14:30". Stopper fx år 00000.
+  // Tidspunktet skal have formatet ÅÅÅÅ-MM-DD TT:MM
   const formatOk = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(tidspunkt);
   if (!formatOk) {
     return res.status(400).json({ error: "Date and time must look like 2026-11-10 14:30" });
   }
 
-  // Laver teksten om til et rigtigt tidspunkt. Ugyldige værdier (fx kl. 25:00) giver NaN.
+  // Ugyldige tidspunkter, fx kl. 25:00, giver NaN
   const valgtTidspunkt = new Date(tidspunkt.replace(" ", "T"));
   if (isNaN(valgtTidspunkt.getTime())) {
     return res.status(400).json({ error: "Invalid date or time" });
   }
 
-  // Tjekker at datoen findes. Fx bliver 31/2 ellers lavet om til 3/3.
+  // Afviser datoer, der ikke findes, fx 31/2
   if (valgtTidspunkt.getDate() !== Number(tidspunkt.slice(8, 10))) {
     return res.status(400).json({ error: "Invalid date or time" });
   }
 
-  // Tjekker at tidspunktet ikke ligger i fremtiden
+  // Tidspunktet må ikke ligge i fremtiden
   const nu = new Date();
   if (valgtTidspunkt > nu) {
     return res.status(400).json({ error: "The date and time cannot be in the future." });
   }
 
-  // Tjekker at tidspunktet højst er 14 dage gammelt (samme periode som History)
+  // Tidspunktet må højst være 14 dage gammelt
   const graense = new Date();
   graense.setDate(nu.getDate() - 14);
   if (valgtTidspunkt < graense) {
@@ -270,7 +277,7 @@ app.post("/api/symptomer", kraevLogin, async (req, res) => {
     const symptom = await symptomer.opretSymptom(patient_id, tidspunkt, beskrivelse.trim());
     res.status(201).json(symptom);
   } catch (err) {
-    // Fejlkode 23503 betyder, at patienten ikke findes i tabellen patients
+    // Fejlkode 23503: patienten findes ikke i tabellen patients
     if (err.code === "23503") {
       return res.status(400).json({ error: "Patient not found" });
     }
@@ -279,12 +286,12 @@ app.post("/api/symptomer", kraevLogin, async (req, res) => {
   }
 });
 
-// Sidste middleware: returnerer JSON med status 404 for ukendte adresser.
+// Svarer 404 for ukendte adresser
 app.use((req, res) => {
   res.status(404).json({ error: "not found" });
 });
 
-// Starter serveren på port 3000.
+// Starter serveren på PORT eller 3000
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
