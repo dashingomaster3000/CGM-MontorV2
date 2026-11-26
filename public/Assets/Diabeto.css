@@ -210,6 +210,16 @@
     margin-top: 20px;
 }
 
+/* M-II: Mindre afstand mellem overskriften og "Here you can report…",
+   så teksten står lige under overskriften. Kun spacing, ingen logik ændret. */
+.meld-symptomer-page .kort h1 {
+    margin: 0 0 4px;
+}
+
+.meld-symptomer-page .kort h1 + p {
+    margin-top: 0;
+}
+
 /* Inputfelter */
 .meld-symptomer-page input,
 .meld-symptomer-page select {
