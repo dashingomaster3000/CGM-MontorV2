@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- INFORMATION OM SIDEN TIL BROWSEREN -->
 <head>
-    <!-- Gør at æ, ø og å virker -->
+    <!-- Tegnsæt, så æ, ø og å virker -->
     <meta charset="UTF-8">
-    <!-- Får siden til at passe på mobil -->
+    <!-- Tilpasning til mobil -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Teksten der vises i browserfanen -->
     <title>History</title>
-    <!-- Projektets eneste CSS-fil (fælles for alle sider) -->
+    <!-- Projektets CSS-fil -->
     <link rel="stylesheet" href="../Assets/Diabeto.css">
 </head>
 
@@ -18,34 +16,28 @@
 
     <nav class="topbar" aria-label="Main navigation">
         <a class="brand" href="../Forside/Forside.html">Diabeto</a>
-        <!-- Skjult som standard. Vises kun for sundhedsprofessionelle (styres i JavaScript) -->
+        <!-- Kun synlig for sundhedsprofessionelle -->
         <a href="../Patients/Patients.html" id="patientListLink" hidden>Patient list</a>
-        <!-- M-II: Dashboard står nu før Report symptoms (rækkefølge: Dashboard, Report symptoms, History) -->
         <a href="../Forside/Forside.html">Dashboard</a>
-        <!-- Skjules for sundhedsprofessionelle (styres i JavaScript) – kun borgere melder symptomer -->
+        <!-- Skjult for sundhedsprofessionelle -->
         <a href="../Feedback/MeldSymptomer.html" id="reportSymptomsLink">Report symptoms</a>
         <a href="History.html" class="active" aria-current="page">History</a>
-        <!-- Brugernavnet på den, der er logget ind (udfyldes af Auth.js) -->
+        <!-- Brugernavn (udfyldes af Auth.js) -->
         <span id="currentUser"></span>
         <button id="logoutButton" type="button">Log out</button>
     </nav>
 
-    <!-- Alt indholdet under menuen på siden -->
     <main>
         <h1>History</h1>
-        <!-- Patientens navn indsættes af JavaScript -->
+        <!-- Patientens navn (kun for sundhedsprofessionelle) -->
         <p id="patientName"></p>
 
-        <!-- KNAPPER TIL AT VÆLGE PERIODEN -->
-        <!-- Vælg om der vises 7 eller 14 dage -->
-        <!-- M-II: 14 dage er valgt fra start, så History viser samme periode som Dashboardet -->
+        <!-- Vælg periode: 7 eller 14 dage -->
         <button id="button7" class="day-button">7 days</button>
         <button id="button14" class="day-button selected">14 days</button>
 
-        <!-- NØGLETAL FOR DE VALGTE DAGE -->
-        <!-- Tre kort ved siden af hinanden -->
+        <!-- Nøgletal for den valgte periode -->
         <section class="key-figures">
-            <!-- Tallene bliver udfyldt af JavaScript -->
             <div class="card">
                 Average
                 <p id="average" class="number">–</p>
@@ -60,7 +52,7 @@
             </div>
         </section>
 
-        <!-- M-II: LAVE OG HØJE HÆNDELSER – samme liste som på Dashboardet (fælles funktion) -->
+        <!-- Lave og høje hændelser -->
         <section class="card">
             <h2>Low and high glucose events</h2>
             <table>
@@ -74,23 +66,21 @@
             </table>
         </section>
 
-        <!-- TABEL MED MÅLINGER FOR HVER DAG -->
+        <!-- Gennemsnit, laveste og højeste pr. dag -->
         <section class="card">
             <h2>Measurements per day</h2>
             <table>
-                <!-- Overskrifter til tabellens kolonner her -->
                 <tr>
                     <th>Date</th>
                     <th>Average</th>
                     <th>Lowest</th>
                     <th>Highest</th>
                 </tr>
-                <!-- JavaScript laver rækkerne her inde -->
                 <tbody id="tableBody"></tbody>
             </table>
         </section>
 
-        <!-- TABEL MED HVER ENKELT MÅLING OG DENS KLOKKESLÆT -->
+        <!-- Alle målinger med klokkeslæt -->
         <section class="card">
             <h2>All measurements</h2>
             <table>
@@ -99,23 +89,21 @@
                     <th>Time</th>
                     <th>Glucose</th>
                 </tr>
-                <!-- JavaScript laver rækkerne her inde -->
                 <tbody id="measurementBody"></tbody>
             </table>
         </section>
 
-        <!-- SYMPTOMER SOM PATIENTEN HAR MELDT -->
+        <!-- Symptomer meldt af patienten -->
         <section class="card">
             <h2>Symptom reports</h2>
-            <!-- JavaScript udfylder listen med symptomer -->
             <ul id="symptomList"></ul>
         </section>
     </main>
 
     <script src="../Login/Auth.js"></script>
-    <!-- Fælles menu-kode (beholder ?patient= i links, viser/skjuler menupunkter efter rolle) -->
+    <!-- Fælles menukode -->
     <script src="../Assets/Menu.js"></script>
-    <!-- M-II: Fælles grænser og dato/tid-format (deles med Dashboard) -->
+    <!-- Fælles grænser og datoformat -->
     <script src="../Assets/Glukose.js"></script>
     <script src="History.js"></script>
 </body>
