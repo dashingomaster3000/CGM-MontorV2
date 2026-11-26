@@ -1,9 +1,8 @@
-// Fælles login-tjek og log ud for alle sider, der kræver login.
-// Indlæses før sidens egen JS. Må IKKE indlæses på index.html (login-siden).
+// Fælles login-tjek og log ud for sider, der kræver login
+// Indlæses ikke på login-siden (index.html)
 
-// Spørg serveren, hvem der er logget ind.
-// Ikke logget ind (401): send til login-siden og returnér null.
-// Logget ind (200): vis brugernavnet i topbaren og returnér brugeren.
+// Spørger serveren, hvem der er logget ind
+// Ved 401 sendes brugeren til login-siden
 async function visLogin() {
     try {
         const response = await fetch("/api/me");
@@ -28,7 +27,7 @@ async function visLogin() {
     }
 }
 
-// Log ud: luk sessionen på serveren og gå til login-siden.
+// Logger ud og går til login-siden
 async function logUd() {
     try {
         await fetch("/api/logout", { method: "POST" });

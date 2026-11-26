@@ -1,25 +1,25 @@
-// Finder formularen og beskedområdet på login-siden.
+// Formularen og feltet til fejlbeskeder
 const loginForm = document.getElementById("loginForm");
 const loginMessage = document.getElementById("loginMessage");
 
-// Håndterer login uden at genindlæse siden.
+// Logger ind uden at genindlæse siden
 loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
     loginMessage.textContent = "";
 
-    // Henter og renser de loginoplysninger, som brugeren har indtastet.
+    // E-mail (uden mellemrum) og password fra formularen
     const brugernavn = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
     try {
-        // Serveren tjekker adgangskoden mod bcrypt-hashen i databasen.
+        // Serveren sammenligner password med bcrypt-hashen
         const response = await fetch("/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ brugernavn, password })
         });
 
-        // Forkerte loginoplysninger
+        // Forkert e-mail eller password
         if (response.status === 400 || response.status === 401) {
             loginMessage.textContent = "Incorrect e-mail or password.";
             return;
@@ -31,11 +31,11 @@ loginForm.addEventListener("submit", async function (event) {
 
         const bruger = await response.json();
 
-        // Sender borgeren til sin egen forside.
+        // Patienter sendes til deres Dashboard
         if (bruger.role === "patient") {
             window.location.href = "Forside/Forside.html?patient=" + bruger.patient_id;
         }
-        // Sender den sundhedsprofessionelle til patientlisten.
+        // Sundhedsprofessionelle sendes til patientlisten
         else {
             window.location.href = "Patients/Patients.html";
         }

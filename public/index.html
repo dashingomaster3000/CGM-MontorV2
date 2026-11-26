@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Angiver dokumentets sprog, tegnsæt og responsive layout. -->
+    <!-- Tegnsæt og tilpasning til mobil -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Teksten, der vises i browserens fane. -->
     <title>Log in – Diabeto</title>
 
-    <!-- Fælles udseende for Diabeto-siderne. -->
+    <!-- Projektets CSS-fil -->
     <link rel="stylesheet" href="Assets/Diabeto.css">
 
-    <!-- Indlæser login-logikken, efter HTML-koden er fortolket. -->
+    <!-- Loginscriptet køres, når HTML er indlæst (defer) -->
     <script src="Login/Login.js" defer></script>
 </head>
 
 <body class="login-page">
-    <!-- Login-sidens primære indho ld. -->
+    <!-- Login-sidens indhold -->
     <main>
-        <!-- Programmets navn og sidens overskrift. -->
+        <!-- Logo og overskrift -->
        <img
         src="Assets/DiabetoLogo.png"
         alt="Diabeto"
@@ -26,10 +25,9 @@
     >
         <h2>Log in</h2>
 
-        <!-- Loginformular med brugerens loginoplysninger. -->
+        <!-- Loginformular -->
         <form id="loginForm">
             <div>
-                <!-- E-mailadresse, der bruges til at identificere brugeren. -->
                 <label for="email">E-mail</label>
                 <input
                     type="email"
@@ -40,7 +38,6 @@
             </div>
 
             <div>
-                <!-- Adgangskode, der bruges til at bekræfte brugerens identitet. -->
                 <label for="password">Password</label>
                 <input
                     type="password"
@@ -50,10 +47,9 @@
                 >
             </div>
 
-            <!-- Sender de indtastede loginoplysninger til Login.js. -->
             <button type="submit">Log in</button>
 
-            <!-- Viser en fejl, hvis loginoplysningerne ikke godkendes. -->
+            <!-- Fejlbesked ved forkert login -->
             <p id="loginMessage"></p>
         </form>
 
