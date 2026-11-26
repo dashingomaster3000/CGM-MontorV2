@@ -2,11 +2,6 @@
 const dataStatus = document.getElementById("dataStatus");
 const dataFile = document.getElementById("dataFile");
 
-// Menuens links beholder den valgte patient (?patient=), når man skifter side.
-document.querySelectorAll("nav a").forEach(function (link) {
-    link.search = window.location.search;
-});
-
 // Åbn den skjulte filvælger, når brugeren klikker på importknappen.
 document.getElementById("importButton").addEventListener("click", function() {
     dataFile.click();
@@ -291,19 +286,12 @@ function setStatus(message, isError = false) {
     dataStatus.classList.toggle("error", isError);
 }
 
-// M-II: patientId er fjernet her, fordi dashboardet ikke længere henter patientens målinger
-// fra databasen. Menuens links beholder stadig ?patient= (se toppen af filen).
-
 // Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
-// Er det en sundhedsprofessionel, vises "Patient list", så man kan gå tilbage
-// og vælge en ny borger, og "Report symptoms" skjules, da kun borgere melder symptomer.
+// tilpasMenu (Assets/Menu.js) viser/skjuler menupunkter efter brugerens rolle.
 // Dataene hentes først, når vi ved, hvem der er logget ind.
-visLogin().then(bruger => {
+visLogin().then(function (bruger) {
     if (!bruger) return;
-    if (bruger.role === "professional") {
-        document.getElementById("patientListLink").hidden = false;
-        document.getElementById("reportSymptomsLink").hidden = true;
-    }
+    tilpasMenu(bruger);
     hentData();
 });
 

@@ -115,11 +115,6 @@ form.addEventListener("submit", async function (event) {
     }
 });
 
-// Menuens links beholder den valgte patient (?patient=), når man skifter side.
-document.querySelectorAll("nav a").forEach(function (link) {
-    link.search = window.location.search;
-});
-
 // Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
 // Kun borgere melder symptomer. En sundhedsprofessionel sendes til patientlisten.
 visLogin().then(function (bruger) {

@@ -28,11 +28,6 @@ const symptomList = document.getElementById("symptomList");
 // M-II: Listen med lave og høje hændelser (samme som på Dashboard)
 const eventList = document.getElementById("eventList");
 
-// Menuens links beholder den valgte patient (?patient=), når man skifter side.
-document.querySelectorAll("nav a").forEach(function (link) {
-    link.search = window.location.search;
-});
-
 // Beregn gennemsnittet af en liste tal
 function getAverage(values) {
     let sum = 0;
@@ -304,15 +299,11 @@ async function loadData() {
 }
 
 // Tjek login først (Auth.js). Ikke logget ind: Auth.js sender til login-siden.
-// Er det en sundhedsprofessionel, vises "Patient list", så man kan gå tilbage
-// og vælge en ny borger, og "Report symptoms" skjules, da kun borgere melder symptomer.
+// tilpasMenu (Assets/Menu.js) viser/skjuler menupunkter efter brugerens rolle.
 // Start derefter siden ved at hente alt data.
 visLogin().then(function (bruger) {
     if (!bruger) return;
-    if (bruger.role === "professional") {
-        document.getElementById("patientListLink").hidden = false;
-        document.getElementById("reportSymptomsLink").hidden = true;
-    }
+    tilpasMenu(bruger);
     loadData();
     loadSymptoms();
 });
