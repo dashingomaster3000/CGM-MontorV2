@@ -105,8 +105,11 @@ th, td {
 }
 
 /* Dage med lavt blodsukker bliver røde. */
-tr.low {
-    background-color: #ffdddd;
+/* M-II: Samme lyserøde baggrund som grafens røde zone og Dashboardets hændelseskort
+   (før #ffdddd). Høje hændelser får samme farve, ligesom i grafen. */
+tr.low,
+tr.high {
+    background-color: #fce8e6;
 }
 
 @media (max-width: 600px) {

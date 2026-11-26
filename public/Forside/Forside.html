@@ -66,8 +66,9 @@
             <!-- Tallene her beregnes ud fra de indlæste målinger. -->
             <div class="summary" aria-label="Glucose summary">
                 <div><span>Average</span><strong id="averageGlucose">--</strong></div>
-                <div><span>Time in range</span><strong id="timeInRange">--</strong></div>
-                <div><span>Readings</span><strong id="readingCount">--</strong></div>
+                <!-- M-II: "in-range" = grøn tekst, "readings" = rød tekst (samme farver som grafen) -->
+                <div class="in-range"><span>Time in range</span><strong id="timeInRange">--</strong></div>
+                <div class="readings"><span>Readings</span><strong id="readingCount">--</strong></div>
             </div>
         </section>
 

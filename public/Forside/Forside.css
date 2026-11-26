@@ -1,3 +1,12 @@
+/* M-II: Fælles farver for dashboardet. Rød = lav/høj (samme som grafens røde punkter),
+   grøn = i målområdet (mørkere udgave af grafens grønne zone, så teksten kan læses).
+   Lyserød baggrund = samme som grafens røde zone og History-sidens lave rækker. */
+:root {
+    --lav-farve: #b42318;
+    --maal-farve: #2e7d4f;
+    --lav-baggrund: #fce8e6;
+}
+
 /* Medregn indre afstand og kanter i elementernes bredde og højde. */
 * {
     box-sizing: border-box;
@@ -9,6 +18,8 @@ body {
     color: #17212f;
     font-family: Arial, sans-serif;
     background: #f4f6f8;
+    /* M-II: Lidt større grundtekst på dashboardet */
+    font-size: 17px;
 }
 
 /* Lav den blå navigationslinje. */
@@ -78,14 +89,16 @@ body {
 /* Fremhæv velkomstteksten som sidens hovedoverskrift. */
 .dashboard > h2 {
     margin: 0;
-    font-size: 30px;
+    /* M-II: større overskrift (før 30px) */
+    font-size: 34px;
 }
 
 /* Stil beskeden, der fortæller, hvilke data der vises. */
 .status {
     margin: -8px 0 0;
     color: #536273;
-    font-size: 14px;
+    /* M-II: større tekst (før 14px) */
+    font-size: 15px;
 }
 
 /* Brug rød tekst, så indlæsnings- og importfejl er nemme at se. */
@@ -105,7 +118,8 @@ body {
 /* Skab afstand mellem kortets overskrift og indhold. */
 .panel h2 {
     margin: 0 0 16px;
-    font-size: 20px;
+    /* M-II: større kortoverskrifter (før 20px) */
+    font-size: 24px;
 }
 
 /* Placér måling og tendens ved siden af hinanden; lad dem bryde på små skærme. */
@@ -118,7 +132,8 @@ body {
 
 /* Gør den aktuelle glukoseværdi nem at få øje på. */
 .current-reading strong {
-    font-size: 32px;
+    /* M-II: større tal (før 32px) */
+    font-size: 38px;
 }
 
 /* Brug en afdæmpet tekstfarve til tendensbeskrivelsen. */
@@ -181,20 +196,21 @@ body {
 /* M-II: Lave og høje punkter er røde ligesom de røde zoner (samme farve som tal og tekst under grafen). */
 .chart-point.low,
 .chart-point.high {
-    fill: #b42318;
+    fill: var(--lav-farve);
 }
 
 /* M-II: "Low"/"High"-teksten ved punkterne i grafen. */
 .chart-point-label {
-    fill: #b42318;
-    font-size: 12px;
+    fill: var(--lav-farve);
+    font-size: 13px;
     font-weight: bold;
 }
 
 /* Gør grafens etiketter mindre fremtrædende end målingerne. */
 .chart-label {
     fill: #687789;
-    font-size: 12px;
+    /* M-II: større akse-tekst (før 12px) */
+    font-size: 14px;
 }
 
 /* Vis forklaringerne til grafens farver på en række med lidt afstand. */
@@ -211,7 +227,8 @@ body {
     align-items: center;
     gap: 7px;
     color: #536273;
-    font-size: 13px;
+    /* M-II: større tekst (før 13px) */
+    font-size: 15px;
 }
 
 /* Gør farvefeltet til en lille firkant med afrundede hjørner. */
@@ -265,12 +282,26 @@ body {
 /* Brug afdæmpet tekst til overskrifterne i oversigten. */
 .summary span {
     color: #687789;
-    font-size: 13px;
+    /* M-II: større labels (før 13px) */
+    font-size: 16px;
 }
 
 /* Fremhæv de beregnede værdier i oversigten. */
 .summary strong {
-    font-size: 18px;
+    /* M-II: større tal (før 18px) */
+    font-size: 24px;
+}
+
+/* M-II: "Time in range" står med grøn tekst (som grafens grønne målområde). */
+.summary .in-range span,
+.summary .in-range strong {
+    color: var(--maal-farve);
+}
+
+/* M-II: "Readings" står med rød tekst (som grafens røde punkter). */
+.summary .readings span,
+.summary .readings strong {
+    color: var(--lav-farve);
 }
 
 /* Vis så mange kort over lave målinger på hver række, som skærmen tillader. */
@@ -287,6 +318,13 @@ body {
     background: #f4f6f8;
 }
 
+/* M-II: Lave og høje hændelser får samme lyserøde baggrund som grafens røde zone
+   og History-sidens lave rækker, så de ser ens ud overalt. */
+.event-card.low,
+.event-card.high {
+    background: var(--lav-baggrund);
+}
+
 /* Vis dato og detaljer på separate linjer i hvert målingskort. */
 .event-card strong,
 .event-card span {
@@ -296,24 +334,36 @@ body {
 /* Tilføj lidt afstand under datoen for målingen. */
 .event-card strong {
     margin-bottom: 6px;
+    /* M-II: større dato */
+    font-size: 18px;
 }
 
 /* Gør målingsdetaljerne læsbare uden at overdøve datoen. */
 .event-card span {
     color: #536273;
-    font-size: 14px;
+    /* M-II: større tekst (før 14px) */
+    font-size: 16px;
+}
+
+/* M-II: "Lowest"/"Highest" er rød, så den matcher grafens røde punkter. */
+.event-card .event-value {
+    color: var(--lav-farve);
+    font-weight: bold;
 }
 
 /* Stil underoverskriften over det hyppigste tidspunkt med lav glukose. */
 .panel h3 {
     margin: 18px 0 6px;
-    font-size: 15px;
+    /* M-II: større tekst (før 15px) */
+    font-size: 17px;
     font-weight: normal;
 }
 
 /* Fremhæv tidspunktet, hvor lav glukose forekommer oftest. */
 .period {
-    font-size: 24px;
+    /* M-II: større tal (før 24px), rød fordi det er tidspunktet for lav glukose */
+    font-size: 28px;
+    color: var(--lav-farve);
 }
 
 /* Tilpas afstande og kort på mindre mobilskærme. */
